@@ -1,0 +1,4 @@
+*~
+buildFiles/CMake/Tools/*
+game/core/fonts/*
+*.uft
