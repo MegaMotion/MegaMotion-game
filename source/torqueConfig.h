@@ -20,8 +20,7 @@
 // IN THE SOFTWARE.
 //-----------------------------------------------------------------------------
 
-#ifndef _TORQUECONFIG_H_
-#define _TORQUECONFIG_H_
+#pragma once
 
 //-----------------------------------------------------------------------------
 //Hi, and welcome to the Torque Config file.
@@ -32,7 +31,7 @@
 //not only to your game proper, but also to all of your tools.
 
 /// What's the name of your application? Used in a variety of places.
-#define TORQUE_APP_NAME            "Empty"
+#define TORQUE_APP_NAME            "MegaMotion"
 
 /// What version of the application specific source code is this?
 ///
@@ -40,61 +39,53 @@
 #define TORQUE_APP_VERSION         1000
 
 /// Human readable application version string.
-#define TORQUE_APP_VERSION_STRING  "1.0"
+#define TORQUE_APP_VERSION_STRING  "1.0.0.0"
 
 /// Define me if you want to enable multithreading support.
-#ifndef TORQUE_MULTITHREAD
 #define TORQUE_MULTITHREAD
-#endif
 
 /// Define me if you want to disable Torque memory manager.
-#ifndef TORQUE_DISABLE_MEMORY_MANAGER
 #define TORQUE_DISABLE_MEMORY_MANAGER
-#endif
-
-/// The improved SimDictionary uses C++11 and is designed for games where
-/// there are over 10000 simobjects active normally. To enable the new
-/// SimDictionary just uncomment the line below.
-//#define USE_NEW_SIMDICTIONARY
 
 /// Define me if you want to disable the virtual mount system.
-//#define TORQUE_DISABLE_VIRTUAL_MOUNT_SYSTEM
+/* #undef TORQUE_DISABLE_VIRTUAL_MOUNT_SYSTEM */
 
 /// Define me if you want to disable looking for the root of a given path
 /// within a zip file.  This means that the zip file name itself must be
 /// the root of the path.  Requires the virtual mount system to be active.
-//#define TORQUE_DISABLE_FIND_ROOT_WITHIN_ZIP
+/* #undef TORQUE_DISABLE_FIND_ROOT_WITHIN_ZIP */
 
 //Uncomment this define if you want to use the alternative zip support where you can 
 //define your directories and files inside the zip just like you would on disk
 //instead of the default zip support that treats the zip as an extra directory.
-//#define TORQUE_ZIP_DISK_LAYOUT
+/* #undef TORQUE_ZIP_DISK_LAYOUT */
 
 /// Define me if you don't want Torque to compile dso's
 #define TORQUE_NO_DSO_GENERATION
 
 // Define me if this build is a tools build
-
-#ifndef TORQUE_PLAYER
-#  define TORQUE_TOOLS
-#else
-#  undef TORQUE_TOOLS
-#endif
+/* #undef TORQUE_PLAYER */
+#define TORQUE_TOOLS
 
 /// Define me if you want to enable the profiler.
 ///    See also the TORQUE_SHIPPING block below
-//#define TORQUE_ENABLE_PROFILER
+/* #undef TORQUE_ENABLE_PROFILER */
 
 /// Define me to enable debug mode; enables a great number of additional
 /// sanity checks, as well as making AssertFatal and AssertWarn do something.
 /// This is usually defined by the build target.
-//#define TORQUE_DEBUG
+
+// TORQUE_DEBUG is now set dynamically and not here anymore
+/* #undef TORQUE_DEBUG */
+
+/* #undef DEBUG_SPEW */
+/* #undef TORQUE_DEBUG_GFX_MODE */
 
 /// Define me if this is a shipping build; if defined I will instruct Torque
 /// to batten down some hatches and generally be more "final game" oriented.
 /// Notably this disables a liberal resource manager file searching, and
 /// console help strings.
-//#define TORQUE_SHIPPING
+/* #undef TORQUE_SHIPPING */
 
 /// Define me to enable a variety of network debugging aids.
 ///
@@ -102,10 +93,10 @@
 ///  - DebugChecksum guards to detect mismatched pack/unpacks.
 ///  - Detection of invalid destination ghosts.
 ///
-//#define TORQUE_DEBUG_NET
+/* #undef TORQUE_DEBUG_NET */
 
 /// Define me to enable detailed console logging of net moves.
-//#define TORQUE_DEBUG_NET_MOVES
+/* #undef TORQUE_DEBUG_NET_MOVES */
 
 /// Enable this define to change the default Net::MaxPacketDataSize
 /// Do this at your own risk since it has the potential to cause packets
@@ -168,7 +159,9 @@
    #endif
 
    // Enables the C++ assert macros AssertFatal, AssertWarn, etc.
+   #ifndef TORQUE_ENABLE_ASSERTS
    #define TORQUE_ENABLE_ASSERTS
+   #endif
 
 #endif
 
@@ -213,7 +206,3 @@
 #     undef TORQUE_ENABLE_PROFILE_PATH
 #endif
 #endif
-
-
-#endif // _TORQUECONFIG_H_
-
