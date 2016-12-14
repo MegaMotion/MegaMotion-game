@@ -2,6 +2,7 @@
 buildFiles/CMake/Tools/*
 buildFiles/CMake/CMakeFiles/*
 buildFiles/CMake/Win32/*
+buildFiles/CMake/.vs/*
 buildFiles/CMake/MegaMotion.VC.db
 game/core/fonts/*
 *.uft
