@@ -1,0 +1,12 @@
+INSERT INTO [physicsShape] ([id], [name], [datablock], [vehicle_id], [path]) VALUES (1, 'M4', 'M4Physics', 0, 'art/shapes/Daz3D/Michael4/M4.dts');
+INSERT INTO [physicsShape] ([id], [name], [datablock], [vehicle_id], [path]) VALUES (2, 'Dragonfly', 'dragonflyPhysics', 0, 'art/shapes/FlightGear/Dragonfly/dragonfly.dts');
+INSERT INTO [physicsShape] ([id], [name], [datablock], [vehicle_id], [path]) VALUES (3, 'bo105', 'bo105Physics', 0, 'art/shapes/FlightGear/bo105/bo105.dts');
+INSERT INTO [physicsShape] ([id], [name], [datablock], [vehicle_id], [path]) VALUES (4, 'ka50', 'ka50Physics', 1, 'art/shapes/FlightGear/ka50/Models/ka50.dts');
+INSERT INTO [physicsShape] ([id], [name], [datablock], [vehicle_id], [path]) VALUES (5, 'ka50mainRotor', 'ka50mainRotorPhysics', 0, 'art/shapes/FlightGear/ka50/Models/MainRotor/MainRotor.dts');
+INSERT INTO [physicsShape] ([id], [name], [datablock], [vehicle_id], [path]) VALUES (6, 'ka50blade', 'ka50bladePhysics', 0, 'art/shapes/FlightGear/ka50/Models/MainRotor/blade.dts');
+INSERT INTO [physicsShape] ([id], [name], [datablock], [vehicle_id], [path]) VALUES (7, 'ka50rocket', 'ka50rocketPhysics', 0, 'art/shapes/FlightGear/ka50/Models/weapons/rocket.dts');
+INSERT INTO [physicsShape] ([id], [name], [datablock], [vehicle_id], [path]) VALUES (8, 'ka50tubeRocket', 'ka50tubeRocketPhysics', 0, 'art/shapes/FlightGear/ka50/Models/weapons/tuberocket.dts');
+INSERT INTO [physicsShape] ([id], [name], [datablock], [vehicle_id], [path]) VALUES (9, 'a6m2', 'a6m2Physics', 3, 'art/shapes/FlightGear/A6M2/a6m2.dts');
+INSERT INTO [physicsShape] ([id], [name], [datablock], [vehicle_id], [path]) VALUES (10, 'muscular_male', 'makeHumanPhysics', 0, 'art/shapes/makehuman/muscular_male.dts');
+INSERT INTO [physicsShape] ([id], [name], [datablock], [vehicle_id], [path]) VALUES (11, 'Cube', 'PSCube', 0, 'art/shapes/cube/cube.dts');
+INSERT INTO [physicsShape] ([id], [name], [datablock], [vehicle_id], [path]) VALUES (16, 'Cube2', 'Cube2Physics', 0, 'art/shapes/cube/cube.dts');
