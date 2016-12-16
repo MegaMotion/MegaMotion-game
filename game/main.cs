@@ -21,7 +21,7 @@
 //-----------------------------------------------------------------------------
 
 // Set the name of our application
-$appName = "Empty";
+$appName = "Full";
 
 // The directory it is run from
 $defaultGame = "scripts";
@@ -42,7 +42,7 @@ function createCanvas(%windowTitle)
    {
       displayWindow = $platform !$= "windows";
    };
-   
+
    $GameCanvas = %foo;
    
    // Set the window title
@@ -254,6 +254,7 @@ else {
 
    //You can also explicitly decalre some modules here to be loaded by default if they are part of your game
    //Ex: ModuleDatabase.LoadExplicit( "AppCore" );
+   ModuleDatabase.LoadGroup( "Game" );
 
    if( !$isDedicated )
    {

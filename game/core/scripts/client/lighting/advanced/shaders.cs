@@ -85,7 +85,7 @@ new CustomMaterial( AL_VectorLightMaterial )
    sampler["prePassBuffer"] = "#prepass";
    sampler["shadowMap"] = "$dynamiclight";
    sampler["dynamicShadowMap"] = "$dynamicShadowMap";
-   sampler["ssaoMask"] = "#ssaoMask";
+   sampler["ssaoMask"] = "#ssaoMask";  
    sampler["lightBuffer"] = "#lightinfo";
    sampler["colorBuffer"] = "#color";
    sampler["matInfoBuffer"] = "#matinfo";

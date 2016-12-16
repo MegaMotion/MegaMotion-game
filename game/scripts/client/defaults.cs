@@ -26,7 +26,7 @@ exec( "core/scripts/client/defaults.cs" );
 
 // Now add your own game specific client preferences as
 // well as any overloaded core defaults here.
-
+$PhysXLogWarnings = false;
 
 
 

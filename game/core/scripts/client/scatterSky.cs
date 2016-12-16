@@ -42,7 +42,7 @@ singleton ShaderData( ScatterSkyShaderData )
    DXPixelShaderFile      = "shaders/common/scatterSkyP.hlsl";   
    
    OGLVertexShaderFile     = "shaders/common/gl/scatterSkyV.glsl";
-   OGLPixelShaderFile      = "shaders/common/gl/scatterSkyP.glsl";   
+   OGLPixelShaderFile      = "shaders/common/gl/scatterSkyP.glsl";
    
    samplerNames[0] = "$nightSky";
    
