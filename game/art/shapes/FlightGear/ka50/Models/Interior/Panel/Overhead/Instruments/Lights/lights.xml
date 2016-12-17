@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PropertyList>
+
+  <path>lights.ac</path>
+
+  <animation>
+    <!-- Objets opaques -->
+    <object-name>fond</object-name>
+    <object-name>marques</object-name>
+    <object-name>texte</object-name>
+    <object-name>button</object-name>
+    
+    <!-- Objets transparents -->
+  </animation>
+
+  <!-- switchs -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/switch/nav-light.xml</path>
+    <offsets>
+      <x-m>  0.001000 </x-m>
+      <y-m> -0.138120 </y-m>
+      <z-m> -0.007525 </z-m>
+    </offsets>
+  </model>
+
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/switch/switch2.xml</path>
+    <offsets>
+      <x-m>  0.001000 </x-m>
+      <y-m> -0.064120 </y-m>
+      <z-m> -0.007525 </z-m>
+    </offsets>
+  </model>
+
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/switch/switch.xml</path>
+    <offsets>
+      <x-m>  0.001000 </x-m>
+      <y-m> -0.010120 </y-m>
+      <z-m> -0.007525 </z-m>
+    </offsets>
+  </model>
+
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/switch/switch.xml</path>
+    <offsets>
+      <x-m>  0.001000 </x-m>
+      <y-m>  0.070880 </y-m>
+      <z-m> -0.007525 </z-m>
+    </offsets>
+  </model>
+
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/switch/switch.xml</path>
+    <offsets>
+      <x-m>  0.001000 </x-m>
+      <y-m>  0.101880 </y-m>
+      <z-m> -0.007525 </z-m>
+    </offsets>
+  </model>
+
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/switch/switch2.xml</path>
+    <offsets>
+      <x-m>  0.001000 </x-m>
+      <y-m>  0.135880 </y-m>
+      <z-m> -0.007525 </z-m>
+    </offsets>
+  </model>
+
+</PropertyList>

@@ -100,13 +100,16 @@ function PhysicsToolsMenu::onMenuSelect(%this)
 }
 
 function PhysicsEditorPlugin::onEditorWake( %this )
-{
+{//MegaMotion: do *not* do this.
+
    // Disable physics when entering
    // the editor.  Will be re-enabled
    // when the editor is closed.
-   physicsStopSimulation( "client" );
-   physicsStopSimulation( "server" );
-   physicsRestoreState(); 
+   
+   //physicsStopSimulation( "client" );
+   //physicsStopSimulation( "server" );
+   //physicsRestoreState(); 
+   
 }
 
 function PhysicsEditorPlugin::onEditorSleep( %this )

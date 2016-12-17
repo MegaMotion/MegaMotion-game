@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PropertyList>
+
+  <path>overhead.ac</path>
+
+  <animation>
+    <!-- Objets opaques -->
+    <object-name>overhead</object-name>
+
+    <!-- Objets transparents -->
+  </animation>
+
+  <!-- Lights panel  -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Overhead/Instruments/Lights/lights.xml</path>
+    <offsets>
+      <x-m> -0.000836 </x-m>
+      <y-m> -0.143150 </y-m>
+      <z-m>  0.009164 </z-m>
+    </offsets>
+  </model>
+
+  <!-- Frost panel  -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Overhead/Instruments/Frost/frost.xml</path>
+    <offsets>
+      <x-m> -0.001936 </x-m>
+      <y-m>  0.141630 </y-m>
+      <z-m>  0.009164 </z-m>
+    </offsets>
+  </model>
+
+  <!-- Alertes panel  -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Overhead/Instruments/Alertes/alertes.xml</path>
+    <offsets>
+      <x-m> -0.06912 </x-m>
+      <y-m>  0.03125 </y-m>
+      <z-m> -0.08620 </z-m>
+      <pitch-deg> 21 </pitch-deg>
+    </offsets>
+  </model>
+
+  <!-- Alertes panel  -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Overhead/Instruments/gyro/gyro.xml</path>
+    <offsets>
+      <x-m> -0.065 </x-m>
+      <y-m>  0.000 </y-m>
+      <z-m> -0.081 </z-m>
+      <pitch-deg> 21 </pitch-deg>
+    </offsets>
+  </model>
+
+</PropertyList>

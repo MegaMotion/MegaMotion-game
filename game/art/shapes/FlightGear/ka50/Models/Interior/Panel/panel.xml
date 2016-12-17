@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PropertyList>
+
+  <path>panel.ac</path>
+
+  <animation>
+    <!-- Objets opaques -->
+    <object-name>panel</object-name>
+    <object-name>panel2</object-name>
+
+    <!-- Objets transparents -->
+  </animation>
+
+  <!-- AI --> 
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/ai/ai.xml</path>
+    <offsets>
+      <x-m> -0.083 </x-m>
+      <y-m> -0.221 </y-m>
+      <z-m>  0.159 </z-m>
+    </offsets>
+  </model>
+
+  <!-- VSI --> 
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/vsi/vsi.xml</path>
+    <offsets>
+      <x-m> -0.080 </x-m>
+      <y-m> -0.240 </y-m>
+      <z-m>  0.275 </z-m>
+    </offsets>
+  </model>
+
+  <!-- HSI --> 
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/hsi/hsi.xml</path>
+    <offsets>
+      <x-m> -0.078 </x-m>
+      <y-m> -0.220 </y-m>
+      <z-m>  0.018 </z-m>
+    </offsets>
+  </model>
+
+  <!-- ACCEL -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/accel/accel.xml</path>
+    <offsets>
+      <x-m> -0.075 </x-m>
+      <y-m> -0.327 </y-m>
+      <z-m>  0.237 </z-m>
+    </offsets>
+  </model>
+
+  <!-- ALT -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/alt/alt.xml</path>
+    <offsets>
+      <x-m> -0.079 </x-m>
+      <y-m> -0.326 </y-m>
+      <z-m>  0.047 </z-m>
+    </offsets>
+  </model>
+
+  <!-- ASI -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/asi/asi.xml</path>
+    <offsets>
+      <x-m> -0.079 </x-m>
+      <y-m> -0.324 </y-m>
+      <z-m>  0.155 </z-m>
+    </offsets>
+  </model>
+
+  <!-- RADAR ALT -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/ralt/ralt.xml</path>
+    <offsets>
+      <x-m> -0.078 </x-m>
+      <y-m> -0.415 </y-m>
+      <z-m>  0.155 </z-m>
+    </offsets>
+  </model>
+
+  <!-- RPM -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/rpm/rpm.xml</path>
+    <offsets>
+      <x-m> -0.078 </x-m>
+      <y-m> -0.415 </y-m>
+      <z-m>  0.047 </z-m>
+    </offsets>
+  </model>
+
+  <!-- RPM -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/clock/clock.xml</path>
+    <offsets>
+      <x-m> -0.078 </x-m>
+      <y-m> -0.412 </y-m>
+      <z-m> -0.053 </z-m>
+    </offsets>
+  </model>
+
+  <!-- ANGLE BLADE -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/bladeangle/bladeangle.xml</path>
+    <offsets>
+      <x-m> -0.076 </x-m>
+      <y-m> -0.326 </y-m>
+      <z-m> -0.037 </z-m>
+    </offsets>
+  </model>
+
+  <!-- GEARS -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/gear/gear.xml</path>
+    <offsets>
+      <x-m> -0.07817 </x-m>
+      <y-m> -0.49744 </y-m>
+      <z-m> -0.01250 </z-m>
+    </offsets>
+  </model>
+
+  <!-- Overhead switchs  -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Overhead/overhead.xml</path>
+    <offsets>
+      <x-m> 0.006016 </x-m>
+      <y-m> 0.000000 </y-m>
+      <z-m> 0.867430 </z-m>
+      <pitch-deg> 22 </pitch-deg>
+    </offsets>
+  </model>
+  
+  <!-- WARNING -->
+  <model>
+    <path>Aircraft/Ka-50/Models/Interior/Panel/Instruments/Warning/warning.xml</path>
+    <offsets>
+      <x-m> -0.07733 </x-m>
+      <y-m> -0.24476 </y-m>
+      <z-m>  0.35714 </z-m>
+    </offsets>
+  </model>
+
+</PropertyList>

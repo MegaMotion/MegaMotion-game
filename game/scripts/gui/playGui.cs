@@ -33,12 +33,13 @@ function PlayGui::onWake(%this)
    $enableDirectInput = "1";
    activateDirectInput();
 
+   //MegaMotion, killing this.
    // Message hud dialog
-   if ( isObject( MainChatHud ) )
-   {
-      Canvas.pushDialog( MainChatHud );
-      chatHud.attach(HudMessageVector);
-   }      
+   //if ( isObject( MainChatHud ) )
+   //{
+   //   Canvas.pushDialog( MainChatHud );
+   //   chatHud.attach(HudMessageVector);
+   //}      
    
    // just update the action map here
    moveMap.push();

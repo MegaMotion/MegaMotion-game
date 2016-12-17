@@ -25,10 +25,27 @@
 
 datablock TSForestItemData(ExampleForestMesh)
 {
-   shapeFile = "art/shapes/trees/defaulttree/defaulttree.DAE";
+   shapeFile = "art/shapes/trees/defaulttree/defaulttree.dae";
    internalName = "ExampleForestMesh";
+   windScale = "0.5";
+   trunkBendScale = "0.0";
+   branchAmp = "0.02";
+   detailAmp = "0.06";
+   detailFreq = "0.05";
+   mass = "5";
+   rigidity = "20";
+   dampingCoefficient = "0.2";
+   tightnessCoefficient = "4";
+   //radius = "??";
+};
+
+
+datablock TSForestItemData(SequiaForestMesh)
+{
+   shapeFile = "art/shapes/trees/TallPine/DTSSequia.DAE";
+   internalName = "SequiaForestMesh";
    windScale = "1";
-   trunkBendScale = "0.02";
+   trunkBendScale = "0.0";
    branchAmp = "0.05";
    detailAmp = "0.1";
    detailFreq = "0.2";
@@ -38,3 +55,92 @@ datablock TSForestItemData(ExampleForestMesh)
    tightnessCoefficient = "4";
 };
 
+datablock TSForestItemData(Sequia02ForestMesh)
+{
+   shapeFile = "art/shapes/trees/TallPine/Sequia_02.DAE";
+   internalName = "Sequia02ForestMesh";
+   windScale = "1";
+   trunkBendScale = "0.0";
+   branchAmp = "0.05";
+   detailAmp = "0.1";
+   detailFreq = "0.2";
+   mass = "5";
+   rigidity = "20";
+   dampingCoefficient = "0.2";
+   tightnessCoefficient = "4";
+};
+
+datablock TSForestItemData(ScrubPineForestMesh)
+{
+   shapeFile = "art/shapes/trees/ScrubPine/ScrubPine.DAE";
+   internalName = "ScrubPineForestMesh";
+   windScale = "1";
+   trunkBendScale = "0.0";
+   branchAmp = "0.05";
+   detailAmp = "0.1";
+   detailFreq = "0.2";
+   mass = "5";
+   rigidity = "20";
+   dampingCoefficient = "0.2";
+   tightnessCoefficient = "4";
+};
+
+datablock TSForestItemData(ShortPineForestMesh)
+{
+   shapeFile = "art/shapes/trees/GreenSpruce/ShortPine001.DAE";
+   internalName = "ShortPineForestMesh";
+   windScale = "1";
+   trunkBendScale = "0.0";
+   branchAmp = "0.05";
+   detailAmp = "0.1";
+   detailFreq = "0.2";
+   mass = "5";
+   rigidity = "20";
+   dampingCoefficient = "0.2";
+   tightnessCoefficient = "4";
+};
+
+datablock TSForestItemData(Acacia01ForestMesh)
+{
+   shapeFile = "art/shapes/trees/acaciaTree_01/acacciaTree_01.DAE";
+   internalName = "Acacia01ForestMesh";
+   windScale = "1";
+   trunkBendScale = "0.0";
+   branchAmp = "0.01";
+   detailAmp = "1";
+   detailFreq = "0.1";
+   mass = "5";
+   rigidity = "20";
+   dampingCoefficient = "0.2";
+   tightnessCoefficient = "4";
+};
+
+datablock TSForestItemData(Acacia02ForestMesh)
+{
+   shapeFile = "art/shapes/trees/AfricaTree_01/AfricaTree_01.DAE";
+   internalName = "Acacia02ForestMesh";
+   windScale = "1";
+   trunkBendScale = "0.0";
+   branchAmp = "0.2";
+   detailAmp = "1";
+   detailFreq = "0.1";
+   mass = "5";
+   rigidity = "20";
+   dampingCoefficient = "0.2";
+   tightnessCoefficient = "4";
+};
+
+datablock TSForestItemData(AfricanMahoganyForestMesh)
+{
+   shapeFile = "art/shapes/trees/africanMohogany_01/africanMahogany_01.DAE";
+   internalName = "AfricanMahoganyForestMesh";
+   windScale = "0.5";
+   trunkBendScale = "0.0";
+   branchAmp = "0.02";
+   detailAmp = "1";
+   detailFreq = "0.2";
+   mass = "5";
+   rigidity = "20";
+   dampingCoefficient = "0.2";
+   tightnessCoefficient = "4";
+};

@@ -209,7 +209,8 @@ function EditorNewLevel( %file )
    }
       
    if(%saveFirst)
-      EditorSaveMission();
+      MegaMotionSaveMission();
+      //EditorSaveMission();
 
    // Clear dirty flags first to avoid duplicate dialog box from EditorOpenMission()
    if( isObject( Editor ) )
@@ -239,7 +240,8 @@ function EditorSaveMissionMenu()
    if(EditorGui.saveAs)
       EditorSaveMissionAs();
    else
-      EditorSaveMission();
+         MegaMotionSaveMission();
+         //EditorSaveMission();
 }
 
 function EditorSaveMission()

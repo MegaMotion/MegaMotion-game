@@ -26,14 +26,17 @@
 
 //--- OBJECT WRITE BEGIN ---
 new SimGroup(ForestBrushGroup) {
+   canSave = "1";
    canSaveDynamicFields = "1";
 
    new ForestBrush() {
       internalName = "ExampleForestBrush";
+      canSave = "1";
       canSaveDynamicFields = "1";
 
       new ForestBrushElement() {
          internalName = "ExampleElement";
+         canSave = "1";
          canSaveDynamicFields = "1";
          ForestItemData = "ExampleForestMesh";
          probability = "1";
@@ -48,10 +51,154 @@ new SimGroup(ForestBrushGroup) {
          slopeMax = "30";
          elevationMin = "-10000";
          elevationMax = "10000";
-         clumpCountMin = "1";
-         clumpCountMax = "1";
-         clumpCountExponent = "1";
-         clumpRadius = "10";
+            clumpCountExponent = "1";
+            clumpCountMax = "1";
+            clumpCountMin = "1";
+            clumpRadius = "10";
+      };
+   };
+   new ForestBrush() {
+      internalName = "SequoiaBrush";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+
+      new ForestBrushElement() {
+         internalName = "SequoiaElement";
+         canSave = "1";
+         canSaveDynamicFields = "1";
+         ForestItemData = "SequiaForestMesh";
+         probability = "1";
+         rotationRange = "360";
+         scaleMin = "1";
+         scaleMax = "1";
+         scaleExponent = "1";
+         sinkMin = "0";
+         sinkMax = "0";
+         sinkRadius = "1";
+         slopeMin = "0";
+         slopeMax = "90";
+         elevationMin = "-10000";
+         elevationMax = "10000";
+      };
+      new ForestBrushElement() {
+         internalName = "Sequia02Element";
+         canSave = "1";
+         canSaveDynamicFields = "1";
+         ForestItemData = "Sequia02ForestMesh";
+         probability = "1";
+         rotationRange = "360";
+         scaleMin = "1";
+         scaleMax = "1";
+         scaleExponent = "1";
+         sinkMin = "0";
+         sinkMax = "0";
+         sinkRadius = "1";
+         slopeMin = "0";
+         slopeMax = "90";
+         elevationMin = "-10000";
+         elevationMax = "10000";
+      };
+   };
+   new ForestBrush() {
+      internalName = "ShortPineBrush";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+
+      new ForestBrushElement() {
+         internalName = "ShortPineElement";
+         canSave = "1";
+         canSaveDynamicFields = "1";
+         ForestItemData = "ScrubPineForestMesh";
+         probability = "1";
+         rotationRange = "360";
+         scaleMin = "1";
+         scaleMax = "1";
+         scaleExponent = "1";
+         sinkMin = "0";
+         sinkMax = "0";
+         sinkRadius = "1";
+         slopeMin = "0";
+         slopeMax = "90";
+         elevationMin = "-10000";
+         elevationMax = "10000";
+      };
+      new ForestBrushElement() {
+         internalName = "Element";
+         canSave = "1";
+         canSaveDynamicFields = "1";
+         ForestItemData = "ShortPineForestMesh";
+         probability = "1";
+         rotationRange = "360";
+         scaleMin = "1";
+         scaleMax = "1";
+         scaleExponent = "1";
+         sinkMin = "0";
+         sinkMax = "0";
+         sinkRadius = "1";
+         slopeMin = "0";
+         slopeMax = "90";
+         elevationMin = "-10000";
+         elevationMax = "10000";
+      };
+   };
+   new ForestBrush() {
+      internalName = "AcaciaBrush";
+      canSave = "1";
+      canSaveDynamicFields = "1";
+
+      new ForestBrushElement() {
+         internalName = "Acacia01Element";
+         canSave = "1";
+         canSaveDynamicFields = "1";
+         ForestItemData = "Acacia01ForestMesh";
+         probability = "1";
+         rotationRange = "360";
+         scaleMin = "1";
+         scaleMax = "1";
+         scaleExponent = "1";
+         sinkMin = "0";
+         sinkMax = "0";
+         sinkRadius = "1";
+         slopeMin = "0";
+         slopeMax = "90";
+         elevationMin = "-10000";
+         elevationMax = "10000";
+      };
+      new ForestBrushElement() {
+         internalName = "Acacia02Element";
+         canSave = "1";
+         canSaveDynamicFields = "1";
+         ForestItemData = "Acacia02ForestMesh";
+         probability = "1";
+         rotationRange = "360";
+         scaleMin = "1";
+         scaleMax = "1";
+         scaleExponent = "1";
+         sinkMin = "0";
+         sinkMax = "0";
+         sinkRadius = "1";
+         slopeMin = "0";
+         slopeMax = "90";
+         elevationMin = "-10000";
+         elevationMax = "10000";
+      };
+      new ForestBrushElement() {
+         internalName = "MahoganyElement";
+         canSave = "1";
+         canSaveDynamicFields = "1";
+         ForestItemData = "AfricanMahoganyForestMesh";
+         probability = "1";
+         rotationRange = "360";
+         scaleMin = "1";
+         scaleMax = "1";
+         scaleExponent = "1";
+         sinkMin = "0";
+         sinkMax = "0";
+         sinkRadius = "1";
+         slopeMin = "0";
+         slopeMax = "90";
+         elevationMin = "-10000";
+         elevationMax = "10000";
       };
    };
 };

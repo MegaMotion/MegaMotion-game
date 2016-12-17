@@ -105,7 +105,16 @@ function onStart()
    // Server gets loaded for all sessions, since clients
    // can host in-game servers.
    initServer();
-
+      
+   //////////////// OpenSimEarth ///////////////
+   startSQL($pref::MegaMotion::DB);
+   
+   initOpenSteer();
+   
+   //schedule(90,0,"openSimEarthTick");
+   //////////////// OpenSimEarth ///////////////
+   
+   
    // Start up in either client, or dedicated server mode
    if ($Server::Dedicated)
       initDedicated();
@@ -132,6 +141,8 @@ function onExit()
    echo("Exporting server prefs");
    export("$Pref::Server::*", "./server/prefs.cs", False);
    BanList::Export("./server/banlist.cs");
+   
+   stopSQL();
 
    Parent::onExit();
 }

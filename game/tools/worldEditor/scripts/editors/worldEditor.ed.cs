@@ -48,6 +48,18 @@ function WorldEditor::onSelect( %this, %obj )
    
    // Update the Transform Selection window
    ETransformSelection.onSelectionChanged();
+   
+   if (MegaMotionScenes.isVisible())
+   {      
+      //SINGLE PLAYER HACK
+      $editorSelectObjectServer = %obj;
+      $editorSelectObjectClient = %obj.getClientObject();
+      echo("SELECTING AN OBJECT, server " @ $editorSelectObjectServer.getId() @ " client " @ 
+                     $editorSelectObjectClient.getId() );
+                     
+      if (%obj.sceneShapeID > 0)
+         $mmSceneShapeList.setSelected(%obj.sceneShapeID);
+   }
 }
 
 function WorldEditor::onMultiSelect( %this, %set )
@@ -185,6 +197,28 @@ function WorldEditor::onClick( %this, %obj )
 
 function WorldEditor::onEndDrag( %this, %obj )
 {
+   if (%obj.getClassName() $= "PhysicsShape")
+   {
+      %obj.isDirty = true;
+      echo("setting physics shape " @ %obj @ " dirty!!!!!!!!!!!!!!!!!!!!!!!!");
+      
+      %trans = %obj.getTransform();      
+      $mmSceneShapePositionX.setText(getWord(%trans,0));
+      $mmSceneShapePositionY.setText(getWord(%trans,1));
+      $mmSceneShapePositionZ.setText(getWord(%trans,2));
+      $mmSceneShapeOrientationX.setText(getWord(%trans,3));
+      $mmSceneShapeOrientationY.setText(getWord(%trans,4));
+      $mmSceneShapeOrientationZ.setText(getWord(%trans,5));
+      $mmSceneShapeOrientationAngle.setText(mRadToDeg(getWord(%trans,6)));
+      echo("angle rad " @ getWord(%trans,6) @ " degree " @ mRadToDeg(getWord(%trans,6)) );
+      %scale = %obj.getScale(); //FIX, how did we get object scale in script again?
+      $mmSceneShapeScaleX.setText(getWord(%scale,0));
+      $mmSceneShapeScaleY.setText(getWord(%scale,1));
+      $mmSceneShapeScaleZ.setText(getWord(%scale,2));
+      //NEXT: orientation, convert to axis and angle, and then scale, watching out for "1 1 1".
+      
+      
+   }
    Inspector.inspect( %obj );
    Inspector.apply();
 }

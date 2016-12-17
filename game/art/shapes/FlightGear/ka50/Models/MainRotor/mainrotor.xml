@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PropertyList>
+
+  <path>mainrotor.ac</path>
+
+  <animation>
+    <object-name>mainrotor</object-name>
+    <object-name>partrotorB1</object-name>
+    <object-name>partrotorB2</object-name>
+    <object-name>partrotorB3</object-name>
+    <object-name>partrotorH1</object-name>
+    <object-name>partrotorH2</object-name>
+  </animation>
+
+  <!-- Blades -->
+  <model>
+    <name>Blade1</name>
+    <path>Aircraft/Ka-50/Models/MainRotor/blade1.xml</path>
+    <offsets>
+      <x-m> 0.0 </x-m>
+      <y-m> 0.0 </y-m>
+      <z-m> 0.7 </z-m>
+    </offsets>
+  </model>
+
+  <model>
+    <name>Blade2</name>
+    <path>Aircraft/Ka-50/Models/MainRotor/blade2.xml</path>
+    <offsets>
+      <x-m> 0.0 </x-m>
+      <y-m> 0.0 </y-m>
+      <z-m> 0.7 </z-m>
+      <heading-deg> 120 </heading-deg>
+    </offsets>
+  </model>
+
+  <model>
+    <name>Blade3</name>
+    <path>Aircraft/Ka-50/Models/MainRotor/blade3.xml</path>
+    <offsets>
+      <x-m> 0.0 </x-m>
+      <y-m> 0.0 </y-m>
+      <z-m> 0.7 </z-m>
+      <heading-deg> 240 </heading-deg>
+    </offsets>
+  </model>
+
+  <model>
+    <name>Blade4</name>
+    <path>Aircraft/Ka-50/Models/MainRotor/blade4.xml</path>
+    <offsets>
+      <x-m> 0.00 </x-m>
+      <y-m> 0.00 </y-m>
+      <z-m> 2.23 </z-m>
+      <roll-deg>   180 </roll-deg>
+      <heading-deg> 60 </heading-deg>
+    </offsets>
+  </model>
+
+  <model>
+    <name>Blade5</name>
+    <path>Aircraft/Ka-50/Models/MainRotor/blade5.xml</path>
+    <offsets>
+      <x-m> 0.00 </x-m>
+      <y-m> 0.00 </y-m>
+      <z-m> 2.23 </z-m>
+      <roll-deg>    180 </roll-deg>
+      <heading-deg> 180 </heading-deg>
+    </offsets>
+  </model>
+
+  <model>
+    <name>Blade6</name>
+    <path>Aircraft/Ka-50/Models/MainRotor/blade6.xml</path>
+    <offsets>
+      <x-m> 0.00 </x-m>
+      <y-m> 0.00 </y-m>
+      <z-m> 2.23 </z-m>
+      <roll-deg>    180 </roll-deg>
+      <heading-deg> 300 </heading-deg>
+    </offsets>
+  </model>
+
+  <animation>
+    <name>HeliceBasse</name>
+    <object-name>partrotorB1</object-name>
+    <object-name>partrotorB2</object-name>
+    <object-name>partrotorB3</object-name>
+    <object-name>Blade1</object-name>
+    <object-name>Blade2</object-name>
+    <object-name>Blade3</object-name>
+  </animation>
+
+  <animation>
+    <name>HeliceHaute</name>
+    <object-name>partrotorH1</object-name>
+    <object-name>partrotorH2</object-name>
+    <object-name>Blade4</object-name>
+    <object-name>Blade5</object-name>
+    <object-name>Blade6</object-name>
+  </animation>
+
+  <animation>
+    <type>rotate</type>
+    <object-name>HeliceBasse</object-name>
+    <property>rotors/main/blade[0]/position-deg</property>
+    <axis>
+      <x> 0 </x>
+      <y> 0 </y>
+      <z> 1 </z>
+    </axis>
+  </animation>
+
+  <animation>
+    <type>rotate</type>
+    <object-name>HeliceHaute</object-name>
+    <property>rotors/main/blade[0]/position-deg</property>
+    <axis>
+      <x>  0 </x>
+      <y>  0 </y>
+      <z> -1 </z>
+    </axis>
+  </animation>
+
+</PropertyList>

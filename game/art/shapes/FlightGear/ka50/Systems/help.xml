@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PropertyList>
+  
+  <title>Ka 50 - background and help</title>
+  <line>______________________________________________</line> 
+  <key>
+    <name>{</name>
+    <desc>Start engines</desc>
+  </key>
+  <key>
+    <name>}</name>
+    <desc>Shutdown engines</desc>
+  </key>
+  <key>
+    <name>R</name>
+    <desc>Toggle rotor brake</desc>
+  </key>
+  <key>
+    <name>r</name>
+    <desc>Apply rotor brake</desc>
+  </key>
+  <key>
+    <name>Ctrl d</name>
+    <desc>S.A.S.</desc>
+  </key>
+  <key>
+    <name>Ctrl f</name>
+    <desc>Auto hover</desc>
+  </key>
+  
+</PropertyList>

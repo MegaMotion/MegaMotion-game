@@ -1,0 +1,245 @@
+%guiContent = new GuiWindowCtrl(MegaMotionSequenceWindow) {
+   position = "2 620";
+   extent = "800 120";
+   text = "Sequence Timeline";
+   canClose = "1";
+   useMouseEvents = "1";
+   closeCommand = "MegaMotionSequenceWindow.setVisible(false);";
+
+   new GuiSliderCtrl() {
+      position = "40 38";
+      extent = "720 20";
+      internalName = "sequenceSlider";
+      command = "mmSequenceSliderClick();";
+      variable = "$sequenceCurrentFrame";
+      groupNum = "-1";
+      profile = "ToolsGuiSliderProfile";
+      altCommand = "mmSequenceSliderDrag();";
+   };
+   new GuiBitmapCtrl() {
+      position = "40 26";
+      extent = "8 13";
+      internalName = "sequenceInBar";
+      bitmap = "tools/shapeEditor/images/seq_bar-in";
+      groupNum = "-1";
+   };
+   new GuiBitmapCtrl() {
+      position = "752 26";
+      extent = "8 13";
+      internalName = "sequenceOutBar";
+      bitmap = "tools/shapeEditor/images/seq_bar-out";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "8 38";
+      extent = "28 20";
+      internalName = "sequenceInFrame";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "764 38";
+      extent = "28 20";
+      internalName = "sequenceOutFrame";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "754 68";
+      extent = "38 20";
+      internalName = "sequenceFrame";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "719 68";
+      extent = "30 20";
+      text = "Frame";
+      internalName = "sequenceFrameLabel";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "60 68";
+      extent = "28 18";
+      text = "in";
+      internalName = "sequenceInButton";
+      command = "mmSequenceSetInBar();";
+      buttonType = "PushButton";
+      groupNum = "-1";
+   };
+   new GuiBitmapButtonCtrl() {
+      position = "108 68";
+      extent = "18 18";
+      internalName = "sequenceBackwardToInButton";
+      command = "mmSequenceBackwardToIn();";
+      bitmap = "tools/shapeEditor/images/back_btn";
+      buttonType = "PushButton";
+      groupNum = "-1";
+   };
+   new GuiBitmapButtonCtrl() {
+      position = "146 68";
+      extent = "18 18";
+      internalName = "sequenceBackStepButton";
+      command = "mmSequenceStepBackward();";
+      bitmap = "tools/shapeEditor/images/stepback_btn";
+      buttonType = "PushButton";
+      groupNum = "-1";
+   };
+   new GuiBitmapButtonCtrl() {
+      position = "184 68";
+      extent = "18 18";
+      internalName = "sequencePlayBackButton";
+      command = "mmSequencePlayBackward();";
+      bitmap = "tools/shapeEditor/images/playbkwd_btn";
+      buttonType = "RadioButton";
+      groupNum = "-1";
+   };
+   new GuiBitmapButtonCtrl() {
+      position = "222 68";
+      extent = "18 18";
+      internalName = "sequencePauseButton";
+      command = "mmSequencePause();";
+      bitmap = "tools/shapeEditor/images/pause_btn";
+      buttonType = "RadioButton";
+      groupNum = "-1";
+   };
+   new GuiBitmapButtonCtrl() {
+      position = "260 68";
+      extent = "18 18";
+      internalName = "sequencePlayForwardButton";
+      command = "mmSequencePlayForward();";
+      bitmap = "tools/shapeEditor/images/playfwd_btn";
+      buttonType = "RadioButton";
+      groupNum = "-1";
+   };
+   new GuiBitmapButtonCtrl() {
+      position = "298 68";
+      extent = "18 18";
+      internalName = "sequenceStepForwardButton";
+      command = "mmSequenceStepForward();";
+      bitmap = "tools/shapeEditor/images/stepfwd_btn";
+      buttonType = "PushButton";
+      groupNum = "-1";
+   };
+   new GuiBitmapButtonCtrl() {
+      position = "336 68";
+      extent = "18 18";
+      internalName = "sequenceForwardToOutButton";
+      command = "mmSequenceForwardToOut();";
+      bitmap = "tools/shapeEditor/images/fwd_btn";
+      buttonType = "PushButton";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "374 68";
+      extent = "28 18";
+      text = "out";
+      internalName = "sequenceOutButton";
+      command = "mmSequenceSetOutBar();";
+      buttonType = "PushButton";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "417 68";
+      extent = "38 18";
+      text = "Crop";
+      internalName = "sequenceCropButton";
+      command = "mmCrop();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "67 92";
+      extent = "60 18";
+      text = "Find Loop";
+      internalName = "sequenceFindLoopButton";
+      command = "mmFindLoop();";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "137 92";
+      extent = "28 20";
+      text = "Delay";
+      internalName = "sequenceLoopDelayLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "173 92";
+      extent = "28 20";
+      internalName = "sequenceLoopDelay";
+      variable = "$mmLoopDetectorDelay";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "211 92";
+      extent = "25 20";
+      text = "Max";
+      internalName = "sequenceLoopMaxLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "244 92";
+      extent = "28 20";
+      internalName = "sequenceLoopMax";
+      variable = "$mmLoopDetectorMax";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "292 92";
+      extent = "82 20";
+      text = "Smooth Loop";
+      internalName = "sequenceSmoothLoopButton";
+      command = "mmSmoothLoop();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "495 68";
+      extent = "90 20";
+      text = "Start Centered";
+      internalName = "sequenceStartCenteredButton";
+      command = "mmStartCentered();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "605 68";
+      extent = "90 20";
+      text = "Face Forward";
+      internalName = "sequenceFaceForwardButton";
+      command = "mmFaceForward();";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "22 92";
+      extent = "40 20";
+      text = "0.0";
+      internalName = "sequenceFindLoopDelta";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "384 92";
+      extent = "35 20";
+      text = "Frames";
+      internalName = "sequenceLoopSmoothLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "427 92";
+      extent = "28 20";
+      internalName = "sequenceLoopSmooth";
+      variable = "$mmLoopDetectorSmooth";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "495 92";
+      extent = "90 20";
+      text = "Ground Capture";
+      internalName = "sequenceGroundCaptureButton";
+      command = "mmGroundCaptureSeq();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "605 92";
+      extent = "90 20";
+      text = "Move Forward";
+      internalName = "sequenceMoveForwardButton";
+      command = "mmMoveForward();";
+      groupNum = "-1";
+   };
+};
+

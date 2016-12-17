@@ -1,0 +1,2206 @@
+%guiContent = new GuiWindowCtrl(MegaMotionScenes) {
+   position = "1 144";
+   extent = "475 560";
+   text = "";
+   canClose = "1";
+   useMouseEvents = "1";
+   closeCommand = "MegaMotionScenes.setVisible(false);";
+
+   new GuiTextCtrl() {
+      position = "25 30";
+      extent = "70 20";
+      text = "Project";
+      internalName = "projectLabel";
+      groupNum = "-1";
+   };
+   new GuiPopupMenuCtrl() {
+      position = "100 30";
+      extent = "180 20";
+      internalName = "projectList";
+      command = "mmSelectProject();";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "25 53";
+      extent = "70 20";
+      text = "Scene";
+      internalName = "sceneLabel";
+      groupNum = "-1";
+   };
+   new GuiPopupMenuCtrl() {
+      position = "100 53";
+      extent = "180 20";
+      internalName = "sceneList";
+      command = "mmSelectScene();";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "25 76";
+      extent = "70 20";
+      text = "Scene Shape";
+      internalName = "sceneShapeLabel";
+      groupNum = "-1";
+   };
+   new GuiPopupMenuCtrl() {
+      position = "100 76";
+      extent = "180 20";
+      internalName = "sceneShapeList";
+      command = "mmSelectSceneShape();";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "25 99";
+      extent = "70 20";
+      text = "Shape";
+      internalName = "shapeLabel";
+      groupNum = "-1";
+   };
+   new GuiPopupMenuCtrl() {
+      position = "100 99";
+      extent = "180 20";
+      internalName = "shapeList";
+      command = "mmSelectShape();";
+      groupNum = "-1";
+   };
+   new GuiTabBookCtrl(mmTabBook) {
+      position = "5 153";
+      extent = "465 400";
+      text = "";
+      internalName = "mmTabBook";
+      profile = "ToolsGuiTabBookProfile";
+
+      new GuiTabPageCtrl() {
+         position = "0 20";
+         extent = "455 400";
+         text = "Sequence";
+         internalName = "sequenceTab";
+         profile = "ToolsGuiTabPageProfile";
+
+         new GuiPanel() {
+            position = "5 3";
+            extent = "455 400";
+            text = "";
+            internalName = "sequencePanel";
+
+            new GuiTextCtrl() {
+               position = "15 6";
+               extent = "70 20";
+               text = "File";
+               internalName = "sequenceFileLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "90 6";
+               extent = "380 20";
+               text = " ";
+               internalName = "sequenceFileText";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 29";
+               extent = "70 20";
+               text = "Action";
+               internalName = "sequenceActionLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "90 29";
+               extent = "180 20";
+               internalName = "sequenceActionList";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "275 29";
+               extent = "18 18";
+               text = "+";
+               internalName = "addSequenceActionButton";
+               command = "mmAddSequenceAction();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "298 29";
+               extent = "18 18";
+               text = "-";
+               internalName = "deleteSequenceActionButton";
+               command = "mmDeleteSequenceAction();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "321 29";
+               extent = "50 19";
+               text = "Assign";
+               internalName = "assignSequenceActionButton";
+               command = "mmAssignSequenceAction();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "376 29";
+               extent = "52 19";
+               text = "Unassign";
+               internalName = "unassignSequenceActionButton";
+               command = "mmUnassignSequenceAction();";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 62";
+               extent = "27 20";
+               text = "Node";
+               internalName = "sequenceNodeLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "47 62";
+               extent = "150 20";
+               internalName = "sequenceNodeList";
+               command = "mmSelectSequenceNode();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "202 62";
+               extent = "18 18";
+               text = "<=";
+               internalName = "addMattersNodeButton";
+               command = "mmAddMattersNode();";
+               tooltip = "Add node to sequence.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "225 62";
+               extent = "18 18";
+               text = "=>";
+               internalName = "dropMattersNodeButton";
+               command = "mmDropMattersNode();";
+               tooltip = "Drop node from sequence.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "248 62";
+               extent = "150 20";
+               internalName = "sequenceAllNodeList";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "403 62";
+               extent = "60 20";
+               text = "All Nodes";
+               internalName = "sequenceAllNodeLabel";
+               groupNum = "-1";
+            };
+            new GuiBitmapCtrl() {
+               position = "15 94";
+               extent = "305 2";
+               internalName = "sequenceKeyframeSeparatorV";
+               bitmap = "core/art/gui/images/separator-v";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 109";
+               extent = "80 20";
+               text = "Keyframe Set";
+               internalName = "sequenceKeyframeSetLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "100 109";
+               extent = "160 20";
+               internalName = "sequenceKeyframeSetList";
+               command = "mmSelectKeyframeSet();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "265 109";
+               extent = "18 18";
+               text = "+";
+               internalName = "addKeyframeSetButton";
+               command = "mmAddKeyframeSet();";
+               tooltip = "Adds a new keyframe set for this shape and this sequence.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "288 109";
+               extent = "18 18";
+               text = "-";
+               internalName = "deleteKeyframeSetButton";
+               command = "mmDeleteKeyframeSet();";
+               tooltip = "Deletes this keyframe set and all of its keyframes and series.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 132";
+               extent = "80 20";
+               text = "Keyframe Series";
+               internalName = "sequenceKeyframeSeriesLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "100 132";
+               extent = "160 20";
+               internalName = "sequenceKeyframeSeriesList";
+               command = "mmSelectKeyframeSeries();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "265 132";
+               extent = "18 18";
+               text = "+";
+               internalName = "addKeyframeSeriesButton";
+               command = "mmAddKeyframeSeries();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "288 132";
+               extent = "18 18";
+               text = "-";
+               internalName = "deleteKeyframeSeriesButton";
+               command = "mmDeleteKeyframeSeries();";
+               tooltip = "Delete selected keyframe series.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiBitmapCtrl() {
+               position = "319 95";
+               extent = "2 172";
+               internalName = "sequenceKeyframeSeparatorH";
+               bitmap = "core/art/gui/images/separator-h";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 155";
+               extent = "80 20";
+               text = "Keyframe";
+               internalName = "sequenceKeyframeLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "100 155";
+               extent = "160 20";
+               internalName = "sequenceKeyframeList";
+               command = "mmSelectKeyframe();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "265 155";
+               extent = "18 18";
+               text = "+";
+               internalName = "addKeyframeButton";
+               command = "mmAddKeyframe();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "288 155";
+               extent = "18 18";
+               text = "-";
+               internalName = "deleteKeyframeButton";
+               command = "mmDeleteKeyframe();";
+               tooltip = "Delete selected keyframe.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "85 178";
+               extent = "20 20";
+               text = "X";
+               internalName = "sequenceKeyframeXLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "140 178";
+               extent = "20 20";
+               text = "Y";
+               internalName = "sequenceKeyframeYLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "195 178";
+               extent = "20 20";
+               text = "Z";
+               internalName = "sequenceKeyframeZLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 201";
+               extent = "60 20";
+               text = "Sum";
+               internalName = "sequenceKeyframeSumLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "80 201";
+               extent = "30 20";
+               text = "0.0";
+               internalName = "sequenceKeyframeSumX";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "135 201";
+               extent = "30 20";
+               text = "0.0";
+               internalName = "sequenceKeyframeSumY";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "190 201";
+               extent = "30 20";
+               text = "0.0";
+               internalName = "sequenceKeyframeSumZ";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 224";
+               extent = "55 20";
+               text = "Value";
+               internalName = "sequenceKeyframeValueLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "75 224";
+               extent = "30 20";
+               internalName = "sequenceKeyframeValueX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "130 224";
+               extent = "30 20";
+               internalName = "sequenceKeyframeValueY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "185 224";
+               extent = "30 20";
+               internalName = "sequenceKeyframeValueZ";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "230 224";
+               extent = "18 18";
+               text = "+";
+               internalName = "sequenceKeyframeAdjustNodeButton";
+               command = "mmAdjustNode();";
+               tooltip = "Add the current XYZ values to an existing keyframe or create a new one, at the current position of the sequence slider.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "253 224";
+               extent = "18 18";
+               text = "-";
+               internalName = "sequenceKeyframeUnadjustNodeButton";
+               command = "mmUnadjustNode();";
+               tooltip = "Subtract the current XYZ values to an existing keyframe or create a new one with negative values, at the current position of the sequence slider.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "230 201";
+               extent = "40 19";
+               text = "Set";
+               internalName = "sequenceKeyframeSetNodeButton";
+               command = "mmSetNode();";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "240 178";
+               extent = "35 20";
+               text = "Frame";
+               internalName = "sequenceKeyframeFrameLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "280 178";
+               extent = "25 18";
+               internalName = "sequenceKeyframeFrame";
+               groupNum = "-1";
+            };
+            new GuiCheckBoxCtrl() {
+               position = "332 95";
+               extent = "60 20";
+               text = "Blend";
+               internalName = "sequenceBlend";
+               command = "mmSequenceBlendToggle();";
+               tooltip = "Cause sequence to blend on top of another animation sequence.";
+               tooltipprofile = "GuiToolTipProfile";
+               variable = "$mmSequenceBlend";
+               buttonType = "ToggleButton";
+               groupNum = "-1";
+               profile = "CheckBoxProfile";
+            };
+            new GuiCheckBoxCtrl() {
+               position = "397 95";
+               extent = "60 20";
+               text = "Loop";
+               internalName = "sequenceCyclic";
+               command = "mmSequenceCyclicToggle();";
+               tooltip = "Cause sequence to play continuously in a loop.";
+               tooltipprofile = "GuiToolTipProfile";
+               variable = "$mmSequenceCyclic";
+               buttonType = "ToggleButton";
+               groupNum = "-1";
+               profile = "CheckBoxProfile";
+            };
+            new GuiCheckBoxCtrl() {
+               position = "332 118";
+               extent = "100 20";
+               text = "Ground Animate";
+               internalName = "sequenceGroundAnimate";
+               command = "mmSequenceGroundAnimateToggle();";
+               tooltip = "Cause sequence to transfer world position changes to GroundFrames array.";
+               tooltipprofile = "GuiToolTipProfile";
+               variable = "$mmSequenceGroundAnimate";
+               buttonType = "ToggleButton";
+               groupNum = "-1";
+               profile = "CheckBoxProfile";
+            };
+            new GuiTextCtrl() {
+               position = "15 247";
+               extent = "55 20";
+               text = "Type";
+               internalName = "sequenceKeyframeTypeLabel";
+               groupNum = "-1";
+            };
+            new GuiBitmapCtrl() {
+               position = "15 270";
+               extent = "305 2";
+               internalName = "sequenceKeyframeSeparatorV2";
+               bitmap = "core/art/gui/images/separator-v";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "75 247";
+               extent = "60 20";
+               internalName = "sequenceKeyframeTypeText";
+               groupNum = "0";
+            };
+         };
+      };
+      new GuiTabPageCtrl() {
+         position = "0 20";
+         extent = "445 400";
+         text = "Physics";
+         internalName = "shapePartTab";
+         profile = "ToolsGuiTabPageProfile";
+
+         new GuiPanel() {
+            position = "5 3";
+            extent = "445 400";
+            text = "";
+            internalName = "shapePartPanel";
+
+            new GuiTextCtrl() {
+               position = "15 6";
+               extent = "60 20";
+               text = "ShapePart";
+               internalName = "shapePartLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "80 6";
+               extent = "120 20";
+               internalName = "shapePartList";
+               command = "mmSelectShapePart();";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 29";
+               extent = "60 20";
+               text = "Base Node";
+               internalName = "shapePartBaseNodeLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "80 29";
+               extent = "140 20";
+               internalName = "shapePartBaseNodeList";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "235 29";
+               extent = "60 20";
+               text = "Child Node";
+               internalName = "shapePartChildNodeLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "300 29";
+               extent = "140 20";
+               internalName = "shapePartChildNodeList";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "115 52";
+               extent = "30 20";
+               text = "X";
+               internalName = "shapePartsXLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "170 52";
+               extent = "30 20";
+               text = "Y";
+               internalName = "shapePartsYLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "225 52";
+               extent = "30 20";
+               text = "Z";
+               internalName = "shapePartsZLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 70";
+               extent = "60 20";
+               text = "Dimensions";
+               internalName = "shapePartDimensionsLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "98 70";
+               extent = "45 20";
+               internalName = "shapePartDimensionsX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "153 70";
+               extent = "45 20";
+               internalName = "shapePartDimensionsY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "208 70";
+               extent = "45 20";
+               internalName = "shapePartDimensionsZ";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 93";
+               extent = "60 20";
+               text = "Rotation";
+               internalName = "shapePartOrientationLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "98 93";
+               extent = "45 20";
+               internalName = "shapePartOrientationX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "153 93";
+               extent = "45 20";
+               internalName = "shapePartOrientationY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "208 93";
+               extent = "45 20";
+               internalName = "shapePartOrientationZ";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 116";
+               extent = "60 20";
+               text = "Offset";
+               internalName = "shapePartOffsetLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "98 116";
+               extent = "45 20";
+               internalName = "shapePartOffsetX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "153 116";
+               extent = "45 20";
+               internalName = "shapePartOffsetY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "208 116";
+               extent = "45 20";
+               internalName = "shapePartOffsetZ";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "320 92";
+               extent = "80 20";
+               text = "Debug Render";
+               internalName = "debugRenderLabel";
+               groupNum = "-1";
+            };
+            new GuiCheckBoxCtrl() {
+               position = "320 115";
+               extent = "80 20";
+               text = "Collision Hulls";
+               internalName = "debugRenderCollisions";
+               command = "mmToggleDebugRenderCollisions();";
+               tooltip = "Debug render collision hulls.";
+               tooltipprofile = "GuiToolTipProfile";
+               variable = "$mmDebugRenderCollisions";
+               buttonType = "ToggleButton";
+               groupNum = "-1";
+               profile = "CheckBoxProfile";
+            };
+            new GuiCheckBoxCtrl() {
+               position = "320 138";
+               extent = "80 20";
+               text = "Joint Limits";
+               internalName = "debugRenderJointLimits";
+               command = "mmToggleDebugRenderJointLimits();";
+               variable = "$mmDebugRenderJointLimits";
+               buttonType = "ToggleButton";
+               groupNum = "-1";
+               profile = "CheckBoxProfile";
+            };
+            new GuiCheckBoxCtrl() {
+               position = "320 161";
+               extent = "80 20";
+               text = "Body Axes";
+               internalName = "debugRenderBodyAxes";
+               command = "mmToggleDebugRenderBodyAxes();";
+               variable = "$mmDebugRenderBodyAxes";
+               buttonType = "ToggleButton";
+               groupNum = "-1";
+               profile = "CheckBoxProfile";
+            };
+            new GuiTextCtrl() {
+               position = "15 139";
+               extent = "78 20";
+               text = "Joint Rotation 1";
+               internalName = "shapePartJointRot1Label";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "98 139";
+               extent = "45 20";
+               internalName = "shapePartJointRot1X";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "153 139";
+               extent = "45 20";
+               internalName = "shapePartJointRot1Y";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "208 139";
+               extent = "45 20";
+               internalName = "shapePartJointRot1Z";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 162";
+               extent = "78 20";
+               text = "Joint Rotation 2";
+               internalName = "shapePartJointRot2Label";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "98 162";
+               extent = "45 20";
+               internalName = "shapePartJointRot2X";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "153 162";
+               extent = "45 20";
+               internalName = "shapePartJointRot2Y";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "208 162";
+               extent = "45 20";
+               internalName = "shapePartJointRot2Z";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "360 62";
+               extent = "50 20";
+               text = "Relax All";
+               internalName = "shapeRelaxButton";
+               command = "$mmSelectedShape.relaxAll();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "205 6";
+               extent = "18 18";
+               text = "+";
+               internalName = "addShapePartButton";
+               command = "mmAddShapePart();";
+               tooltip = "Add a new physics-enabled bodypart.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "228 6";
+               extent = "18 18";
+               text = "-";
+               internalName = "deleteShapePartButton";
+               command = "mmReallyDeleteShapePart();";
+               tooltip = "Remove the selected bodypart.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 191";
+               extent = "45 20";
+               text = "Joint";
+               internalName = "jointLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "65 191";
+               extent = "160 20";
+               internalName = "jointList";
+               command = "mmSelectJoint();";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "275 6";
+               extent = "40 20";
+               text = "Type";
+               internalName = "shapePartTypeLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "320 6";
+               extent = "120 20";
+               internalName = "shapePartTypeList";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "240 191";
+               extent = "45 20";
+               text = "Type";
+               internalName = "jointTypeLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "290 191";
+               extent = "120 20";
+               internalName = "jointTypeList";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 219";
+               extent = "65 20";
+               text = "Twist Limit";
+               internalName = "jointTwistLimitLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "85 219";
+               extent = "55 20";
+               internalName = "jointTwistLimit";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "155 219";
+               extent = "65 20";
+               text = "Swing Limit";
+               internalName = "jointSwingLimitLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "225 219";
+               extent = "55 20";
+               internalName = "jointSwingLimit";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "295 219";
+               extent = "70 20";
+               text = "Swing Limit 2";
+               internalName = "jointSwingLimit2Label";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "370 219";
+               extent = "55 20";
+               internalName = "jointSwingLimit2";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 242";
+               extent = "65 20";
+               text = "X Limit";
+               internalName = "jointXLimitLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "85 242";
+               extent = "55 20";
+               internalName = "jointXLimit";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "155 242";
+               extent = "65 20";
+               text = "Y Limit";
+               internalName = "jointYLimitLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "225 242";
+               extent = "55 20";
+               internalName = "jointYLimit";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "295 242";
+               extent = "70 20";
+               text = "Z Limit";
+               internalName = "jointZLimitLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "370 242";
+               extent = "55 20";
+               internalName = "jointZLimit";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 265";
+               extent = "65 20";
+               text = "Axis X";
+               internalName = "jointAxisXLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "85 265";
+               extent = "55 20";
+               internalName = "jointAxisX";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "155 265";
+               extent = "65 20";
+               text = "Axis Y";
+               internalName = "jointAxisYLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "225 265";
+               extent = "55 20";
+               internalName = "jointAxisY";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "295 265";
+               extent = "70 20";
+               text = "Axis Z";
+               internalName = "jointAxisZLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "370 265";
+               extent = "55 20";
+               internalName = "jointAxisZ";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 288";
+               extent = "65 20";
+               text = "Normal X";
+               internalName = "jointNormalXLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "85 288";
+               extent = "55 20";
+               internalName = "jointNormalX";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "155 288";
+               extent = "65 20";
+               text = "Normal Y";
+               internalName = "jointNormalYLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "225 288";
+               extent = "55 20";
+               internalName = "jointNormalY";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "295 288";
+               extent = "70 20";
+               text = "Normal Z";
+               internalName = "jointNormalZLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "370 288";
+               extent = "55 20";
+               internalName = "jointNormalZ";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 311";
+               extent = "65 20";
+               text = "Twist Spring";
+               internalName = "jointTwistSpringLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "85 311";
+               extent = "55 20";
+               internalName = "jointTwistSpring";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "155 311";
+               extent = "65 20";
+               text = "Swing Spring";
+               internalName = "jointSwingSpringLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "225 311";
+               extent = "55 20";
+               internalName = "jointSwingSpring";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "295 311";
+               extent = "70 20";
+               text = "Spring Damper";
+               internalName = "jointSpringDamperLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "370 311";
+               extent = "55 20";
+               internalName = "jointSpringDamper";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 334";
+               extent = "65 20";
+               text = "Motor Spring";
+               internalName = "jointMotorSpringLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "85 334";
+               extent = "55 20";
+               internalName = "jointMotorSpring";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "155 334";
+               extent = "65 20";
+               text = "Motor Damper";
+               internalName = "jointMotorDamperLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "225 334";
+               extent = "55 20";
+               internalName = "jointMotorDamper";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 357";
+               extent = "65 20";
+               text = "Max Force";
+               internalName = "jointMaxForceLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "85 357";
+               extent = "55 20";
+               internalName = "jointMaxForce";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "155 357";
+               extent = "65 20";
+               text = "Max Torque";
+               internalName = "jointMaxTorqueLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "225 357";
+               extent = "55 20";
+               internalName = "jointMaxTorque";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "305 62";
+               extent = "50 20";
+               text = "Ragdoll";
+               internalName = "shapeRagdollButton";
+               command = "$mmSelectedShape.setDynamic(true);";
+               groupNum = "-1";
+            };
+         };
+      };
+      new GuiTabPageCtrl() {
+         position = "0 20";
+         extent = "445 400";
+         text = "Scene Shape";
+         internalName = "sceneShapeTab";
+
+         new GuiPanel() {
+            position = "5 3";
+            extent = "455 400";
+            text = "";
+            internalName = "sceneShapePanel";
+
+            new GuiTextCtrl() {
+               position = "122 6";
+               extent = "30 20";
+               text = "X";
+               internalName = "sceneShapeXLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "187 6";
+               extent = "30 20";
+               text = "Y";
+               internalName = "sceneShapeYLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "252 6";
+               extent = "30 20";
+               text = "Z";
+               internalName = "sceneShapeZLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 29";
+               extent = "80 20";
+               text = "Position";
+               internalName = "sceneShapePositionLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 52";
+               extent = "80 20";
+               text = "Orientation";
+               internalName = "sceneShapeOrientationLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 75";
+               extent = "80 20";
+               text = "Scale";
+               internalName = "sceneShapeScaleLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "100 29";
+               extent = "55 20";
+               internalName = "sceneShapePositionX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "165 29";
+               extent = "55 20";
+               internalName = "sceneShapePositionY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "230 29";
+               extent = "55 20";
+               internalName = "sceneShapePositionZ";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "100 52";
+               extent = "55 20";
+               internalName = "sceneShapeOrientationX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "165 52";
+               extent = "55 20";
+               internalName = "sceneShapeOrientationY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "230 52";
+               extent = "55 20";
+               internalName = "sceneShapeOrientationZ";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "100 75";
+               extent = "55 20";
+               internalName = "sceneShapeScaleX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "165 75";
+               extent = "55 20";
+               internalName = "sceneShapeScaleY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "230 75";
+               extent = "55 20";
+               internalName = "sceneShapeScaleZ";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "295 52";
+               extent = "55 20";
+               internalName = "sceneShapeOrientationAngle";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "307 6";
+               extent = "40 20";
+               text = "Angle";
+               internalName = "sceneShapeAngleLabel";
+               groupNum = "-1";
+            };
+            new GuiBitmapCtrl() {
+               position = "15 107";
+               extent = "420 2";
+               internalName = "sceneShapeSeparator";
+               bitmap = "core/art/gui/images/separator-v";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 122";
+               extent = "80 20";
+               text = "Shape Mount";
+               internalName = "shapeMountLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "100 122";
+               extent = "240 20";
+               internalName = "shapeMountList";
+               command = "mmSelectShapeMount();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "345 122";
+               extent = "18 18";
+               text = "+";
+               internalName = "addShapeMountButton";
+               command = "mmAddShapeMount();";
+               tooltip = "Mount a new shape onto this PhysicsShape. (Soon to be Scene Shape.)";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "368 122";
+               extent = "18 18";
+               text = "-";
+               internalName = "deleteShapeMountButton";
+               command = "mmDeleteShapeMount();";
+               tooltip = "Remove this shape mount.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 145";
+               extent = "80 20";
+               text = "Parent Node";
+               internalName = "shapeMountParentNodeLabel";
+               tooltip = "Node from parent shape on which to mount child shape.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "100 145";
+               extent = "240 20";
+               internalName = "shapeMountParentNodeList";
+               command = "mmSelectMountParentNode();";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 168";
+               extent = "80 20";
+               text = "Child Shape";
+               internalName = "shapeMountChildShapeLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "100 168";
+               extent = "240 20";
+               internalName = "shapeMountChildShapeList";
+               command = "mmSelectMountChildShape();";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 191";
+               extent = "80 20";
+               text = "Child Node";
+               internalName = "shapeMountChildNodeLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "100 191";
+               extent = "240 20";
+               internalName = "shapeMountChildNodeList";
+               command = "mmSelectMountChildNode();";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "122 214";
+               extent = "30 20";
+               text = "X";
+               internalName = "shapeMountXLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "187 214";
+               extent = "30 20";
+               text = "Y";
+               internalName = "shapeMountYLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "252 214";
+               extent = "30 20";
+               text = "Z";
+               internalName = "shapeMountZLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 237";
+               extent = "80 20";
+               text = "Offset";
+               internalName = "shapeMountOffsetLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "100 237";
+               extent = "55 20";
+               internalName = "shapeMountOffsetX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "165 237";
+               extent = "55 20";
+               internalName = "shapeMountOffsetY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "230 237";
+               extent = "55 20";
+               internalName = "shapeMountOffsetZ";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 260";
+               extent = "80 20";
+               text = "Rotation";
+               internalName = "shapeMountRotationLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "100 260";
+               extent = "55 20";
+               internalName = "shapeMountRotationX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "165 260";
+               extent = "55 20";
+               internalName = "shapeMountRotationY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "230 260";
+               extent = "55 20";
+               internalName = "shapeMountRotationZ";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 283";
+               extent = "80 20";
+               text = "Scale";
+               internalName = "shapeMountScaleLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "100 283";
+               extent = "55 20";
+               internalName = "shapeMountScaleX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "165 283";
+               extent = "55 20";
+               internalName = "shapeMountScaleY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "230 283";
+               extent = "55 20";
+               internalName = "shapeMountScaleZ";
+               groupNum = "-1";
+            };
+         };
+      };
+      new GuiTabPageCtrl() {
+         position = "0 20";
+         extent = "445 400";
+         text = "BVH";
+         internalName = "bvhTab";
+         profile = "ToolsGuiTabPageProfile";
+
+         new GuiPanel() {
+            position = "5 3";
+            extent = "445 400";
+            text = "";
+            internalName = "bvhPanel";
+
+            new GuiTextCtrl() {
+               position = "10 6";
+               extent = "80 20";
+               text = "Import Profile";
+               internalName = "bvhImportProfileLabel";
+               groupNum = "-1";
+            };
+            new GuiBitmapCtrl() {
+               position = "220 6";
+               extent = "2 95";
+               internalName = "bvhImportExportSeparatorH";
+               bitmap = "core/art/gui/images/separator-h";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "232 6";
+               extent = "100 20";
+               text = "Export Profile";
+               internalName = "bvhExportProfileLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "10 29";
+               extent = "200 20";
+               internalName = "bvhImportProfileList";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "232 29";
+               extent = "200 20";
+               internalName = "bvhExportProfileList";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "10 52";
+               extent = "80 20";
+               text = "Import BVH";
+               internalName = "bvhImportBvhButton";
+               command = "mmImportBvhSequence();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "95 52";
+               extent = "100 20";
+               text = "Import Directory";
+               internalName = "bvhImportDirButton";
+               command = "mmImportBvhDirectory();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "232 52";
+               extent = "80 20";
+               text = "Export BVH";
+               internalName = "bvhExportBvhButton";
+               command = "mmExportBvhSequence();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "317 52";
+               extent = "100 20";
+               text = "Export Directory";
+               internalName = "bvhExportDirButton";
+               command = "mmExportBvhDirectory();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "10 75";
+               extent = "185 20";
+               text = "Import Scene";
+               internalName = "bvhImportSceneButton";
+               command = "mmBvhImportScene();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "232 75";
+               extent = "185 20";
+               text = "Export Scene";
+               internalName = "bvhExportSceneButton";
+               command = "mmBvhExportScene();";
+               groupNum = "-1";
+            };
+            new GuiBitmapCtrl() {
+               position = "5 101";
+               extent = "440 2";
+               internalName = "bvhImportExportSeparatorV";
+               bitmap = "core/art/gui/images/separator-v";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "10 111";
+               extent = "60 20";
+               text = "BVH Profile";
+               internalName = "bvhProfileLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "75 111";
+               extent = "280 20";
+               internalName = "bvhProfileList";
+               command = "mmSelectBvhProfile();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "360 111";
+               extent = "18 18";
+               text = "+";
+               internalName = "addBvhProfileButton";
+               command = "mmAddBvhProfile();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "383 111";
+               extent = "18 18";
+               text = "-";
+               internalName = "deleteBvhProfileButton";
+               command = "mmDeleteBvhProfile();";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "10 134";
+               extent = "80 20";
+               text = "Model Nodes";
+               internalName = "bvhModelNodesLabel";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "153 134";
+               extent = "60 20";
+               text = "Link";
+               internalName = "bvhNodeLinkButton";
+               command = "mmBvhLinkNode();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "228 134";
+               extent = "60 20";
+               text = "Unlink";
+               internalName = "bvhNodeUnlinkButton";
+               command = "mmBvhUnlinkNode();";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "376 134";
+               extent = "60 20";
+               text = "BVH Nodes";
+               internalName = "bvhBvhNodesLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "10 157";
+               extent = "200 20";
+               internalName = "bvhModelNodesList";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "230 157";
+               extent = "200 20";
+               internalName = "bvhBvhNodesList";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "10 180";
+               extent = "85 20";
+               text = "Linked Nodes";
+               internalName = "bvhLinkedNodesLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "100 180";
+               extent = "240 20";
+               internalName = "bvhLinkedNodesList";
+               command = "mmSelectBvhLinkedNode();";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "150 203";
+               extent = "20 20";
+               text = "X";
+               internalName = "bvhXLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "220 203";
+               extent = "20 20";
+               text = "Y";
+               internalName = "bvhYLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "290 203";
+               extent = "20 20";
+               text = "Z";
+               internalName = "bvhZLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "10 226";
+               extent = "80 20";
+               text = "Pose Rot A";
+               internalName = "bvhPoseRotALabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "10 249";
+               extent = "80 20";
+               text = "Pose Rot B";
+               internalName = "bvhPoseRotBLabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "10 272";
+               extent = "80 20";
+               text = "Fix Rot A";
+               internalName = "bvhFixRotALabel";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "10 295";
+               extent = "80 20";
+               text = "Fix Rot B";
+               internalName = "bvhFixRotBLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "125 226";
+               extent = "50 20";
+               internalName = "bvhPoseRotAX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "195 226";
+               extent = "50 20";
+               internalName = "bvhPoseRotAY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "265 226";
+               extent = "50 20";
+               internalName = "bvhPoseRotAZ";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "125 249";
+               extent = "50 20";
+               internalName = "bvhPoseRotBX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "195 249";
+               extent = "50 20";
+               internalName = "bvhPoseRotBY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "265 249";
+               extent = "50 20";
+               internalName = "bvhPoseRotBZ";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "125 272";
+               extent = "50 20";
+               internalName = "bvhFixRotAX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "195 272";
+               extent = "50 20";
+               internalName = "bvhFixRotAY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "265 272";
+               extent = "50 20";
+               internalName = "bvhFixRotAZ";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "125 295";
+               extent = "50 20";
+               internalName = "bvhFixRotBX";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "195 295";
+               extent = "50 20";
+               internalName = "bvhFixRotBY";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "265 295";
+               extent = "50 20";
+               internalName = "bvhFixRotBZ";
+               groupNum = "-1";
+            };
+         };
+      };
+      new GuiTabPageCtrl() {
+         position = "0 20";
+         extent = "445 400";
+         text = "AI";
+         internalName = "aiTab";
+
+         new GuiPanel() {
+            position = "5 3";
+            extent = "445 400";
+            text = "";
+            internalName = "aiPanel";
+
+            new GuiTextCtrl() {
+               position = "15 6";
+               extent = "80 20";
+               text = "Shape Group";
+               internalName = "sceneShapeGroupLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "100 6";
+               extent = "240 20";
+               internalName = "sceneShapeGroupList";
+               command = "mmSelectShapeGroup();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "345 6";
+               extent = "18 18";
+               text = "+";
+               internalName = "addShapeGroupButton";
+               command = "mmAddShapeGroup();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "368 6";
+               extent = "18 18";
+               text = "-";
+               internalName = "deleteShapeGroupButton";
+               command = "mmDeleteShapeGroup();";
+               groupNum = "-1";
+            };
+            new GuiBitmapCtrl() {
+               position = "15 39";
+               extent = "420 2";
+               internalName = "sceneShapeBehaviorSeparator";
+               bitmap = "core/art/gui/images/separator-v";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 54";
+               extent = "80 20";
+               text = "Behavior Tree";
+               internalName = "sceneShapeBehaviorTreeLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "100 54";
+               extent = "240 20";
+               internalName = "sceneShapeBehaviorTreeList";
+               command = "mmSelectBehaviorTree();";
+               groupNum = "-1";
+            };
+            new GuiBitmapCtrl() {
+               position = "15 197";
+               extent = "420 2";
+               internalName = "sceneShapeOpenSteerSeparator";
+               bitmap = "core/art/gui/images/separator-v";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "15 212";
+               extent = "80 20";
+               text = "OpenSteer";
+               internalName = "sceneShapeOpenSteerLabel";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "100 212";
+               extent = "240 20";
+               internalName = "sceneShapeOpenSteerList";
+               command = "mmSelectOpenSteer();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "345 212";
+               extent = "18 18";
+               text = "+";
+               internalName = "addOpenSteerButton";
+               command = "mmAddOpenSteer();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "368 212";
+               extent = "18 18";
+               text = "-";
+               internalName = "deleteOpenSteerButton";
+               command = "mmDeleteOpenSteer();";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "35 245";
+               extent = "80 20";
+               text = "Mass";
+               internalName = "sceneShapeOpenSteerMassLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "120 245";
+               extent = "55 20";
+               internalName = "sceneShapeOpenSteerMass";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "200 245";
+               extent = "100 20";
+               text = "Radius";
+               internalName = "sceneShapeOpenSteerRadiusLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "305 245";
+               extent = "55 20";
+               internalName = "sceneShapeOpenSteerRadius";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "35 268";
+               extent = "80 20";
+               text = "Max Force";
+               internalName = "sceneShapeOpenSteerMaxForceLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "120 268";
+               extent = "55 20";
+               internalName = "sceneShapeOpenSteerMaxForce";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "200 268";
+               extent = "100 20";
+               text = "Max Speed";
+               internalName = "sceneShapeOpenSteerMaxSpeedLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "305 268";
+               extent = "55 20";
+               internalName = "sceneShapeOpenSteerMaxSpeed";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "33 291";
+               extent = "80 20";
+               text = " Wander Chance";
+               internalName = "sceneShapeOpenSteerWanderChanceLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "120 291";
+               extent = "55 20";
+               internalName = "sceneShapeOpenSteerWanderChance";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "198 291";
+               extent = "100 20";
+               text = " Wander Weight";
+               internalName = "sceneShapeOpenSteerWanderWeightLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "305 291";
+               extent = "55 20";
+               internalName = "sceneShapeOpenSteerWanderWeight";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "35 314";
+               extent = "80 20";
+               text = "Seek Target";
+               internalName = "sceneShapeOpenSteerSeekTargetLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "120 314";
+               extent = "55 20";
+               internalName = "sceneShapeOpenSteerSeekTarget";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "200 314";
+               extent = "100 20";
+               text = "Avoid Target";
+               internalName = "sceneShapeOpenSteerAvoidTargetLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "305 314";
+               extent = "55 20";
+               internalName = "sceneShapeOpenSteerAvoidTarget";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "35 337";
+               extent = "80 20";
+               text = "Seek Neighbor";
+               internalName = "sceneShapeOpenSteerSeekNeighborLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "120 337";
+               extent = "55 20";
+               internalName = "sceneShapeOpenSteerSeekNeighbor";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "200 337";
+               extent = "100 20";
+               text = "Avoid Neighbor";
+               internalName = "sceneShapeOpenSteerAvoidNeighborLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "305 337";
+               extent = "55 20";
+               internalName = "sceneShapeOpenSteerAvoidNeighbor";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "35 360";
+               extent = "80 20";
+               text = "Avoid Edge";
+               internalName = "sceneShapeOpenSteerAvoidEdgeLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "120 360";
+               extent = "55 20";
+               internalName = "sceneShapeOpenSteerAvoidEdge";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
+               position = "200 360";
+               extent = "100 20";
+               text = "Detect Edge Range";
+               internalName = "sceneShapeOpenSteerDetectEdgeLabel";
+               groupNum = "-1";
+            };
+            new GuiTextEditCtrl() {
+               position = "305 360";
+               extent = "55 20";
+               internalName = "sceneShapeOpenSteerDetectEdge";
+               groupNum = "-1";
+            };
+         };
+      };
+      new GuiTabPageCtrl() {
+         position = "0 20";
+         extent = "445 400";
+         text = "Scene";
+         internalName = "sceneTab";
+
+         new GuiPanel() {
+            position = "6 3";
+            extent = "445 400";
+            text = "";
+            internalName = "scenePanel";
+
+            new GuiButtonCtrl() {
+               position = "15 6";
+               extent = "120 26";
+               text = "Play Scene";
+               internalName = "scenePlayButton";
+               command = "mmSetBehaviors($mmSceneList.getSelected());";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "15 155";
+               extent = "48 18";
+               text = "Action 1";
+               internalName = "sceneAction1Button";
+               command = "mmSceneAction1();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "64 155";
+               extent = "48 18";
+               text = "Action 2";
+               internalName = "sceneAction2Button";
+               command = "mmSceneAction2();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "118 155";
+               extent = "48 18";
+               text = "Action 3";
+               internalName = "sceneAction3Button";
+               command = "mmSceneAction3();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "172 155";
+               extent = "48 18";
+               text = "Action 4";
+               internalName = "sceneAction4Button";
+               command = "mmSceneAction4();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "226 155";
+               extent = "48 18";
+               text = "Action 5";
+               internalName = "sceneAction5Button";
+               command = "mmSceneAction5();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "280 155";
+               extent = "48 18";
+               text = "Action 6";
+               internalName = "sceneAction6Button";
+               command = "mmSceneAction6();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "334 155";
+               extent = "48 18";
+               text = "Action 7";
+               internalName = "sceneAction7Button";
+               command = "mmSceneAction7();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "388 155";
+               extent = "48 18";
+               text = "Action 8";
+               internalName = "sceneAction8Button";
+               command = "mmSceneAction8();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "141 6";
+               extent = "140 26";
+               text = "Start Recording";
+               internalName = "startRecordingButton";
+               command = "startSceneRecording();";
+               tooltip = "Tells all scene shapes to begin recording frames.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "141 35";
+               extent = "140 26";
+               text = "Stop Recording";
+               internalName = "stopRecordingButton";
+               command = "stopSceneRecording();";
+               tooltip = "Tells all scene shapes to stop recording and save sequences.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiCheckBoxCtrl() {
+               position = "15 35";
+               extent = "60 20";
+               text = "Autoplay";
+               internalName = "sceneAutoplay";
+               command = "$pref::MegaMotion::SceneAutoplay = $mmSceneAutoplay;";
+               variable = "$mmSceneAutoplay";
+               buttonType = "ToggleButton";
+               groupNum = "-1";
+               profile = "CheckBoxProfile";
+            };
+            new GuiButtonCtrl() {
+               position = "287 6";
+               extent = "140 26";
+               text = "Load Scene Sequences";
+               internalName = "loadSceneSequencesButton";
+               command = "mmLoadSceneSequences();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "287 35";
+               extent = "140 26";
+               text = "Play Scene Sequences";
+               internalName = "playSceneSequencesButton";
+               command = "mmPlaySceneSequences();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "287 64";
+               extent = "140 26";
+               text = "Export Scene Bvh";
+               internalName = "sceneBvhExport";
+               command = "mmExportSceneBvh();";
+               groupNum = "-1";
+            };
+         };
+      };
+   };
+   new GuiTextCtrl() {
+      position = "25 122";
+      extent = "70 20";
+      text = "Sequence";
+      internalName = "sequenceLabel";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "285 30";
+      extent = "18 18";
+      text = "+";
+      internalName = "addProjectButton";
+      command = "mmAddProject();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "308 30";
+      extent = "18 18";
+      text = "-";
+      internalName = "deleteProjectButton";
+      command = "mmDeleteProject();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "285 53";
+      extent = "18 18";
+      text = "+";
+      internalName = "addSceneButton";
+      command = "mmAddScene();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "308 53";
+      extent = "18 18";
+      text = "-";
+      internalName = "deleteSceneButton";
+      command = "mmDeleteScene();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "285 76";
+      extent = "18 18";
+      text = "+";
+      internalName = "addSceneShapeButton";
+      command = "mmAddSceneShape();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "308 76";
+      extent = "18 18";
+      text = "-";
+      internalName = "deleteSceneShapeButton";
+      command = "mmDeleteSceneShape();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "285 99";
+      extent = "18 18";
+      text = "+";
+      internalName = "addShapeButton";
+      command = "mmAddPhysicsShape();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "308 99";
+      extent = "18 18";
+      text = "-";
+      internalName = "deleteShapeButton";
+      command = "mmDeletePhysicsShape();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "331 53";
+      extent = "50 20";
+      text = "Load";
+      internalName = "loadSceneButton";
+      command = "mmLoadScene($mmSceneList.getSelected());";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "386 53";
+      extent = "50 20";
+      text = "Unload";
+      internalName = "unloadSceneButton";
+      command = "mmUnloadScene($mmSceneList.getSelected());";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "331 30";
+      extent = "50 20";
+      text = "Load";
+      internalName = "loadProjectButton";
+      command = "mmLoadProject();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "386 30";
+      extent = "50 20";
+      text = "Unload";
+      internalName = "unloadProjectButton";
+      command = "mmUnloadProject();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "331 76";
+      extent = "105 43";
+      text = "Commit";
+      internalName = "mmCommitButton";
+      command = "updateMegaMotionForm();";
+      groupNum = "-1";
+   };
+   new GuiPopupMenuCtrl() {
+      position = "100 122";
+      extent = "180 20";
+      internalName = "sequenceList";
+      command = "mmSelectSequence();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "285 122";
+      extent = "18 18";
+      text = "+";
+      internalName = "addSequenceButton";
+      command = "mmAddSequence();";
+      tooltip = "Load a new sequence.";
+      tooltipprofile = "GuiToolTipProfile";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "308 122";
+      extent = "18 18";
+      text = "-";
+      internalName = "deleteSequenceButton";
+      command = "mmDropSequence();";
+      tooltip = "Drop sequence.";
+      tooltipprofile = "GuiToolTipProfile";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "331 122";
+      extent = "40 20";
+      text = "Save";
+      internalName = "saveSequenceButton";
+      command = "mmSaveSequence();";
+      groupNum = "-1";
+   };
+};
+

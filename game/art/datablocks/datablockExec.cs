@@ -29,6 +29,8 @@ exec("./audioProfiles.cs");
 // LightFlareData and LightAnimData(s)
 exec("./lights.cs");
 
+exec("./physicsShape.cs");
+
 // Do the various effects next -- later scripts/datablocks may need them
 exec("./particles.cs");
 exec("./environment.cs");
@@ -37,9 +39,6 @@ exec("./triggers.cs");
 
 // Add a rigid example
 exec("./rigidShape.cs");
-
-// Add physics shapes
-exec("./physicsShape.cs");
 
 exec("./health.cs");
 

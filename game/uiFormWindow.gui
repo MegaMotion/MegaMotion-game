@@ -1,0 +1,511 @@
+%guiContent = new GuiWindowCtrl(uiFormWindow) {
+   position = "491 74";
+   extent = "475 570";
+   text = "";
+   canClose = "1";
+   useMouseEvents = "1";
+   closeCommand = "uiFormWindow.setVisible(false);";
+
+   new GuiTextCtrl() {
+      position = "10 53";
+      extent = "40 20";
+      text = "Element";
+      internalName = "elementLabel";
+      groupNum = "-1";
+   };
+   new GuiPopUpMenuCtrl() {
+      position = "55 53";
+      extent = "200 20";
+      internalName = "elementList";
+      command = "selectUIElement();";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 30";
+      extent = "40 20";
+      text = "Form";
+      internalName = "formLabel";
+      groupNum = "-1";
+   };
+   new GuiPopUpMenuCtrl() {
+      position = "55 30";
+      extent = "200 20";
+      internalName = "formList";
+      command = "selectUIForm();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "260 30";
+      extent = "20 20";
+      text = "+";
+      internalName = "addFormButton";
+      command = "addUIForm();";
+      tooltip = "Add a new UI form.";
+      tooltipprofile = "GuiToolTipProfile";
+      buttonType = "PushButton";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "260 53";
+      extent = "20 20";
+      text = "+";
+      internalName = "addElementButton";
+      command = "addUIElement();";
+      tooltip = "Add a new UI element.";
+      tooltipprofile = "GuiToolTipProfile";
+      buttonType = "PushButton";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 76";
+      extent = "120 20";
+      text = "Parent";
+      internalName = "parentLabel";
+      groupNum = "-1";
+   };
+   new GuiPopUpMenuCtrl() {
+      position = "135 76";
+      extent = "320 20";
+      internalName = "parentList";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 99";
+      extent = "120 20";
+      text = "Bitmap";
+      internalName = "bitmapLabel";
+      groupNum = "-1";
+   };
+   new GuiPopUpMenuCtrl() {
+      position = "135 99";
+      extent = "320 20";
+      internalName = "bitmapList";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 122";
+      extent = "120 20";
+      text = "Left Anchor";
+      internalName = "leftAnchorLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 145";
+      extent = "120 20";
+      text = "Right Anchor";
+      internalName = "rightAnchorLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 168";
+      extent = "120 20";
+      text = "Top Anchor";
+      internalName = "topAnchorLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 191";
+      extent = "120 20";
+      text = "Bottom Anchor";
+      internalName = "bottomAnchorLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 214";
+      extent = "120 20";
+      text = "Type";
+      internalName = "typeLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 237";
+      extent = "120 20";
+      text = "Name";
+      internalName = "nameLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 260";
+      extent = "120 23";
+      text = " Width";
+      internalName = "widthLabel";
+      groupNum = "-1";
+   };
+   new GuiPopUpMenuCtrl() {
+      position = "135 122";
+      extent = "235 20";
+      internalName = "leftAnchorList";
+      groupNum = "-1";
+   };
+   new GuiPopUpMenuCtrl() {
+      position = "135 145";
+      extent = "235 20";
+      internalName = "rightAnchorList";
+      groupNum = "-1";
+   };
+   new GuiPopUpMenuCtrl() {
+      position = "135 168";
+      extent = "235 20";
+      internalName = "topAnchorList";
+      groupNum = "-1";
+   };
+   new GuiPopUpMenuCtrl() {
+      position = "135 191";
+      extent = "235 20";
+      internalName = "bottomAnchorList";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 214";
+      extent = "320 20";
+      internalName = "typeEdit";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 237";
+      extent = "320 20";
+      internalName = "nameEdit";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 260";
+      extent = "60 20";
+      internalName = "widthEdit";
+      groupNum = "-1";
+   };
+   new GuiCheckBoxCtrl() {
+      position = "375 122";
+      extent = "75 20";
+      text = "Left Align";
+      internalName = "leftAlignCheck";
+      tooltip = "Align left edge to left edge of anchor.";
+      tooltipprofile = "GuiToolTipProfile";
+      variable = "$anchor_left_align";
+      buttonType = "ToggleButton";
+      groupNum = "-1";
+      profile = "CheckBoxProfile";
+   };
+   new GuiCheckBoxCtrl() {
+      position = "375 145";
+      extent = "75 20";
+      text = "Right Align";
+      internalName = "rightAlignCheck";
+      tooltip = "Align right edge to right edge of anchor.";
+      tooltipprofile = "GuiToolTipProfile";
+      variable = "$anchor_right_align";
+      buttonType = "ToggleButton";
+      groupNum = "-1";
+      profile = "CheckBoxProfile";
+   };
+   new GuiCheckBoxCtrl() {
+      position = "375 168";
+      extent = "75 20";
+      text = "Top Align";
+      internalName = "topAlignCheck";
+      tooltip = "Align top edge to top edge of anchor.";
+      tooltipprofile = "GuiToolTipProfile";
+      variable = "$anchor_top_align";
+      buttonType = "ToggleButton";
+      groupNum = "-1";
+      profile = "CheckBoxProfile";
+   };
+   new GuiCheckBoxCtrl() {
+      position = "375 191";
+      extent = "75 20";
+      text = "Bottom Align";
+      internalName = "bottomAlignCheck";
+      tooltip = "Align bottom edge to bottom edge of anchor.";
+      tooltipprofile = "GuiToolTipProfile";
+      variable = "$anchor_bottom_align";
+      buttonType = "ToggleButton";
+      groupNum = "-1";
+      profile = "CheckBoxProfile";
+   };
+   new GuiButtonCtrl() {
+      position = "285 30";
+      extent = "20 20";
+      text = "-";
+      internalName = "deleteFormButton";
+      command = "deleteUIForm();";
+      tooltip = "Delete this UI form and all of its child elements.";
+      tooltipprofile = "GuiToolTipProfile";
+      buttonType = "PushButton";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "285 53";
+      extent = "20 20";
+      text = "-";
+      internalName = "deleteElementButton";
+      command = "deleteUIElement();";
+      tooltip = "Delete this UI element and all of its child elements.";
+      tooltipprofile = "GuiToolTipProfile";
+      buttonType = "PushButton";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 286";
+      extent = "120 20";
+      text = "Content";
+      internalName = "contentLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "240 260";
+      extent = "75 20";
+      text = "Height";
+      internalName = "heightLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 309";
+      extent = "120 20";
+      text = "Command";
+      internalName = "commandLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 286";
+      extent = "320 20";
+      internalName = "contentEdit";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "320 260";
+      extent = "60 20";
+      internalName = "heightEdit";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 309";
+      extent = "320 20";
+      internalName = "commandEdit";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "312 30";
+      extent = "70 43";
+      text = "Commit";
+      internalName = "commitButton";
+      command = "updateUIElement();";
+      tooltip = "Commit changes to database and refresh form.";
+      tooltipprofile = "GuiToolTipProfile";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "387 30";
+      extent = "70 20";
+      text = "Save XML";
+      internalName = "saveXmlButton";
+      command = "saveFormXML();";
+      tooltip = "Save this form to an XML file.";
+      tooltipprofile = "GuiToolTipProfile";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "387 53";
+      extent = "70 20";
+      text = "Load XML";
+      internalName = "loadXmlButton";
+      command = "loadFormXML();";
+      tooltip = "Load a form from an XML file.";
+      tooltipprofile = "GuiToolTipProfile";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 332";
+      extent = "120 20";
+      text = "Alt Command";
+      internalName = "altCommandLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 332";
+      extent = "320 20";
+      internalName = "altCommandEdit";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 355";
+      extent = "120 20";
+      text = "Tooltip";
+      internalName = "tooltipLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 378";
+      extent = "120 20";
+      text = "Horiz Aign";
+      internalName = "horizAlignLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 401";
+      extent = "120 20";
+      text = "Pos X";
+      internalName = "posXLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 355";
+      extent = "320 20";
+      internalName = "tooltipEdit";
+      groupNum = "-1";
+   };
+   new GuiPopUpMenuCtrl() {
+      position = "135 378";
+      extent = "60 20";
+      internalName = "horizAlignList";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 401";
+      extent = "60 20";
+      internalName = "PosXEdit";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "260 378";
+      extent = "55 20";
+      text = "Vert Align";
+      internalName = "vertAlignLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "270 401";
+      extent = "45 20";
+      text = "Pos Y";
+      internalName = "posYLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 424";
+      extent = "120 20";
+      text = "Horiz Padding";
+      internalName = "horizPaddingLabel";
+      groupNum = "-1";
+   };
+   new GuiPopUpMenuCtrl() {
+      position = "320 378";
+      extent = "60 20";
+      internalName = "vertAlignList";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "320 401";
+      extent = "60 20";
+      internalName = "PosYEdit";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 424";
+      extent = "60 20";
+      internalName = "horizPaddingEdit";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "250 424";
+      extent = "65 20";
+      text = "Vert Padding";
+      internalName = "vertPaddingLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 447";
+      extent = "120 20";
+      text = "Horiz Edge Padding";
+      internalName = "horizEdgePaddingLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "320 424";
+      extent = "60 20";
+      internalName = "vertPaddingEdit";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 447";
+      extent = "60 20";
+      internalName = "horizEdgePaddingEdit";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "225 447";
+      extent = "90 20";
+      text = "Vert Edge Padding";
+      internalName = "vertEdgePaddingLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 470";
+      extent = "120 20";
+      text = "Variable";
+      internalName = "variableLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 493";
+      extent = "120 20";
+      text = "Button Type";
+      internalName = "buttonTypeLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 516";
+      extent = "120 20";
+      text = "Group Num";
+      internalName = "groupNumLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 539";
+      extent = "120 20";
+      text = "Profile";
+      internalName = "profileLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "320 447";
+      extent = "60 20";
+      internalName = "vertEdgePaddingEdit";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 470";
+      extent = "320 20";
+      internalName = "variableEdit";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 493";
+      extent = "320 20";
+      internalName = "buttonTypeEdit";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 516";
+      extent = "60 20";
+      internalName = "groupNumEdit";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "135 539";
+      extent = "320 20";
+      internalName = "profileEdit";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "210 516";
+      extent = "45 20";
+      text = "Value";
+      internalName = "valueLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "275 516";
+      extent = "180 20";
+      internalName = "valueEdit";
+      groupNum = "-1";
+   };
+};
+

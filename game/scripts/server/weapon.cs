@@ -241,6 +241,30 @@ function WeaponImage::onFire(%this, %obj, %slot)
          sourceClass = %obj.getClassName();
       };
       MissionCleanup.add(%p);
+      
+      //Physics: do a castRay, IF this is a weapon which should do this.
+      //TEMP! Hard coding it for basic pistol and rifle for first pass, but this  
+      //  should be maybe a projectile property(?)
+      if ((%this.getName() $= "RyderWeaponImage")||(%this.getName() $= "LurkerWeaponImage"))
+      {
+         %start = %obj.getEyePoint();
+         %start = VectorAdd(%start,VectorScale(%muzzleVector,2));  
+         %vec = VectorScale(%muzzleVector,100);
+         
+         //TEMP! Define this in the (weapon or the projectile datablock)?
+         if (%this.getName() $= "RyderWeaponImage")
+            %weaponForce = 0.01;
+         else
+            %weaponForce = 0.02;
+            
+         //echo("casting ray from: " @ %start @ " in direction of " @ %vec);
+         %id = physx3CastRay(%start,%vec,1);//0=static,1=dynamic,2=player,3=all
+         if ((%id)&&(%id.getClassName() $= "PhysicsShape")) 
+         {
+            %id.setDynamic(1);
+            //%id.aitp(%id.getContactBody(),VectorScale(%muzzleVector,%weaponForce));
+         }
+      }
    }
 }
 

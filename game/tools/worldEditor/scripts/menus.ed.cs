@@ -265,7 +265,21 @@ function EditorGui::buildMenus(%this)
       item[1] = "Profiler" TAB "ctrl F2" TAB "showMetrics(true);";
    };
    %this.menuBar.insert(%toolsMenu, %this.menuBar.getCount());
-      
+   
+   // uiForms Menu
+   %uiFormsMenu = new PopupMenu()
+   {
+      superClass = "MenuBuilder";
+      class = "uiFormMenu";
+
+      barTitle = "Forms";
+         
+      item[0] = "MegaMotion" TAB "" TAB "exposeMegaMotionScenesForm();";
+      item[1] = "UI Manager" TAB "" TAB "exposeUIFormWindow();";
+      //item[2] = "openSimEarth" TAB "" TAB "exposeOpenSimEarthForm();";
+   };
+   %this.menuBar.insert(%uiFormsMenu, %this.menuBar.getCount());
+   
    // Help Menu
    %helpMenu = new PopupMenu()
    {

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PropertyList include="ka50-base.xml">
+
+  <sim>
+
+    <description>Kamov Ka 50 Black Shark (Yasim)</description>
+    <author>BARANGER Emmanuel (3D)</author>
+    <status>alpha</status>
+    <license>GPL v2</license>
+
+    <flight-model>yasim</flight-model>
+    <aero>ka50-yasim</aero>
+    
+    <rating>
+      <FDM type="int">     1 </FDM>
+      <systems type="int"> 1 </systems>
+      <cockpit type="int"> 2 </cockpit>
+      <model type="int">   4 </model>
+    </rating>
+    
+  </sim>
+
+</PropertyList>

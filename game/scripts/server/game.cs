@@ -46,7 +46,7 @@ function onServerCreated()
    $Game::StartTime = 0;
 
    // Create the server physics world.
-   physicsInitWorld( "server" );
+   physicsInitWorld( "server", $pref::Physics::gravity );
 
    // Load up any objects or datablocks saved to the editor managed scripts
    %datablockFiles = new ArrayObject();
@@ -61,7 +61,8 @@ function onServerCreated()
 
    // Run the other gameplay scripts in this folder
    exec("./scriptExec.cs");
-
+   
+   %temp = new SimSet(SceneShapes);
    // Keep track of when the game started
    $Game::StartTime = $Sim::Time;
 }

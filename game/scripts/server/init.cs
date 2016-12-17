@@ -73,6 +73,15 @@ function initServer()
    // Load up game server support scripts
    exec("./commands.cs");
    exec("./game.cs");
+   
+   exec("./openSimEarth.cs");
+   exec("./uiForms.cs");
+   exec("./MegaMotion.cs");
+   exec("./MegaMotionBehaviors.cs");
+   exec("./terrainPager.cs");
+   exec("./BadBehavior/main.cs");
+   
+   schedule(90,0,"MegaMotionTick");
 }
 
 

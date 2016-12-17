@@ -663,6 +663,31 @@ GlobalActionMap.bindCmd(keyboard, "alt enter", "", "Canvas.attemptFullscreenTogg
 GlobalActionMap.bindCmd(keyboard, "F1", "", "contextHelp();");
 moveMap.bindCmd(keyboard, "n", "toggleNetGraph();", "");
 
+///////// MegaMotion ////////////////////
+//GlobalActionMap.bindCmd(keyboard, "alt b", "$m4.aitp(15,\"2 0 0\");$m4.aitp(18,\"-2 0 0\");","");
+//TEMP, this will be hooked up to a gui of course.
+GlobalActionMap.bindCmd(keyboard, "alt f", "mmLoadScene(12);","");
+GlobalActionMap.bindCmd(keyboard, "alt g", "mmLoadScene(11);","");
+//GlobalActionMap.bindCmd(keyboard, "alt f", "loadScene(1); schedule(30, 0, \"assignBehaviors\"); schedule(40, 0, \"startRecording\");","");//
+//GlobalActionMap.bindCmd(keyboard, "alt g", "stopRecording();","");
+//GlobalActionMap.bindCmd(keyboard, "alt g", "shapesAct();","");
+//GlobalActionMap.bindCmd(keyboard, "alt g", "makeSqlGuiForm(1);","");
+//GlobalActionMap.bindCmd(keyboard, "alt b", "makeSequences();","");
+GlobalActionMap.bindCmd(keyboard, "alt b", "testAddTrees();","");
+
+GlobalActionMap.bindCmd(keyboard, "alt v", "pdd(1);metrics(fps);","");
+GlobalActionMap.bindCmd(keyboard, "alt d", "loadOSM();","");//"pdd(0);" todo - make this toggle
+GlobalActionMap.bindCmd(keyboard, "alt c", "makeStreets();","");//todo - make this toggle
+//GlobalActionMap.bindCmd(keyboard, "alt g", "echo($m4.getclassname());","");
+
+
+GlobalActionMap.bind( joystick, button0, mouseFire );
+GlobalActionMap.bind( joystick, button1, altTrigger );
+
+GlobalActionMap.bind( joystick, button5, joyButton5 );
+GlobalActionMap.bind( joystick, button6, joyButton6 );
+GlobalActionMap.bindCmd( joystick, button7, "joyButton7();" );
+GlobalActionMap.bindCmd( joystick, button8, "joyButton8();" );
 // ----------------------------------------------------------------------------
 // Useful vehicle stuff
 // ----------------------------------------------------------------------------
@@ -729,13 +754,96 @@ function brake(%val)
    $mvTriggerCount2++;
 }
 
+function joyButton0()
+{
+   echo("joystick button 0");
+}
+function joyButton1()
+{
+   echo("joystick button 1");
+}
+function joyButton2()
+{
+   echo("joystick button 2");
+}
+function joyButton3()
+{
+   echo("joystick button 3");
+}
+function joyButton4()
+{
+   echo("joystick button 4");
+}
+function joyButton5()
+{
+   echo("joystick button 5");
+}
+function joyButton6()
+{
+   echo("joystick button 6");
+}
+function joyButton7()
+{
+   echo("joystick button 7");
+}
+function joyButton8()
+{
+   echo("joystick button 8");
+}
+function joyButton9()
+{
+   echo("joystick button 9");
+}
+function joyButton10()
+{
+   echo("joystick button 10");
+}
+function joyButton11()
+{
+   echo("joystick button 11");
+}
+function POV1Up()
+{
+   echo("pan up!");
+}
+function POV1Down()
+{
+   echo("pan down!");
+}
+
+function vehicleLookUp()
+{
+   echo("vehicle looking up!");
+   $myPlayer.mVehicle.setEyeRot("30 0 0");   
+}
+
+function vehicleLookDown()
+{
+   echo("vehicle looking down!");
+   $myPlayer.mVehicle.setEyeRot("-30 0 0");   
+}
+
 vehicleMap.bind( keyboard, w, moveforward );
 vehicleMap.bind( keyboard, s, movebackward );
 vehicleMap.bind( keyboard, up, moveforward );
 vehicleMap.bind( keyboard, down, movebackward );
 vehicleMap.bind( mouse, xaxis, yaw );
 vehicleMap.bind( mouse, yaxis, pitch );
-vehicleMap.bind( mouse, button0, mouseFire );
+vehicleMap.bind( joystick, button0, mouseFire );
+vehicleMap.bind( joystick, button1, altTrigger );
+vehicleMap.bind( joystick, button2, panUp );
+vehicleMap.bind( joystick, button3, panDown );
+vehicleMap.bind( joystick, button4, joyButton4 );
+vehicleMap.bind( joystick, button5, joyButton5 );
+vehicleMap.bind( joystick, button6, joyButton6 );
+vehicleMap.bind( joystick, button7, joyButton7 );
+vehicleMap.bind( joystick, button8, joyButton8 );
+vehicleMap.bind( joystick, button9, joyButton9 );
+vehicleMap.bind( joystick, button10, joyButton10 );
+vehicleMap.bind( joystick, button11, joyButton11 );
+vehicleMap.bind( joystick, upov, vehicleLookDown );
+vehicleMap.bind( joystick, dpov, vehicleLookUp );
+//vehicleMap.bind( mouse, button0, mouseFire );
 vehicleMap.bind( mouse, button1, altTrigger );
 vehicleMap.bindCmd(keyboard, "ctrl f","getout();","");
 vehicleMap.bind(keyboard, space, brake);
