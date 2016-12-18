@@ -272,7 +272,7 @@ function EditorGui::buildMenus(%this)
       superClass = "MenuBuilder";
       class = "uiFormMenu";
 
-      barTitle = "Forms";
+      barTitle = "MegaMotion";
          
       item[0] = "MegaMotion" TAB "" TAB "exposeMegaMotionScenesForm();";
       item[1] = "UI Manager" TAB "" TAB "exposeUIFormWindow();";
