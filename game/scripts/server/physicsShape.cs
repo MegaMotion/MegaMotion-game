@@ -70,17 +70,21 @@ function PhysicsShapeData::damage(%this, %obj, %sourceObject, %position, %amount
 
 function PhysicsShape::shapeSpecifics(%this)
 {
+   echo("Calling shapeSpecifics for " @ %this.dataBlock @ ", server " @ %this.isServerObject());
    //Misc section for things that haven't found a better place yet.
    if (%this.dataBlock $= "M4Physics") 
-   {            
-      %this.setActionSeq("ambient","ambient");//This might not always be idle, could be just breathing
-      %this.setActionSeq("idle","ambient");// and idle could be that plus fidgeting, etc.
+   {     
       %this.setActionSeq("walk","walk");      
       %this.setActionSeq("run","run");
+      
+      %this.setActionSeq("ambient","ambient");//This might not always be idle, could be just breathing
+      %this.setActionSeq("idle","ambient");// and idle could be that plus fidgeting, etc.
+
       %this.setActionSeq("rightGetup","rSideGetup");
       %this.setActionSeq("leftGetup","lSideGetup");
       %this.setActionSeq("frontGetup","frontGetup");
-      %this.setActionSeq("backGetup","backGetup");      
+      %this.setActionSeq("backGetup","backGetup");   
+         
    } 
    else if (%this.dataBlock $= "bo105Physics") 
    {            
@@ -91,9 +95,9 @@ function PhysicsShape::shapeSpecifics(%this)
    else 
    if (%this.dataBlock $= "ka50Physics") 
    {
-      echo("Calling shapeSpecifics for ka50!!!!!!!!!!!!!!!!!!!!!");
+      
       %this.schedule(500,"showRotorBlades");
-      //%this.schedule(500,"setUseDataSource",true);
+      //%this.schedule(500,"setUseDataSource",true);//vehicleDataSource networking not working yet in new build, 12/26/2016
       //%this.setIsRecording(true);
    }  
 }
@@ -102,7 +106,7 @@ function PhysicsShape::shapeSpecifics(%this)
 //HERE: all this needs to be moved farther down into specific behavior trees. 
 function PhysicsShape::onStartup(%this)
 {
-   echo(%this @ " calling onStartup! position " @ %this.getPosition() @ " tree " @ %this.behaviorTree);
+   echo(%this @ " calling onStartup! position " @ %this.getPosition() @ " tree " @ %this.behaviorTree );
    /*
    if (%this.dataBlock $= "M4Physics")
    {      
@@ -189,13 +193,16 @@ function PhysicsShape::openSteerSimpleVehicle(%this)
 
 function PhysicsShape::openSteerNavVehicle(%this)
 {   
+   echo("CALLING openSteerNavVehicle! isServer: " @ %this.isServerObject());
    if (%this.isServerObject())
       %clientShape = %this.getClientObject();
    else 
       %clientShape = %this;   
       
-   %this.currentPathNode = 0;
    %clientShape.currentPathNode = 0;
+   %clientShape.sceneShapeID = %this.sceneShapeID;   
+   %clientShape.openSteerID = %this.openSteerID;
+
    
    if (%clientShape.getVehicleID()>0)
       return;//We've already done all this, so don't do it again.
@@ -203,13 +210,16 @@ function PhysicsShape::openSteerNavVehicle(%this)
    if (!isObject(Nav))//TEMP! Search MissionGroup for all NavMesh objects, pick best one.
       return;
       
-   %this.setNavMesh("Nav");
+   //%clientShape.setNavMesh("Nav");
+   %this.setNavMesh("Nav");//Is there any reason for this to happen? Should be client only right?
+   %this.createVehicle(%clientShape.getPosition(),0);
    
-   %this.currentAction = "walk";
    
-      
-   %clientShape.createVehicle(%clientShape.getPosition(),0);
-   %clientShape.openSteerID = %this.openSteerID;
+   //%clientShape.createVehicle(%clientShape.getPosition(),0);
+   //%clientShape.setNavMesh("Nav");//Hm, having navpath problems... trying
+   
+   
+   %clientShape.currentAction = "walk";
    
    if (%clientShape.openSteerID <= 0)
       return;
@@ -217,7 +227,7 @@ function PhysicsShape::openSteerNavVehicle(%this)
    %id = %clientShape.openSteerID;
    %query = "SELECT * FROM openSteerProfile WHERE id=" @ %this.openSteerID @ ";";
    %resultSet = sqlite.query(%query,0);
-   //echo("trying to setup an opensteer vehicle! opensteer id " @ %id @ " maxForce " @ $openSteerProfile[%id].maxForce);
+   echo("trying to setup an opensteer vehicle! opensteer id " @ %id @ " maxForce " @ $openSteerProfile[%id].maxForce);
    
    if (%resultSet)
    {
@@ -233,7 +243,7 @@ function PhysicsShape::openSteerNavVehicle(%this)
       %clientShape.setOpenSteerAvoidNeighborWeight(sqlite.getColumn(%resultSet,"avoidNeighborWeight"));
       %clientShape.setOpenSteerAvoidNavMeshEdgeWeight(sqlite.getColumn(%resultSet,"avoidNavMeshEdgeWeight"));
       %clientShape.setOpenSteerDetectNavMeshEdgeRange(sqlite.getColumn(%resultSet,"detectNavMeshEdgeRange"));
-   }   
+   } 
 }
 
 /*
