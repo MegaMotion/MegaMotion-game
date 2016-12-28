@@ -212,3 +212,75 @@ new TerrainMaterial()
    Enabled = "1";
    diffuseSize = "200";
 };
+
+new TerrainMaterial()
+{
+   diffuseMap = "art/terrains/TT_Materials/Stone and Rock/TT_Rock_14_Dif";
+   normalMap = "art/terrains/TT_Materials/Stone and Rock/TT_Rock_14_Nm";
+   internalName = "warning_material";
+   detailMap = "art/terrains/TT_Materials/Stone and Rock/TT_Rock_14";
+};
+
+new TerrainMaterial()
+{
+   //diffuseMap = "art/terrains/TT_Materials/Gravel and Rubble/TT_Gravel_02_Dif";
+   diffuseMap = "art/terrains/forests_tile";//??
+   normalMap = "art/terrains/TT_Materials/Gravel and Rubble/TT_Gravel_02_Nm";
+   detailMap = "art/terrains/TT_Materials/Gravel and Rubble/TT_Gravel_02";
+   internalName = "gravel_02";
+   detailSize = "2";
+   macroMap = "art/terrains/TT_Materials/Mud and Mulch/TT_Mud_14_Dif";
+};
+
+new TerrainMaterial()
+{
+   diffuseMap = "art/terrains/TT_Materials/Grass and Moss/TT_Grass_01_Dif";
+   diffuseSize = "200";
+   normalMap = "art/terrains/TT_Materials/Grass and Moss/TT_Grass_01_Nm";
+   detailMap = "art/terrains/TT_Materials/Grass and Moss/TT_Grass_01";
+   detailSize = "2";
+   internalName = "grass_01";
+   isManaged = "1";
+   detailBrightness = "1";
+   enabled = "1";
+};
+
+new TerrainMaterial()
+{
+   diffuseMap = "art/terrains/TT_Materials/Grass and Moss/TT_Grass_20_Dif";
+   diffuseSize = "200";
+   normalMap = "art/terrains/TT_Materials/Grass and Moss/TT_Grass_20_Nm";
+   detailMap = "art/terrains/TT_Materials/Grass and Moss/TT_Grass_20";
+   detailSize = "1.2";
+   internalName = "grass_20";
+   isManaged = "1";
+   detailBrightness = "1";
+   enabled = "1";
+};
+
+new TerrainMaterial()
+{
+   diffuseMap = "art/terrains/TT_Materials/Snow and Ice/TT_Snow_01_Dif";
+   normalMap = "art/terrains/TT_Materials/Snow and Ice/TT_Snow_01_Nm";
+   detailMap = "art/terrains/TT_Materials/Snow and Ice/TT_Snow_01";
+   detailSize = "1";
+   internalName = "snow_01";
+};
+
+new TerrainMaterial()
+{
+   diffuseMap = "art/terrains/TT_Materials/Mud and Mulch/TT_Mud_07_Dif";
+   normalMap = "art/terrains/TT_Materials/Mud and Mulch/TT_Mud_07_Nm";
+   detailMap = "art/terrains/TT_Materials/Mud and Mulch/TT_Mud_07";
+   detailSize = "1";
+   internalName = "mud_07";
+};
+
+new TerrainMaterial()
+{
+   diffuseMap = "art/terrains/TT_Materials/Mud and Mulch/TT_Mud_14_Dif";
+   normalMap = "art/terrains/TT_Materials/Mud and Mulch/TT_Mud_14_Nm";
+   detailMap = "art/terrains/TT_Materials/Mud and Mulch/TT_Mud_14";
+   detailSize = "1";
+   internalName = "mud_14";
+};
