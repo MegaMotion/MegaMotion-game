@@ -2,12 +2,15 @@
 singleton Material(IndstrialShack_01_conc01)
 {
    mapTo = "conc01";
-   diffuseMap[0] = "conc01";
+   diffuseMap[0] = "art/shapes/FreeHarborProps/IndustrialShack_01/conc01";
    specular[0] = "0.9 0.9 0.9 1";
    specularPower[0] = "10";
    translucentBlendOp = "None";
-   normalMap[0] = "conc01_NRM.png";
+   normalMap[0] = "art/shapes/FreeHarborProps/IndustrialShack_01/conc01_NRM.png";
    useAnisotropic[0] = "1";
+   accuScale[0] = "0.03125";
+   accuEnabled[0] = "1";
+   accuStrength[0] = "0.55";
 };
 
 singleton Material(IndstrialShack_01_BumpWood01)

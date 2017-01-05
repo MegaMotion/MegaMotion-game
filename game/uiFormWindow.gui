@@ -1,5 +1,5 @@
 %guiContent = new GuiWindowCtrl(uiFormWindow) {
-   position = "491 74";
+   position = "806 96";
    extent = "475 570";
    text = "";
    canClose = "1";
