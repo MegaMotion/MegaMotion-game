@@ -21,7 +21,7 @@
 //-----------------------------------------------------------------------------
 
 // Set the name of our application
-$appName = "Full";
+$appName = "MegaMotion";
 
 // The directory it is run from
 $defaultGame = "scripts";

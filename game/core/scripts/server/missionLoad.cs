@@ -138,6 +138,8 @@ function loadMissionStage2()
 
    // Go ahead and launch the game
    onMissionLoaded();
+   
+   echo("Mission all finished loading!!!!!!!!!!");
 }
 
 

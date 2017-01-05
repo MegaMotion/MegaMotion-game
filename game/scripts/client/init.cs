@@ -112,6 +112,10 @@ function initClient()
    if (isFile("./config.cs"))
       exec("./config.cs");
 
+   //MegaMotion, temp, find a better directory for these.
+   //exec("MegaMotionScenes.gui");
+   //exec("MegaMotionSequenceWindow.gui");
+   
    loadMaterials();
 
    // Really shouldn't be starting the networking unless we are

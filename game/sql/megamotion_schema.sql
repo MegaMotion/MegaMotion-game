@@ -46,26 +46,6 @@ CREATE TABLE uiElement (
 
 -----------------------------------------
 
-
--- Table: vector3
-CREATE TABLE vector3 ( 
-    id INTEGER PRIMARY KEY AUTOINCREMENT
-               UNIQUE,
-    x  REAL    DEFAULT ( 0 ),
-    y  REAL    DEFAULT ( 0 ),
-    z  REAL    DEFAULT ( 0 ) 
-);
-
--- Table: rotation
-CREATE TABLE rotation ( 
-    id    INTEGER PRIMARY KEY AUTOINCREMENT
-                  UNIQUE,
-    x     REAL    DEFAULT ( 0 ),
-    y     REAL    DEFAULT ( 0 ),
-    z     REAL    DEFAULT ( 1 ),
-    angle REAL    DEFAULT ( 0 ) 
-);
-
 -- Table: project
 CREATE TABLE project ( 
     id   INTEGER PRIMARY KEY AUTOINCREMENT
@@ -81,8 +61,10 @@ CREATE TABLE scene (
     id          INTEGER PRIMARY KEY AUTOINCREMENT
                         NOT NULL
                         UNIQUE,
-    pos_id      INTEGER DEFAULT ( 0 ),
-    project_id  INTEGER DEFAULT ( 0 ),
+    project_id  INTEGER DEFAULT ( 1 ),
+    pos_x     	REAL    DEFAULT ( 0 ),
+    pos_y     	REAL    DEFAULT ( 0 ),
+    pos_z     	REAL    DEFAULT ( 0 ),
     name        VARCHAR NOT NULL
                         DEFAULT ( '' ),
     description VARCHAR DEFAULT ( '' )
@@ -102,11 +84,17 @@ CREATE TABLE shapeVehicle (
                                 NOT NULL
                                 UNIQUE,
     rudder_range        REAL,
-    rudder_offset_id    INTEGER,
+    rudder_offset_x     REAL DEFAULT ( 0 ),
+    rudder_offset_y     REAL DEFAULT ( 0 ),
+    rudder_offset_z     REAL DEFAULT ( 0 ),
     elevator_range      REAL,
-    elevator_offset_id  INTEGER,
+    elevator_offset_x   REAL DEFAULT ( 0 ),
+    elevator_offset_y   REAL DEFAULT ( 0 ),
+    elevator_offset_z   REAL DEFAULT ( 0 ),
     aileron_range       REAL,
-    aileron_offset_id   INTEGER,
+    aileron_offset_x    REAL DEFAULT ( 0 ),
+    aileron_offset_y    REAL DEFAULT ( 0 ),
+    aileron_offset_z    REAL DEFAULT ( 0 ),
     rudder_nodes        TEXT,
     elevator_nodes      TEXT,
     right_aileron_nodes TEXT,
@@ -145,34 +133,34 @@ CREATE TABLE px3Joint (
     motorDamper         REAL    DEFAULT ( 0 ),
     maxForce            REAL    DEFAULT ( 1000 ),
     maxTorque           REAL    DEFAULT ( 1000 ),
-    numLimitPlanes      INTEGER,
-    limitPoint_x        REAL,
-    limitPoint_y        REAL,
-    limitPoint_z        REAL,
-    limitPlaneAnchor1_x REAL,
-    limitPlaneAnchor1_y REAL,
-    limitPlaneAnchor1_z REAL,
-    limitPlaneNormal1_x REAL,
-    limitPlaneNormal1_y REAL,
-    limitPlaneNormal1_z REAL,
-    limitPlaneAnchor2_x REAL,
-    limitPlaneAnchor2_y REAL,
-    limitPlaneAnchor2_z REAL,
-    limitPlaneNormal2_x REAL,
-    limitPlaneNormal2_y REAL,
-    limitPlaneNormal2_z REAL,
-    limitPlaneAnchor3_x REAL,
-    limitPlaneAnchor3_y REAL,
-    limitPlaneAnchor3_z REAL,
-    limitPlaneNormal3_x REAL,
-    limitPlaneNormal3_y REAL,
-    limitPlaneNormal3_z REAL,
-    limitPlaneAnchor4_x REAL,
-    limitPlaneAnchor4_y REAL,
-    limitPlaneAnchor4_z REAL,
-    limitPlaneNormal4_x REAL,
-    limitPlaneNormal4_y REAL,
-    limitPlaneNormal4_z REAL 
+    numLimitPlanes      INTEGER DEFAULT ( 0 ),
+    limitPoint_x        REAL DEFAULT ( 0 ),
+    limitPoint_y        REAL DEFAULT ( 0 ),
+    limitPoint_z        REAL DEFAULT ( 0 ),
+    limitPlaneAnchor1_x REAL DEFAULT ( 0 ),
+    limitPlaneAnchor1_y REAL DEFAULT ( 0 ),
+    limitPlaneAnchor1_z REAL DEFAULT ( 0 ),
+    limitPlaneNormal1_x REAL DEFAULT ( 0 ),
+    limitPlaneNormal1_y REAL DEFAULT ( 0 ),
+    limitPlaneNormal1_z REAL DEFAULT ( 0 ),
+    limitPlaneAnchor2_x REAL DEFAULT ( 0 ),
+    limitPlaneAnchor2_y REAL DEFAULT ( 0 ),
+    limitPlaneAnchor2_z REAL DEFAULT ( 0 ),
+    limitPlaneNormal2_x REAL DEFAULT ( 0 ),
+    limitPlaneNormal2_y REAL DEFAULT ( 0 ),
+    limitPlaneNormal2_z REAL DEFAULT ( 0 ),
+    limitPlaneAnchor3_x REAL DEFAULT ( 0 ),
+    limitPlaneAnchor3_y REAL DEFAULT ( 0 ),
+    limitPlaneAnchor3_z REAL DEFAULT ( 0 ),
+    limitPlaneNormal3_x REAL DEFAULT ( 0 ),
+    limitPlaneNormal3_y REAL DEFAULT ( 0 ),
+    limitPlaneNormal3_z REAL DEFAULT ( 0 ),
+    limitPlaneAnchor4_x REAL DEFAULT ( 0 ),
+    limitPlaneAnchor4_y REAL DEFAULT ( 0 ),
+    limitPlaneAnchor4_z REAL DEFAULT ( 0 ),
+    limitPlaneNormal4_x REAL DEFAULT ( 0 ),
+    limitPlaneNormal4_y REAL DEFAULT ( 0 ),
+    limitPlaneNormal4_z REAL DEFAULT ( 0 ) 
 );
 
 -- Table: physicsShape
@@ -295,9 +283,9 @@ CREATE TABLE bvhProfileNode (
     parent_id     INTEGER,
     name          VARCHAR,
     nodeGroup     INTEGER DEFAULT ( 0 ),
-    offset_x      REAL,
-    offset_y      REAL,
-    offset_z      REAL,
+    offset_x      REAL DEFAULT ( 0 ),
+    offset_y      REAL DEFAULT ( 0 ),
+    offset_z      REAL DEFAULT ( 0 ),
     channels      INTEGER,
     channelRots_0 INTEGER,
     channelRots_1 INTEGER,
@@ -369,10 +357,17 @@ CREATE TABLE sceneShape (
                                 DEFAULT ( 0 ),
     shape_id            INTEGER NOT NULL
                                 DEFAULT ( 0 ),
-    pos_id              INTEGER DEFAULT ( 0 ),
-    rot_id              INTEGER DEFAULT ( 0 ),
-    scale_id            INTEGER DEFAULT ( 0 ),
-    name                TEXT    DEFAULT ( '' ),
+    name          	TEXT    DEFAULT ( '' ),
+    pos_x         	REAL    DEFAULT ( 0 ),
+    pos_y         	REAL    DEFAULT ( 0 ),
+    pos_z         	REAL    DEFAULT ( 0 ),
+    rot_x         	REAL    DEFAULT ( 0 ),
+    rot_y         	REAL    DEFAULT ( 0 ),
+    rot_z         	REAL    DEFAULT ( 1 ), 
+    rot_a         	REAL    DEFAULT ( 0 ), 
+    scale_x       	REAL    DEFAULT ( 1 ),
+    scale_y       	REAL    DEFAULT ( 1 ),
+    scale_z       	REAL    DEFAULT ( 1 ),
     behavior_tree       TEXT    DEFAULT ( '' ),
     target_shape_id     INTEGER DEFAULT ( 0 ),
     shapeGroup_id       INTEGER DEFAULT ( 0 ),
@@ -387,12 +382,17 @@ CREATE TABLE shapeNode (
                             NOT NULL
                             UNIQUE,
     physicsShape_id INTEGER NOT NULL,
-    name            TEXT    NOT NULL,
     parent_id       INTEGER,
     node_index      INTEGER,
     parent_index    INTEGER,
-    defaultTrans_id INTEGER,
-    defaultRot_id   INTEGER 
+    name            TEXT    NOT NULL,
+    defaultTrans_x  REAL    DEFAULT ( 0 ),
+    defaultTrans_y  REAL    DEFAULT ( 0 ),
+    defaultTrans_z  REAL    DEFAULT ( 0 ), 
+    defaultRot_x    REAL    DEFAULT ( 0 ),
+    defaultRot_y    REAL    DEFAULT ( 0 ),
+    defaultRot_z    REAL    DEFAULT ( 0 ),
+    defaultRot_w    REAL    DEFAULT ( 0 )
 );
 
 
@@ -405,10 +405,16 @@ CREATE TABLE shapeMount (
                             DEFAULT ( 0 ),
     child_shape_id  INTEGER NOT NULL
                             DEFAULT ( 0 ),
-    offset_id       INTEGER DEFAULT ( 0 ),
-    orientation_id  INTEGER DEFAULT ( 0 ),
-    scale_id        INTEGER DEFAULT ( 0 ),
-    joint_id        INTEGER DEFAULT ( 0 ),
     parent_node     INTEGER DEFAULT ( 0 ),
-    child_node      INTEGER DEFAULT ( 0 )
+    child_node      INTEGER DEFAULT ( 0 ),
+    joint_id        INTEGER DEFAULT ( 0 ),
+    offset_x         	REAL    DEFAULT ( 0 ),
+    offset_y         	REAL    DEFAULT ( 0 ),
+    offset_z         	REAL    DEFAULT ( 0 ),
+    orient_x         	REAL    DEFAULT ( 0 ),
+    orient_y         	REAL    DEFAULT ( 0 ),
+    orient_z         	REAL    DEFAULT ( 0 ), 
+    scale_x       	REAL    DEFAULT ( 0 ),
+    scale_y       	REAL    DEFAULT ( 0 ),
+    scale_z       	REAL    DEFAULT ( 0 )
 );

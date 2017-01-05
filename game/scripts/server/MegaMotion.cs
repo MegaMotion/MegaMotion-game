@@ -15,6 +15,11 @@ $mmAddKeyframeWindowID = 524;
 $mmAddKeyframeSeriesWindowID = 466;
 $mmAddKeyframeSetWindowID = 544;
 
+$mmScene_ActorBlock_16x16_ID = 7;
+$mmScene_ActorBlock_4x4_ID = 8;
+$mmScene_ActorBlock_3x40_ID = 10;
+
+
 $mmLastProject = 0;
 $mmLastScene = 0;  
 
@@ -49,6 +54,8 @@ $mmDebugRenderJointLimits = 0;
 $mmDebugRenderBodyAxes = 0;
 
 //Some of above should just be prefs, others should be local.
+
+exec("MegaMotionScenes.gui");
 
 
 /*
@@ -163,11 +170,14 @@ function exposeMegaMotionScenesForm()
       MegaMotionScenes.delete();
    }
    
-   %dbRebuild = true;
+   %dbRebuild = false;
    if (%dbRebuild)
       makeSqlGuiForm($MegaMotionScenesWindowID);
    else //Hmm, not working, not sure why.
-      exec("../../MegaMotionScenes.gui");//FIX: find or make a directory for these, not game/.
+   {
+      exec("MegaMotionScenes.gui");//FIX: still searching for correct place to execute this.
+      EWorldEditor.add(MegaMotionScenes); 
+   }
       
    setupMegaMotionScenesForm();   
    
@@ -634,7 +644,7 @@ function updateMegaMotionForm()
 
 function mmUpdatePhysicsTab()
 {//First shape part properties, then joint properties...
-//FIX: All of these fields need to check for blank spaces, will crash query.
+ //FIX: All of these fields need to check for blank spaces, will crash query.
    if (!isObject($mmSelectedShape))
    {
       echo("Physics Tab Commit failed, no sceneShape selected!");
@@ -791,6 +801,9 @@ function mmUpdateSequenceTab()
    //do nothing here yet (so far all sequence tab changes are instant, no "Commit" button changes.
 }
 
+
+//HERE: still need to fix all occurrences of vector3/rotation or new position/rotation/scale tables,
+//to restore system of vectors included in the parent table instead.
 function mmUpdateSceneShapeTab()
 {
    %panel = $mmSceneShapeTab.findObjectByInternalName("sceneShapePanel");
@@ -802,25 +815,30 @@ function mmUpdateSceneShapeTab()
    %pos_x = $mmSceneShapePositionX.getText();
    %pos_y = $mmSceneShapePositionY.getText();
    %pos_z = $mmSceneShapePositionZ.getText();
-   %query = "UPDATE vector3 SET x=" @ %pos_x @ ",y=" @ %pos_y @ ",z=" @ %pos_z @ 
-            " WHERE id=" @ MegaMotionScenes.pos_id @ ";";
-   sqlite.query(%query, 0); 
+   //%query = "UPDATE vector3 SET x=" @ %pos_x @ ",y=" @ %pos_y @ ",z=" @ %pos_z @ 
+   //         " WHERE id=" @ MegaMotionScenes.pos_id @ ";";
+   //sqlite.query(%query, 0); 
    
    %rot_x = $mmSceneShapeOrientationX.getText();
    %rot_y = $mmSceneShapeOrientationY.getText();
    %rot_z = $mmSceneShapeOrientationZ.getText();
    %rot_a = $mmSceneShapeOrientationAngle.getText();
-   %query = "UPDATE rotation SET x=" @ %rot_x @ ",y=" @ %rot_y @ ",z=" @ %rot_z @ 
-             ",angle=" @ %rot_a @ " WHERE id=" @ MegaMotionScenes.rot_id @ ";";
-   sqlite.query(%query, 0); 
+   //%query = "UPDATE rotation SET x=" @ %rot_x @ ",y=" @ %rot_y @ ",z=" @ %rot_z @ 
+   //          ",angle=" @ %rot_a @ " WHERE id=" @ MegaMotionScenes.rot_id @ ";";
+   //sqlite.query(%query, 0); 
    
    %scale_x = $mmSceneShapeScaleX.getText();
    %scale_y = $mmSceneShapeScaleY.getText();
    %scale_z = $mmSceneShapeScaleZ.getText();
-   %query = "UPDATE vector3 SET x=" @ %scale_x @ ",y=" @ %scale_y @ ",z=" @ %scale_z @ 
-            " WHERE id=" @ MegaMotionScenes.scale_id @ ";";
-   sqlite.query(%query, 0); 
+   //%query = "UPDATE vector3 SET x=" @ %scale_x @ ",y=" @ %scale_y @ ",z=" @ %scale_z @ 
+   //         " WHERE id=" @ MegaMotionScenes.scale_id @ ";";
+   //sqlite.query(%query, 0); 
    
+   %query = "UPDATE sceneShape SET pos_x=" @ %pos_x @ ",pos_y=" @ %pos_y @ ",pos_z=" @ %pos_z @ 
+            ",rot_x=" @ %rot_x @ ",rot_y=" @ %rot_y @ ",rot_z=" @ %rot_z @ ",rot_a=" @ %rot_a @ 
+            ",scale_x=" @ %scale_x @ ",scale_y=" @ %scale_y @ ",scale_z=" @ %scale_z @
+            " WHERE id=" @ %sceneShapeID @ ";";
+   sqlite.query(%query,0);
    
    //Shape Mounts
    %shapeMountID = %panel.findObjectByInternalName("shapeMountList").getSelected();
@@ -838,50 +856,18 @@ function mmUpdateSceneShapeTab()
    %childShape = %panel.findObjectByInternalName("shapeMountChildShapeList").getSelected();
    %childNode = %panel.findObjectByInternalName("shapeMountChildNodeList").getSelected();
    
-   
-   //NOPE!! childShape will now stay the same no matter what, since initial creation, but 
-   //you will have to go into the scene shape table and change the shape id there.
-   
    if (MegaMotionScenes.mount_child_shape != %childShape)
    {//We've changed our shape, so we need to go set it in the sceneShape table.
       %query = "UPDATE sceneShape SET shape_id=" @ %childShape @ " WHERE id=" @ 
                   MegaMotionScenes.mount_child_id @ ";";
       sqlite.query(%query,0);
    }
-   //%query = "UPDATE shapeMount SET parent_node=" @ %parentNode @  ",child_shape=" @ %childShape @
-   //        ",child_node=" @ %childNode @  " WHERE id=" @ %shapeMountID @ ";";
-   %query = "UPDATE shapeMount SET parent_node=" @ %parentNode @ ",child_node=" @ %childNode @
-               " WHERE id=" @ %shapeMountID @ ";";
-   sqlite.query(%query, 0);
-      
-   %mount_offset_x = %panel.findObjectByInternalName("shapeMountOffsetX").getText();   
-   %mount_offset_y = %panel.findObjectByInternalName("shapeMountOffsetY").getText(); 
-   %mount_offset_z = %panel.findObjectByInternalName("shapeMountOffsetZ").getText(); 
-   %query = "UPDATE position SET x=" @ %mount_offset_x @ ",y=" @ %mount_offset_y @ ",z=" @ 
-           %mount_offset_z @  " WHERE id=" @ MegaMotionScenes.mount_offset_id @ ";";
-   sqlite.query(%query, 0);
-   
-   %mount_orientation_x = %panel.findObjectByInternalName("shapeMountRotationX").getText();   
-   %mount_orientation_y = %panel.findObjectByInternalName("shapeMountRotationY").getText(); 
-   %mount_orientation_z = %panel.findObjectByInternalName("shapeMountRotationZ").getText(); 
-   %query = "UPDATE euler SET x=" @ %mount_orientation_x @ ",y=" @ %mount_orientation_y @ 
-      ",z=" @ %mount_orientation_z @ " WHERE id=" @ MegaMotionScenes.mount_orientation_id @ ";";
-   sqlite.query(%query, 0);
-   
-   %mount_scale_x = %panel.findObjectByInternalName("shapeMountScaleX").getText();   
-   %mount_scale_y = %panel.findObjectByInternalName("shapeMountScaleY").getText(); 
-   %mount_scale_z = %panel.findObjectByInternalName("shapeMountScaleZ").getText(); 
-   %query = "UPDATE scale SET x=" @ %mount_scale_x @ ",y=" @ %mount_scale_y @ ",z=" @ %mount_scale_z @ 
-            " WHERE id=" @ MegaMotionScenes.mount_scale_id @ ";";
-   sqlite.query(%query, 0);
    
    mmUnloadScene();
    mmLoadScene();
    
    echo("Reloaded scene after updating sceneShapeTab!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 }
-
-
 
 function mmUpdateAiTab()
 {
@@ -891,16 +877,6 @@ function mmUpdateAiTab()
    //if 
    %sceneShapeId = $mmSceneShapeList.getSelected();
    
-   //HERE: Go through all selected sceneShapes.
-    
-   /*
-   if ((%openSteer_id>0)&&(%openSteer_id!=$mmOpenSteerId))
-   {
-      %query = "UPDATE sceneShape SET openSteerProfile_id=" @ %openSteer_id @ " WHERE id=" @ %sceneShapeId @ ";";
-      echo("changing openSteer profile! " @ %query);
-      sqlite.query(%query, 0);       
-   }
-   */
    if (%openSteer_id>0)
    {
       %tab = $mmTabBook.findObjectByInternalName("sceneShapeTab");
@@ -929,15 +905,11 @@ function mmUpdateAiTab()
                " WHERE id=" @ %openSteer_id @ ";";
       echo("Changing openSteer data: \n " @ %query);
       sqlite.query(%query,0);
-   }
-   
+   }   
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////
 //REFACTOR: Still working out the MegaMotion vs openSimEarth division of labor.
-///////////////////////////////////////////////////////////////////////////////////
-// REFACTOR - Still figuring out what goes with MegaMotion vs openSimEarth.
 
 function mmPullSceneShapes(%simGroup)
 {//So, here we need to remove objects from the MissionGroup and put them into another simGroup.
@@ -1011,12 +983,13 @@ function MegaMotionSaveMission()
       }
    }
   
-   // now write the terrain and mission files out:
-   
-   if ($pref::MegaMotion::saveSceneShapes)//Do this regardless of terrainPager or not.
-      mmPullSceneShapesAndSave(%tempSceneShapes);
-   else
-      mmPullSceneShapes(%tempSceneShapes);
+   // now write the terrain and mission files out - for now, only one option, always do it.
+   %tempSceneShapes = new SimSet();
+   //if ($pref::MegaMotion::saveSceneShapes)//Do this regardless of terrainPager or not.
+   mmPullSceneShapesAndSave(%tempSceneShapes);
+   //else  //In the future perhaps provide a checkbox for whether to save scene shapes or not,
+   //   mmPullSceneShapes(%tempSceneShapes); //but for now we do, so unload them or leave them 
+                                             // where you wnat them before working on mission.
       
    
    ///////////////////////////   
@@ -1027,7 +1000,6 @@ function MegaMotionSaveMission()
       %tempStaticGroup = new SimSet();
       %tempRoadGroup = new SimSet();
       %tempForestGroup = new SimSet();
-      %tempSceneShapes = new SimSet();
       
       if ($pref::MegaMotion::saveStatics)
          osePullStaticsAndSave(%tempStaticGroup);
@@ -1091,54 +1063,38 @@ function MegaMotionSaveSceneShapes()
    for (%i = 0; %i < SceneShapes.getCount();%i++)
    {
       %obj = SceneShapes.getObject(%i);  
-      if ((%obj.sceneShapeID>0)&&(%obj.sceneID>0)&&(%obj.isDirty))
+      if ((%obj.sceneShapeID>0)&&(%obj.sceneID>0))//&&(%obj.isDirty)//isDirty isn't always being set - slower, but do them all for now.
       {
-         %query = "SELECT  pos_id,rot_id,scale_id FROM sceneShape " @ 
-                  "WHERE id=" @ %obj.sceneShapeID @ ";";
-         %resultSet = sqlite.query(%query,0);
-         if (sqlite.numRows(%resultSet)==1)
-         {
-            %pos_id = sqlite.getColumn(%resultSet, "pos_id");
-            %rot_id = sqlite.getColumn(%resultSet, "rot_id");
-            %scale_id = sqlite.getColumn(%resultSet, "scale_id");
-            
-            %trans = %obj.getTransform();
-            %p_x = getWord(%trans,0);
-            %p_y = getWord(%trans,1);
-            %p_z = getWord(%trans,2);
-            %r_x = getWord(%trans,3);
-            %r_y = getWord(%trans,4);
-            %r_z = getWord(%trans,5);
-            %r_angle = mRadToDeg(getWord(%trans,6));
-            %query = "UPDATE vector3 SET x=" @ %p_x @ ",y=" @ %p_y @ ",z=" @ %p_z @
-                     " WHERE id=" @ %pos_id @ ";";
-            sqlite.query(%query,0);
-            %query = "UPDATE rotation SET x=" @ %r_x @ ",y=" @ %r_y @ ",z=" @ %r_z @
-                     ",angle=" @ %r_angle @ " WHERE id=" @ %rot_id @ ";";
-            sqlite.query(%query,0);
-            
-            %scale = %obj.getScale();
-            //if (%scale $= "1 1 1") //Do what now? we need to check for this and assign id = 1, and maintain that.
-            %s_x = getWord(%scale,0);//Or, just ignore it and accept the bloat.
-            %s_y = getWord(%scale,1);
-            %s_z = getWord(%scale,2);            
-            %query = "UPDATE vector3 SET x=" @ %s_x @ ",y=" @ %s_y @ ",z=" @ %s_z @
-                     " WHERE id=" @ %scale_id @ ";";
-            sqlite.query(%query,0);
-            
-            echo("updated a dirty scene shape!!");
-         }        
+         %trans = %obj.getTransform();
+         
+         %p_x = getWord(%trans,0);
+         %p_y = getWord(%trans,1);
+         %p_z = getWord(%trans,2);
+         
+         %r_x = getWord(%trans,3);
+         %r_y = getWord(%trans,4);
+         %r_z = getWord(%trans,5);
+         %r_a = mRadToDeg(getWord(%trans,6));
+         
+         %scale = %obj.getScale();
+         %s_x = getWord(%scale,0);
+         %s_y = getWord(%scale,1);
+         %s_z = getWord(%scale,2);
+         
+         %query = "UPDATE sceneShape SET pos_x=" @ %p_x @ ",pos_y=" @ %p_y @ ",pos_z=" @ %p_z @
+                  ",rot_x=" @ %r_x @ ",rot_y=" @ %r_y @ ",rot_z=" @ %r_z @ ",rot_a=" @ %r_a @ 
+                  ",scale_x=" @ %s_x @ ",scale_y=" @ %s_y @ ",scale_z=" @ %s_z @
+                  " WHERE id=" @ %obj.sceneShapeID @ ";";
+         sqlite.query(%query,0);          
       }
    }
 }
-
+         
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
 
 function mmSelectProject()
 {   
-   echo("calling selectMegaMotionProject " @ $mmProjectList.getSelected());
-   
    if ($mmProjectList.getSelected()<=0)
       return;
     
@@ -1230,6 +1186,7 @@ function mmReallyDeleteProject()
       sqlite.clearResult(%resultSet);      
    }
    
+   //(This could be accomplished with cascade deletes, but let's keep doing it manually for now.)
    %query = "DELETE FROM scene WHERE project_id=" @ %project_id @ ";";
    sqlite.query(%query,0);
    
@@ -1262,7 +1219,7 @@ function mmSelectScene()
    $mmLastScene = $mmSceneList.getSelected();
    $mmSceneShapeList.clear(); 
    $mmTargetShapeList.clear(); 
-   
+   $mmTargetShapeList.add("",0);
    echo("calling selectMegaMotionScene on scene " @ $mmSceneList.getSelected());
    
    %firstID = 0;
@@ -1317,11 +1274,11 @@ function mmReallyAddScene()  //TO DO: Description, position.
       sqlite.clearResult(%resultSet);
       
       //HERE: need scene position XYZ fields.
-      %query = "INSERT INTO vector3 (x,y,z) VALUES (0,0,0);";
-      sqlite.query(%query,0);      
+      //%query = "INSERT INTO vector3 (x,y,z) VALUES (0,0,0);";
+      //sqlite.query(%query,0);      
       
-      %query = "INSERT INTO scene (name,project_id,pos_id) VALUES ('" @ %name @ "'," @ %proj_id @ 
-                  ",last_insert_rowid());";
+      %query = "INSERT INTO scene (name,project_id,pos_x,pos_y,pos_z) VALUES ('" @ %name @ "'," @ %proj_id @ 
+                  ",0,0,0);";//FIX!! add pos x,y,z to the Add Scene form.
       sqlite.query(%query,0);
             
       mmAddSceneWindow.delete();
@@ -1346,18 +1303,35 @@ function mmReallyDeleteScene(%id)
 {
    mmUnloadScene(%id);
    
+   //(This could be accomplished with cascade deletes, but let's keep doing it manually for now.)
+   //Except, DERP, now that everything is in the one table, there is a much simpler way than this...
+   /*
    %query = "SELECT id FROM sceneShape WHERE scene_id=" @ %id @ ";";
    %resultSet = sqlite.query(%query,0);
+   %id_list = "";
    if (sqlite.numRows(%resultSet)>0)
    {
       while (!sqlite.endOfResult(%resultSet))
       {
+         //NOPE! Now we will simply list all the ids, and do one query here to delete them all,
+         //mmReallyDeleteSceneShape(%shape_id); //instead of calling this function and doing many queries.
+         
          %shape_id = sqlite.getColumn(%resultSet,"id");
-         mmReallyDeleteSceneShape(%shape_id);
+         if (strlen(%id_list)==0)
+            %id_list =  %shape_id;
+         else
+            %id_list = %id_list @ "," @ %shape_id;
+     
          sqlite.nextRow(%resultSet); 
       }
       sqlite.clearResult(%resultSet);
    }
+   
+   %query = "DELETE FROM sceneShape WHERE id IN (" @ %id_list @ ");";
+   sqlite.query(%query,0);   
+   */
+   %query = "DELETE FROM sceneShape WHERE scene_id=" @ %id @ ";";
+   sqlite.query(%query,0);   
    
    %query = "DELETE FROM scene WHERE id=" @ %id @ ";";
    sqlite.query(%query,0);
@@ -1382,23 +1356,22 @@ function mmLoadScene(%id)
       }
    }
    
+   //HERE: all major SQL query loops need to be done in the engine, they take too long in script. (benchmark this btw)
+   loadSceneShapes(%id);//FIX: doing this later, this is a placeholder.
+   
    %dyn = false;
    %grav = true;
    %ambient = true;
 
-	%query = "SELECT ss.id as ss_id,ss.name AS ss_name,shape_id,shapeGroup_id," @ 
+	%query = "SELECT ss.id AS ss_id,ss.name AS ss_name,shape_id,shapeGroup_id," @ 
 	         "behavior_tree,openSteerProfile_id,actionProfile_id,target_shape_id," @ 
-	         "p.x as pos_x,p.y as pos_y,p.z as pos_z," @ 
-	         "r.x as rot_x,r.y as rot_y,r.z as rot_z,r.angle as rot_angle," @ 
-	         "sc.x as scale_x,sc.y as scale_y,sc.z as scale_z," @ 
-	         "sp.x as scene_pos_x,sp.y as scene_pos_y,sp.z as scene_pos_z," @ 
+	         "ss.pos_x,ss.pos_y,ss.pos_z," @ 
+	         "ss.rot_x,ss.rot_y,ss.rot_z,ss.rot_a," @ 
+	         "ss.scale_x,ss.scale_y,ss.scale_z," @ 
+	         "s.pos_x AS scene_pos_x,s.pos_y AS scene_pos_y,s.pos_z AS scene_pos_z," @ 
 	         "sh.datablock as datablock " @ 
 	         "FROM sceneShape ss " @ 
 	         "JOIN scene s ON s.id=scene_id " @
-	         "LEFT JOIN vector3 p ON ss.pos_id=p.id " @ 
-	         "LEFT JOIN rotation r ON ss.rot_id=r.id " @ 
-	         "LEFT JOIN vector3 sc ON ss.scale_id=sc.id " @ 
-	         "LEFT JOIN vector3 sp ON s.pos_id=sp.id " @ 
 	         "JOIN physicsShape sh ON ss.shape_id=sh.id " @ 
 	         "WHERE scene_id=" @ %id @ ";";  
 	%resultSet = sqlite.query(%query, 0);
@@ -1426,7 +1399,7 @@ function mmLoadScene(%id)
          %rot_x = sqlite.getColumn(%resultSet, "rot_x");
          %rot_y = sqlite.getColumn(%resultSet, "rot_y");
          %rot_z = sqlite.getColumn(%resultSet, "rot_z");
-         %rot_angle = sqlite.getColumn(%resultSet, "rot_angle");
+         %rot_a = sqlite.getColumn(%resultSet, "rot_a");
          
          %scale_x = sqlite.getColumn(%resultSet, "scale_x");
          %scale_y = sqlite.getColumn(%resultSet, "scale_y");
@@ -1444,7 +1417,7 @@ function mmLoadScene(%id)
          //       " behavior tree " @ %behavior_tree );
                 
          %position = (%pos_x + %scene_pos_x) @ " " @ (%pos_y + %scene_pos_y) @ " " @ (%pos_z + %scene_pos_z);
-         %rotation = %rot_x @ " " @ %rot_y @ " " @ %rot_z @ " " @ %rot_angle;
+         %rotation = %rot_x @ " " @ %rot_y @ " " @ %rot_z @ " " @ %rot_a;
          %scale = %scale_x @ " " @ %scale_y @ " " @ %scale_z;
          
          //echo("loading sceneShape id " @ %shape_id @ " position " @ %position @ " rotation " @ 
@@ -1484,6 +1457,7 @@ function mmLoadScene(%id)
             targetShapeID = %target_shape;
             behaviorTreeName = %behavior_tree;
             targetType = "Health";//"AmmoClip" "Player" //Obsolete?
+            targetItem = 0;
             isDirty = false;
          };
          //skeletonID = %skeleton_id;
@@ -1516,10 +1490,30 @@ function mmLoadScene(%id)
    
    mmMountShapes(%id);   
    
+   mmSceneSpecifics(%id);
+   
    $mmLoadedScenes++;
    
    //schedule(40, 0, "mmLoadKeyframeSets");
 } 
+
+function mmSceneSpecifics(%id)
+{  
+   //One example of specific things one can do, on a per scene basis: grab all of the sceneShapes using 
+   //a particular shape, in this case the Cube model, and put them in a special group for later access.
+   if ((%id==$mmScene_ActorBlock_16x16_ID)||(%id==$mmScene_ActorBlock_3x40_ID))
+   {
+      %temp = new SimSet(CubeShapes);
+      for (%i = 0; %i < SceneShapes.getCount();%i++)
+      {
+         %obj = SceneShapes.getObject(%i); 
+         if (%obj.shapeID==11) // Cube
+         {
+            CubeShapes.add(%obj);            
+         }
+      }
+   }
+}
 
 function mmSetBehaviors(%id)
 {
@@ -1713,15 +1707,12 @@ function mmSelectSceneShape()
    }
    
    //%query = "SELECT * FROM sceneShape WHERE id=" @ %sceneShapeId @ ";";  
-	%query = "SELECT shape_id,ss.name,shapeGroup_id,behavior_tree,openSteerProfile_id," @ 
-	         "ss.pos_id AS pos_id,p.x AS pos_x,p.y AS pos_y,p.z AS pos_z," @ 
-	         "ss.rot_id AS rot_id,r.x AS rot_x,r.y AS rot_y,r.z AS rot_z,r.angle AS rot_angle," @ 
-	         "ss.scale_id AS scale_id,sc.x AS scale_x,sc.y AS scale_y,sc.z AS scale_z " @ 
-	         "FROM sceneShape ss " @ 
-	         "LEFT JOIN vector3 p ON ss.pos_id=p.id " @ 
-	         "LEFT JOIN rotation r ON ss.rot_id=r.id " @ 
-	         "LEFT JOIN vector3 sc ON ss.scale_id=sc.id " @ 
-	         "WHERE ss.id=" @ %scene_shape_id @ ";";
+	%query = "SELECT shape_id,name,shapeGroup_id,behavior_tree,openSteerProfile_id," @ 
+	         "pos_x,pos_y,pos_z," @ 
+	         "rot_x,rot_y,rot_z,rot_a," @ 
+	         "scale_x,scale_y,scale_z " @ 
+	         "FROM sceneShape " @ 
+	         "WHERE id=" @ %scene_shape_id @ ";";
 
    %resultSet = sqlite.query(%query, 0); 
    if (sqlite.numRows(%resultSet)==1)
@@ -1738,14 +1729,10 @@ function mmSelectSceneShape()
       %pos_x = sqlite.getColumn(%resultSet, "pos_x");
       %pos_y = sqlite.getColumn(%resultSet, "pos_y");
       %pos_z = sqlite.getColumn(%resultSet, "pos_z");
-      //$mmPosId = sqlite.getColumn(%resultSet, "pos_id");
-      MegaMotionScenes.pos_id = sqlite.getColumn(%resultSet, "pos_id");
       %rot_x = sqlite.getColumn(%resultSet, "rot_x");
       %rot_y = sqlite.getColumn(%resultSet, "rot_y");
       %rot_z = sqlite.getColumn(%resultSet, "rot_z");
-      %rot_a = sqlite.getColumn(%resultSet, "rot_angle");
-      //$mmRotId = sqlite.getColumn(%resultSet, "rot_id");
-      MegaMotionScenes.rot_id = sqlite.getColumn(%resultSet, "rot_id");
+      %rot_a = sqlite.getColumn(%resultSet, "rot_a");
       %scale_x = sqlite.getColumn(%resultSet, "scale_x");
       %scale_y = sqlite.getColumn(%resultSet, "scale_y");
       %scale_z = sqlite.getColumn(%resultSet, "scale_z");
@@ -1819,24 +1806,25 @@ function mmDeleteSceneShape()
 
 function mmReallyDeleteSceneShape(%id)
 {//Now, this can get called from the delete button, OR from inside a loop in another function.
-   
-   %query = "SELECT pos_id,rot_id,scale_id FROM sceneShape WHERE id=" @ %id @ ";";
-   %resultSet = sqlite.query(%query,0);
-   if (%resultSet==0)
-      return;
+   //EXCEPT: we're going to stop calling it from loops, because it is TOO SLOW. For deleting 
+   //whole scenes, we need to collect the ids and use "WHERE id IN (...)"
+   //%query = "SELECT pos_id,rot_id,scale_id FROM sceneShape WHERE id=" @ %id @ ";";
+   //%resultSet = sqlite.query(%query,0);
+   //if (%resultSet==0)
+   //   return;
 
-   %pos_id = sqlite.getColumn(%resultSet,"pos_id");
-   %rot_id = sqlite.getColumn(%resultSet,"rot_id");
-   %scale_id = sqlite.getColumn(%resultSet,"scale_id");
-   sqlite.clearResult(%resultSet);
+   //%pos_id = sqlite.getColumn(%resultSet,"pos_id");
+   //%rot_id = sqlite.getColumn(%resultSet,"rot_id");
+   //%scale_id = sqlite.getColumn(%resultSet,"scale_id");
+   //sqlite.clearResult(%resultSet);
    
-   %query = "DELETE FROM vector3 WHERE id=" @ %pos_id @ " OR id=" @ %scale_id @ ";";
-   sqlite.query(%query,0);
-   %query = "DELETE FROM rotation WHERE id=" @ %rot_id @ ";";
-   sqlite.query(%query,0);
+   //%query = "DELETE FROM vector3 WHERE id=" @ %pos_id @ " OR id=" @ %scale_id @ ";";
+   //sqlite.query(%query,0);
+   //%query = "DELETE FROM rotation WHERE id=" @ %rot_id @ ";";
+   //sqlite.query(%query,0);
+   
    %query = "DELETE FROM sceneShape WHERE id=" @ %id @ ";";
-   sqlite.query(%query,0);//Here, not sure it's a speed advantage, but piling queries 
-                           //together whenever possible just in case. (didn't work?)
+   sqlite.query(%query,0);
 }
 
 //Assign this behavior tree to all selected sceneShapes.
@@ -1897,6 +1885,7 @@ function mmSelectTargetShape()
    
    if (EWorldEditor.getSelectionSize()==0)
       return;
+      
    %target_shape_id = $mmTargetShapeList.getSelected();
    %id_list = "";
    for (%i=0;%i<EWorldEditor.getSelectionSize();%i++)
@@ -2047,6 +2036,7 @@ function mmReallyDeleteShape()
    
    exposeMegaMotionScenesForm();   
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 
 function mmSelectShape()
@@ -2432,10 +2422,10 @@ function mmReallyAddSceneShape()
    %pos_y = mmAddSceneShapeWindow.findObjectByInternalName("shapePositionY").getText();
    %pos_z = mmAddSceneShapeWindow.findObjectByInternalName("shapePositionZ").getText(); 
    
-   %ori_x = mmAddSceneShapeWindow.findObjectByInternalName("shapeOrientationX").getText();
-   %ori_y = mmAddSceneShapeWindow.findObjectByInternalName("shapeOrientationY").getText();
-   %ori_z = mmAddSceneShapeWindow.findObjectByInternalName("shapeOrientationZ").getText(); 
-   %ori_a = mmAddSceneShapeWindow.findObjectByInternalName("shapeOrientationAngle").getText();
+   %rot_x = mmAddSceneShapeWindow.findObjectByInternalName("shapeOrientationX").getText();
+   %rot_y = mmAddSceneShapeWindow.findObjectByInternalName("shapeOrientationY").getText();
+   %rot_z = mmAddSceneShapeWindow.findObjectByInternalName("shapeOrientationZ").getText(); 
+   %rot_a = mmAddSceneShapeWindow.findObjectByInternalName("shapeOrientationAngle").getText();
    
    %scale_x = mmAddSceneShapeWindow.findObjectByInternalName("shapeScaleX").getText();
    %scale_y = mmAddSceneShapeWindow.findObjectByInternalName("shapeScaleY").getText();
@@ -2464,21 +2454,22 @@ function mmReallyAddSceneShape()
              ",'" @ %behavior_tree @ "');";
    sqlite.query(%query,0);
 
-   //These are optional, check for values first.      
-   //,shapeGroup_id,behaviorTree
-   // "," @ %group_id @ ",'" @ %behaviorTree @ "'"
 
-   %ssID = 0;
-   %query = "SELECT id FROM sceneShape WHERE name='" @ %name @ "' AND scene_id=" @ %scene_id @ ";";
+   %query = "SELECT last_insert_rowid() AS id;";
    %resultSet = sqlite.query(%query,0);
-   if (sqlite.numRows(%resultSet)==1)
-   {
-      %ss_id = sqlite.getColumn(%resultSet, "id");
-      sqlite.clearResult(%resultSet);
-   }
+   %ss_id = sqlite.getColumn(%resultSet,"id");
+   sqlite.clearResult(%resultSet);
    if (%ss_id==0)
       return;
-   
+      
+   %query = "UPDATE sceneShape SET pos_x=" @ %pos_x @ ",pos_y="  @ %pos_y @ ",pos_z="  @ %pos_z @
+            ",rot_x="  @ %rot_x @ ",rot_y="  @ %rot_y @ ",rot_z="  @ %rot_z @ ",rot_a="  @ %rot_a @ 
+            ",scale_x="  @ %scale_x @ ",scale_y="  @ %scale_y @ ",scale_z="  @ %scale_z @
+            " WHERE id=" @ %ss_id @ ";";
+            
+            
+            
+/*
    //For first pass at least, just add default values and spawn the character at scene origin.
    %query = "INSERT INTO vector3 (x,y,z) VALUES (" @ %pos_x @ "," @ %pos_y @ "," @ %pos_z @ ");";
    sqlite.query(%query,0);
@@ -2495,6 +2486,7 @@ function mmReallyAddSceneShape()
    sqlite.query(%query,0);
    %query = "UPDATE sceneShape SET scale_id=last_insert_rowid() WHERE id=" @ %ss_id @ ";";
    sqlite.query(%query, 0);  
+  */
    
    mmAddSceneShapeWindow.delete();
       
@@ -2576,7 +2568,7 @@ function mmAddSceneShapeBlock()
       mmLoadScene($mmSceneList.getSelected());
    }
   
-   mmAddShapeGroupWindow.delete();
+   mmAddSceneShapeWindow.delete();
       
    exposeMegaMotionScenesForm();
 }
@@ -2851,13 +2843,11 @@ function mmSelectShapeMount()
    
    
    %query = "SELECT parent_shape_id,child_shape_id,parent_node,child_node," @ 
-   "offset_id,o.x AS offset_x,o.y AS offset_y,o.z AS offset_z," @
-   "orientation_id,r.x AS orientation_x,r.y AS orientation_y,r.z AS orientation_z," @
-   "scale_id,s.x AS scale_x,s.y AS scale_y,s.z AS scale_z," @
+   "offset_x,offset_y,offset_z," @
+   "orient_x,orient_y,orient_z," @
+   "scale_x,scale_y,scale_z," @
    "joint_id FROM shapeMount sm " @
-	"LEFT JOIN position o ON sm.offset_id=o.id " @ 
-	"LEFT JOIN euler r ON sm.orientation_id=r.id " @ 
-	"LEFT JOIN scale s ON sm.scale_id=s.id " @  
+	
    "WHERE sm.id=" @ %shapeMount @ ";";
    %resultSet = sqlite.query(%query,0);
    
@@ -2889,22 +2879,24 @@ function mmSelectShapeMount()
       echo("Setting child shape node: " @ %childNode);
       $mmShapeMountChildNodeList.setSelected(%childNode);
       
-      MegaMotionScenes.mount_offset_id = sqlite.getColumn(%resultSet,"offset_id");
       %offsetX.setText(sqlite.getColumn(%resultSet,"offset_x"));
       %offsetY.setText(sqlite.getColumn(%resultSet,"offset_y"));
       %offsetZ.setText(sqlite.getColumn(%resultSet,"offset_z"));
-      MegaMotionScenes.mount_orientation_id = sqlite.getColumn(%resultSet,"orientation_id");
-      %orientationX.setText(sqlite.getColumn(%resultSet,"orientation_x"));
-      %orientationY.setText(sqlite.getColumn(%resultSet,"orientation_y"));
-      %orientationZ.setText(sqlite.getColumn(%resultSet,"orientation_z"));
-      MegaMotionScenes.mount_scale_id = sqlite.getColumn(%resultSet,"scale_id");
+      %orientationX.setText(sqlite.getColumn(%resultSet,"orient_x"));
+      %orientationY.setText(sqlite.getColumn(%resultSet,"orient_y"));
+      %orientationZ.setText(sqlite.getColumn(%resultSet,"orient_z"));
       %scaleX.setText(sqlite.getColumn(%resultSet,"scale_x"));
       %scaleY.setText(sqlite.getColumn(%resultSet,"scale_y"));
       %scaleZ.setText(sqlite.getColumn(%resultSet,"scale_z"));      
-      
    }
 }
 
+/*
+"LEFT JOIN position o ON sm.offset_id=o.id " @ 
+	"LEFT JOIN euler r ON sm.orientation_id=r.id " @ 
+	"LEFT JOIN scale s ON sm.scale_id=s.id " @  
+*/
+	
 function mmAddShapeMount()
 {
    echo("calling addShapeMount!!!");
@@ -2952,7 +2944,7 @@ function mmSetupAddShapeMountWindow()
    }
    sqlite.clearResult(%resultSet);
    
-   
+   //FIX! remember values from last use.
    %offsetX = addShapeMountWindow.findObjectByInternalName("offsetX");
    %offsetY = addShapeMountWindow.findObjectByInternalName("offsetY");
    %offsetZ = addShapeMountWindow.findObjectByInternalName("offsetZ");
@@ -3043,15 +3035,37 @@ function mmReallyAddShapeMount()
    %scaleZ = addShapeMountWindow.findObjectByInternalName("scaleZ").getText();
    
    //NOW: insert the actual values! Mount a new shape! But first, add the child shape
-   //to sceneShapes!
-   %query = "INSERT INTO sceneShape (name,scene_id,shape_id,shapeGroup_id) " @
+   //to sceneShapes! Since it's going to be a mount, using default pos and rot values.
+   %query = "INSERT INTO sceneShape (name,scene_id,shape_id,shapeGroup_id," @
+            "pos_x,pos_y,pos_z,rot_x,rot_y,rot_z,rot_a,scale_x,scale_y,scale_z)" @
             " VALUES ('" @ %childShapeList.getText() @ "'," @ $mmSelectedShape.sceneID @ "," @ 
-            %childShapeList.getSelected() @ "," @ $mmSelectedShape.shapeGroupID @ ");";
+            %childShapeList.getSelected() @ "," @ $mmSelectedShape.shapeGroupID @ "," @ 
+            "0,0,0,0,0,1,0,1,1,1);";//In fact, ignoring scale for now too, since it's stored in shapeMount.
    sqlite.query(%query,0);
    %query = "SELECT last_insert_rowid() AS id;";
    %resultSet = sqlite.query(%query,0);
    %child_id = sqlite.getColumn(%resultSet,"id");
    
+   %query = "INSERT INTO shapeMount (parent_shape_id,child_shape_id,parent_node,child_node," @ 
+            "offset_x,offset_y,offset_z,orient_x,orient_y,orient_z,scale_x,scale_y,scale_z) " @
+            " VALUES (" @ $mmSelectedShape.sceneShapeID @ "," @ %child_id @ "," @
+            %parentNodeList.getSelected() @ "," @ %childNodeList.getSelected() @ "," @
+            %offsetX @ "," @ %offsetY @ "," @ %offsetZ @ "," @ 
+            %rotationX @ "," @ %rotationY @ "," @ %rotationZ @ "," @ 
+            %scaleX @ "," @ %scaleY @ "," @ %scaleZ @ ");";
+   sqlite.query(%query,0);
+   
+   //%query = "SELECT last_insert_rowid() AS id;";
+   //%resultSet = sqlite.query(%query,0);
+   //%sm_id = sqlite.getColumn(%resultSet,"id");
+   
+   //And, WHEW! Really gotta take a look at optimizations here... 
+   mmUnloadScene();
+   mmLoadScene();
+}
+
+/*
+
    //For first pass at least, just add default values and spawn the character at scene origin.
    %query = "INSERT INTO vector3 (x,y,z) VALUES (0,0,0);";
    sqlite.query(%query,0);
@@ -3066,16 +3080,9 @@ function mmReallyAddShapeMount()
    %query = "INSERT INTO vector3 (x,y,z) VALUES (1,1,1);";      
    sqlite.query(%query,0);
    %query = "UPDATE sceneShape SET scale_id=last_insert_rowid() WHERE id=" @ %child_id @ ";";
-   sqlite.query(%query, 0);  
+   sqlite.query(%query, 0); 
    
    
-   %query = "INSERT INTO shapeMount (parent_shape_id,child_shape_id,parent_node,child_node) " @
-            " VALUES (" @ $mmSelectedShape.sceneShapeID @ "," @ %child_id @ "," @
-            %parentNodeList.getSelected() @ "," @ %childNodeList.getSelected() @ ");";
-   sqlite.query(%query,0);
-   %query = "SELECT last_insert_rowid() AS id;";
-   %resultSet = sqlite.query(%query,0);
-   %sm_id = sqlite.getColumn(%resultSet,"id");
    
    //For first pass at least, just add default values and spawn the character at scene origin.
    %query = "INSERT INTO position (x,y,z) VALUES (" @ %offsetX @ "," @ %offsetY @ "," @ %offsetZ @ ");";
@@ -3094,12 +3101,9 @@ function mmReallyAddShapeMount()
    %query = "UPDATE shapeMount SET scale_id=last_insert_rowid() WHERE id=" @ %sm_id @ ";";
    sqlite.query(%query, 0);  
    
-   //And, WHEW! Really gotta take a look at optimizations here... 
-   mmUnloadScene();
-   mmLoadScene();
-}
+   
 
-/*
+
 	%query = "SELECT shape_id,ss.name,shapeGroup_id,behavior_tree,openSteerProfile_id," @ 
 	         "ss.pos_id AS pos_id,p.x AS pos_x,p.y AS pos_y,p.z AS pos_z," @ 
 	         "ss.rot_id AS rot_id,r.x AS rot_x,r.y AS rot_y,r.z AS rot_z,r.angle AS rot_angle," @ 

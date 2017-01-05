@@ -117,7 +117,7 @@ function goToTarget::precondition(%this, %obj)
 
 function goToTarget::onEnter(%this, %obj)
 {
-   echo("goToTarget::onEnter");
+   //echo("goToTarget::onEnter");
    
    %obj.currentAction = "run";
    
@@ -126,7 +126,7 @@ function goToTarget::onEnter(%this, %obj)
 
 function goToTarget::behavior(%this, %obj)
 {
-   echo("goToTarget::behavior");
+   //echo("goToTarget::behavior");
    // succeed when we reach the item  
    %clientGroundPos = %obj.findGroundPosition(%obj.getClientPosition());
    %diff = VectorSub(%obj.goalPos,%clientGroundPos);
@@ -154,7 +154,7 @@ function navGoToTarget::onEnter(%this, %obj)
 {
    %obj.currentAction = "run";
    %obj.setNavMesh("Nav");
-   echo("navGoToTarget::onEnter, goalPos " @ %obj.goalPos);
+   //echo("navGoToTarget::onEnter, goalPos " @ %obj.goalPos);
    
    if (%obj.currentPathNode==0)//Well this is weird, this time it's calling onEnter all the time...??
    {
@@ -162,8 +162,8 @@ function navGoToTarget::onEnter(%this, %obj)
    
       %obj.currentPathNode = 1;
       %obj.currentPathGoal = %obj.getNavPathNode(%obj.currentPathNode);
-      echo("openSteerGoToTarget, onEnter, first goal: " @ %obj.currentPathGoal @ 
-               " ultimate target " @ %obj.targetItem.position);
+      //echo("openSteerGoToTarget, onEnter, first goal: " @ %obj.currentPathGoal @ 
+      //         " ultimate target " @ %obj.targetItem.position);
       %obj.moveTo(%obj.currentPathGoal);
       //%clientObj.setMoveTarget(%obj.currentPathGoal);
 
@@ -204,7 +204,7 @@ function navGoToTarget::behavior(%this, %obj)
       %clientPos = getWord(%clientGroundPos,0) @ " " @ getWord(%clientGroundPos,1) @ " 0";
       //%nodeDiff = VectorSub(%obj.currentPathGoal,%clientGroundPos);
       %nodeDiff = VectorSub(%pathGoal,%clientPos);
-      echo("checking distance to path node: " @ VectorLen(%nodeDiff) @ " my pos " @ %clientGroundPos @ " target pos " @ %obj.currentPathGoal );
+      //echo("checking distance to path node: " @ VectorLen(%nodeDiff) @ " my pos " @ %clientGroundPos @ " target pos " @ %obj.currentPathGoal );
       //echo(%obj.getId() @ " is looking for target, my position " @ %clientGroundPos @ 
       //      " target position " @ %obj.currentPathGoal @  " distance = " @ VectorLen(%diff) );
 
@@ -332,8 +332,15 @@ function openSteerNavGoToTarget::precondition(%this, %obj)
 function openSteerNavGoToTarget::onEnter(%this, %obj)
 {
    //echo(%obj.sceneShapeID @ " openSteerNavGoToTarget::onEnter, currentGoal " @ %obj.currentPathGoal);
+
+   //DANGER: we have major "ground raycast failed" problems cropping up, trying to turn off groundMove but 
+   //not sure it's working. FIX FIX FIX
+   //%obj.groundMove();
+   //%obj.clearGroundMove();//testing
+   
+   
    %clientObj = %obj.getClientObject();
-   if (%obj.currentPathNode==0)//Well this is weird, this time it's calling onEnter all the time...??
+   if (%obj.currentPathNode==0)
    {
       if (%clientObj.getVehicleID()==0)
          %clientObj.openSteerNavVehicle();
@@ -365,12 +372,14 @@ function openSteerNavGoToTarget::behavior(%this, %obj)
    //if (%obj.targetShapeID>0)
    
    //%groundPos = %obj.findGroundPosition(%obj.goalPos);
-   %currentTargPos = %obj.findGroundPosition(%obj.targetItem.getPosition());
+   //%currentTargPos =  %obj.findGroundPosition(%obj.targetItem.getPosition());
+   %currentTargPos = %obj.targetItem.getPosition();
    %moveDiff = VectorSub(%obj.goalPos,%currentTargPos);
    
-   %clientGroundPos = %obj.findGroundPosition(%obj.getClientPosition());//Note: getClientPosition refers to player
-   %finalDiff = VectorSub(%obj.findGroundPosition(%clientObj.getPosition()),%currentTargPos);
-   
+   //%clientGroundPos = %obj.findGroundPosition(%obj.getClientPosition());//Note: getClientPosition refers to player
+   //%finalDiff = VectorSub(%obj.findGroundPosition(%clientObj.getPosition()),%currentTargPos);
+   %clientGroundPos = %obj.getClientPosition();
+   %finalDiff = VectorSub(%clientObj.getPosition(),%currentTargPos);
    if (VectorLen(%moveDiff)>(%obj.dataBlock.foundItemDistance*2))
    {    
       %obj.setNavPathTo(%currentTargPos);   

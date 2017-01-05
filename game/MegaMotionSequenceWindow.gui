@@ -1,5 +1,5 @@
 %guiContent = new GuiWindowCtrl(MegaMotionSequenceWindow) {
-   position = "2 620";
+   position = "2 637";
    extent = "800 120";
    text = "Sequence Timeline";
    canClose = "1";

@@ -584,7 +584,7 @@ function GameCore::onClientEnterGame(%game, %client)
       for(%e=0; %e < %entity.getCount(); %e++)
       {
          %child = %entity.getObject(%e);
-         if(%child.getCLassName() $= "Entity")
+         if(%child.getClassName() $= "Entity")
             %entityIds = %entityIds SPC %child.getID();  
       }
       
@@ -658,14 +658,16 @@ function GameCore::loadOut(%game, %player)
    %player.setInventory(DeployableTurret, %player.maxInventory(DeployableTurret));
    %player.addToWeaponCycle(DeployableTurret);
    
-   if (%player.getDatablock().mainWeapon.image !$= "")
-   {
-      %player.mountImage(%player.getDatablock().mainWeapon.image, 0);
-   }
-   else
-   {
-      %player.mountImage(Ryder, 0);
-   }
+   //MegaMotion: We don't need to start out with a weapon.
+   //if (%player.getDatablock().mainWeapon.image !$= "")
+   //{
+   //   %player.mountImage(%player.getDatablock().mainWeapon.image, 0);
+   //}
+   //else
+   //{
+   //   %player.mountImage(Ryder, 0);
+   //}
+   
 }
 
 // Customized kill message for falling deaths

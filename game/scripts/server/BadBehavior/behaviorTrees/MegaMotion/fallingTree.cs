@@ -12,12 +12,6 @@ new Root(FallingTree) {
          canSave = "1";
          canSaveDynamicFields = "1";      
          
-         new ScriptEval() {
-            behaviorScript = "echo(\"Falling Tree!\");";
-            defaultReturnStatus = "SUCCESS";
-            canSave = "1";
-            canSaveDynamicFields = "1";
-         };
          new RandomWait() {
             waitMinMs = "3000";
             waitMaxMs = "3500";
@@ -35,7 +29,7 @@ new Root(FallingTree) {
             waitMaxMs = "35000";
             canSave = "1";
             canSaveDynamicFields = "1";
-         };    
+         };  
       };      
    };
 };

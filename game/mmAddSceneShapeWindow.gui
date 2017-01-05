@@ -1,0 +1,331 @@
+%guiContent = new GuiWindowCtrl(mmAddSceneShapeWindow) {
+   position = "672 367";
+   extent = "330 460";
+   text = "Add Scene Shape";
+   canClose = "1";
+   useMouseEvents = "1";
+   closeCommand = "mmAddSceneShapeWindow.setVisible(false);";
+
+   new GuiMLTextCtrl() {
+      position = "20 30";
+      extent = "280 40";
+      text = "Name is optional for Scene Shapes, but if present must be a unique character string, with no spaces and no special characters.";
+      internalName = "instructionsLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "20 73";
+      extent = "50 20";
+      text = "Name";
+      internalName = "nameLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "75 73";
+      extent = "220 20";
+      internalName = "nameEdit";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "20 96";
+      extent = "50 20";
+      text = "Shape";
+      internalName = "shapeLabel";
+      groupNum = "-1";
+   };
+   new GuiPopupMenuCtrl() {
+      position = "75 96";
+      extent = "220 20";
+      internalName = "shapeList";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "110 165";
+      extent = "20 20";
+      text = "X";
+      internalName = "shapeXLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "165 165";
+      extent = "20 20";
+      text = "Y";
+      internalName = "shapeYLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "220 165";
+      extent = "20 20";
+      text = "Z";
+      internalName = "shapeZLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "263 165";
+      extent = "30 20";
+      text = "Angle";
+      internalName = "shapeAngleLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "20 188";
+      extent = "50 20";
+      text = "Position";
+      internalName = "shapePostionLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "20 211";
+      extent = "50 20";
+      text = "Rotation";
+      internalName = "shapeOrientationLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "20 234";
+      extent = "50 20";
+      text = "Scale";
+      internalName = "shapeScaleLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "90 188";
+      extent = "45 20";
+      internalName = "shapePositionX";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "145 188";
+      extent = "45 20";
+      internalName = "shapePositionY";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "200 188";
+      extent = "45 20";
+      internalName = "shapePositionZ";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "90 211";
+      extent = "45 20";
+      internalName = "shapeOrientationX";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "145 211";
+      extent = "45 20";
+      internalName = "shapeOrientationY";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "200 211";
+      extent = "45 20";
+      internalName = "shapeOrientationZ";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "255 211";
+      extent = "45 20";
+      internalName = "shapeOrientationAngle";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "90 234";
+      extent = "45 20";
+      internalName = "shapeScaleX";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "145 234";
+      extent = "45 20";
+      internalName = "shapeScaleY";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "200 234";
+      extent = "45 20";
+      internalName = "shapeScaleZ";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "20 119";
+      extent = "50 20";
+      text = "Behavior";
+      internalName = "behaviorLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "20 142";
+      extent = "50 20";
+      text = "Group";
+      internalName = "groupLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "75 119";
+      extent = "220 20";
+      internalName = "behaviorTree";
+      groupNum = "-1";
+   };
+   new GuiPopupMenuCtrl() {
+      position = "75 142";
+      extent = "220 20";
+      internalName = "groupList";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "100 259";
+      extent = "120 30";
+      text = "Add Scene Shape";
+      internalName = "addSceneShapeButton";
+      command = "mmReallyAddSceneShape();";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "150 307";
+      extent = "20 20";
+      text = "X";
+      internalName = "blockXLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "215 307";
+      extent = "20 20";
+      text = "Y";
+      internalName = "blockYLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "70 330";
+      extent = "50 20";
+      text = "Count";
+      internalName = "blockCountLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "125 330";
+      extent = "60 20";
+      internalName = "blockCountX";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "190 330";
+      extent = "60 20";
+      internalName = "blockCountY";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "70 353";
+      extent = "50 20";
+      text = "Padding";
+      internalName = "blockPaddingLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "125 353";
+      extent = "60 20";
+      internalName = "blockPaddingX";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "190 353";
+      extent = "60 20";
+      internalName = "blockPaddingY";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "70 376";
+      extent = "50 20";
+      text = "Variation";
+      internalName = "blockVariationLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "125 376";
+      extent = "60 20";
+      internalName = "blockVariationX";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "190 376";
+      extent = "60 20";
+      internalName = "blockVariationY";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "80 425";
+      extent = "160 30";
+      text = "Add Scene Shape Block";
+      internalName = "addSceneShapeBlockButton";
+      command = "mmAddSceneShapeBlock();";
+      groupNum = "-1";
+   };
+   new GuiBitmapCtrl() {
+      position = "20 297";
+      extent = "290 2";
+      internalName = "separator";
+      bitmap = "core/art/gui/images/separator-v";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "12 399";
+      extent = "45 20";
+      text = "Rotation";
+      internalName = "blockRotationLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "62 399";
+      extent = "10 20";
+      text = "X";
+      internalName = "blockRotationXLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "77 399";
+      extent = "45 20";
+      internalName = "blockRotationX";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "127 399";
+      extent = "10 20";
+      text = "Y";
+      internalName = "blockRotationYLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "142 399";
+      extent = "45 20";
+      internalName = "blockRotationY";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "192 399";
+      extent = "10 20";
+      text = "Z";
+      internalName = "blockRotationZLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "207 399";
+      extent = "45 20";
+      internalName = "blockRotationZ";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "257 399";
+      extent = "10 20";
+      text = "A";
+      internalName = "blockRotationAngleLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "272 399";
+      extent = "45 20";
+      internalName = "blockRotationAngle";
+      groupNum = "-1";
+   };
+};
+

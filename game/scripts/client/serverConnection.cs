@@ -58,6 +58,11 @@ function GameConnection::initialControlSet(%this)
          Canvas.setContent(PlayGui);
       }
    }
+   
+   //MegaMotion - we need to start out with the world editor and MegaMotion open. Probably should 
+   //comment out the setContent(PlayGui) above, but for first test, seeing if this works.
+   toggleEditor(true);
+   exposeMegaMotionScenesForm();
 }
 
 function GameConnection::onControlObjectChange(%this)

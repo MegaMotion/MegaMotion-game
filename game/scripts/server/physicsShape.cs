@@ -70,7 +70,7 @@ function PhysicsShapeData::damage(%this, %obj, %sourceObject, %position, %amount
 
 function PhysicsShape::shapeSpecifics(%this)
 {
-   echo("Calling shapeSpecifics for " @ %this.dataBlock @ ", server " @ %this.isServerObject());
+   //echo("Calling shapeSpecifics for " @ %this.dataBlock @ ", server " @ %this.isServerObject());
    //Misc section for things that haven't found a better place yet.
    if (%this.dataBlock $= "M4Physics") 
    {     
@@ -106,7 +106,7 @@ function PhysicsShape::shapeSpecifics(%this)
 //HERE: all this needs to be moved farther down into specific behavior trees. 
 function PhysicsShape::onStartup(%this)
 {
-   echo(%this @ " calling onStartup! position " @ %this.getPosition() @ " tree " @ %this.behaviorTree );
+   //echo(%this @ " calling onStartup! position " @ %this.getPosition() @ " tree " @ %this.behaviorTree );
    /*
    if (%this.dataBlock $= "M4Physics")
    {      
@@ -193,7 +193,7 @@ function PhysicsShape::openSteerSimpleVehicle(%this)
 
 function PhysicsShape::openSteerNavVehicle(%this)
 {   
-   echo("CALLING openSteerNavVehicle! isServer: " @ %this.isServerObject());
+   //echo("CALLING openSteerNavVehicle! isServer: " @ %this.isServerObject());
    if (%this.isServerObject())
       %clientShape = %this.getClientObject();
    else 
@@ -287,7 +287,7 @@ function PhysicsShape::say(%this, %message)//Testing, does this only work for AI
 
 function PhysicsShape::findTargetShapePos(%this)
 { 
-   echo(%this.sceneShapeID @ " is seeking target shape: " @ %this.targetShapeID @ " isServer " @ %this.isServerObject());
+   //echo(%this.sceneShapeID @ " is seeking target shape: " @ %this.targetShapeID @ " isServer " @ %this.isServerObject());
    if (%this.targetShapeID>0)
    {
       for (%i = 0; %i < SceneShapes.getCount();%i++)
@@ -297,9 +297,54 @@ function PhysicsShape::findTargetShapePos(%this)
          {
             %this.goalPos = %targ.getClientObject().getPosition();
             %this.targetItem = %targ.getClientObject();
-            echo(%this.sceneShapeID @ " found target shape: " @ %this.targetShapeID @ " pos " @ %this.goalPos);
+            //echo(%this.sceneShapeID @ " found target shape: " @ %this.targetShapeID @ " pos " @ %this.goalPos);
             return;
          }
+      }
+   }   
+   return;
+}
+
+function PhysicsShape::findRandomTargetPos(%this)
+{ 
+   //echo(%this.sceneShapeID @ " is seeking target shape: " @ %this.targetShapeID @ " isServer " @ %this.isServerObject());
+   if (%this.targetShapeID==0)
+   {
+      %cubeCount = CubeShapes.getCount();
+      %randomCube = getRandom(%cubeCount-1);
+      for (%i = 0; %i < %cubeCount;%i++)
+      {
+         if (%i == %randomCube)
+         {
+            %targ = CubeShapes.getObject(%i);  
+            %this.goalPos = %targ.getClientObject().getPosition();
+            %this.targetItem = %targ.getClientObject();
+            //echo(%this.sceneShapeID @ " found target shape: " @ %this.targetShapeID @ " pos " @ %this.goalPos);
+            return;
+         }
+      }
+   }   
+   return;
+}
+
+function PhysicsShape::findSeriesTargetPos(%this)
+{ 
+   //echo(%this.sceneShapeID @ " is seeking target shape: " @ %this.targetShapeID @ " isServer " @ %this.isServerObject());
+   %cubeCount = CubeShapes.getCount();
+   if ((%this.targetItem==0)||(%this.currentCube==%cubeCount-1))
+   {
+      %this.currentCube = -1;
+   }
+   %this.currentCube++;
+   for (%i = 0; %i < %cubeCount;%i++)
+   {
+      %targ = CubeShapes.getObject(%i);  
+      if (!strcmp(%targ.name,"Cube_" @ %this.currentCube))
+      {
+         %this.goalPos = %targ.getClientObject().getPosition();
+         %this.targetItem = %targ.getClientObject();
+         //echo(%this.sceneShapeID @ " found series target: " @ %targ.sceneShapeID @ " count " @ %this.currentCube);
+         return;
       }
    }   
    return;
@@ -359,6 +404,8 @@ function PhysicsShape::findPlayerPos(%this)
    %this.goalPos = "0 0 0";
    return;
 }
+
+
 
 ////////////////////////////////////////////////////
 

@@ -1,5 +1,5 @@
 %guiContent = new GuiWindowCtrl(MegaMotionScenes) {
-   position = "1 144";
+   position = "1 203";
    extent = "475 560";
    text = "";
    canClose = "1";
@@ -1190,7 +1190,7 @@
                text = "+";
                internalName = "addShapeMountButton";
                command = "mmAddShapeMount();";
-               tooltip = "Mount a new shape onto this PhysicsShape. (Soon to be Scene Shape.)";
+               tooltip = "Add a new shape to the scene, mounted onto the selected shape.";
                tooltipprofile = "GuiToolTipProfile";
                groupNum = "-1";
             };
@@ -1727,6 +1727,22 @@
                groupNum = "-1";
             };
             new GuiTextCtrl() {
+               position = "15 77";
+               extent = "80 20";
+               text = "Target Shape";
+               internalName = "sceneShapeTargetShapeLabel";
+               tooltip = "Scene shape to be used as target entity for this shape.";
+               tooltipprofile = "GuiToolTipProfile";
+               groupNum = "-1";
+            };
+            new GuiPopupMenuCtrl() {
+               position = "100 77";
+               extent = "240 20";
+               internalName = "sceneShapeTargetShapeList";
+               command = "mmSelectTargetShape();";
+               groupNum = "-1";
+            };
+            new GuiTextCtrl() {
                position = "15 212";
                extent = "80 20";
                text = "OpenSteer";
@@ -1935,70 +1951,6 @@
                groupNum = "-1";
             };
             new GuiButtonCtrl() {
-               position = "15 155";
-               extent = "48 18";
-               text = "Action 1";
-               internalName = "sceneAction1Button";
-               command = "mmSceneAction1();";
-               groupNum = "-1";
-            };
-            new GuiButtonCtrl() {
-               position = "64 155";
-               extent = "48 18";
-               text = "Action 2";
-               internalName = "sceneAction2Button";
-               command = "mmSceneAction2();";
-               groupNum = "-1";
-            };
-            new GuiButtonCtrl() {
-               position = "118 155";
-               extent = "48 18";
-               text = "Action 3";
-               internalName = "sceneAction3Button";
-               command = "mmSceneAction3();";
-               groupNum = "-1";
-            };
-            new GuiButtonCtrl() {
-               position = "172 155";
-               extent = "48 18";
-               text = "Action 4";
-               internalName = "sceneAction4Button";
-               command = "mmSceneAction4();";
-               groupNum = "-1";
-            };
-            new GuiButtonCtrl() {
-               position = "226 155";
-               extent = "48 18";
-               text = "Action 5";
-               internalName = "sceneAction5Button";
-               command = "mmSceneAction5();";
-               groupNum = "-1";
-            };
-            new GuiButtonCtrl() {
-               position = "280 155";
-               extent = "48 18";
-               text = "Action 6";
-               internalName = "sceneAction6Button";
-               command = "mmSceneAction6();";
-               groupNum = "-1";
-            };
-            new GuiButtonCtrl() {
-               position = "334 155";
-               extent = "48 18";
-               text = "Action 7";
-               internalName = "sceneAction7Button";
-               command = "mmSceneAction7();";
-               groupNum = "-1";
-            };
-            new GuiButtonCtrl() {
-               position = "388 155";
-               extent = "48 18";
-               text = "Action 8";
-               internalName = "sceneAction8Button";
-               command = "mmSceneAction8();";
-               groupNum = "-1";
-            };
-            new GuiButtonCtrl() {
                position = "141 6";
                extent = "140 26";
                text = "Start Recording";
@@ -2051,6 +2003,70 @@
                text = "Export Scene Bvh";
                internalName = "sceneBvhExport";
                command = "mmExportSceneBvh();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "15 93";
+               extent = "48 18";
+               text = "Action 1";
+               internalName = "sceneAction1Button";
+               command = "mmSceneAction1();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "67 93";
+               extent = "48 18";
+               text = "Action 2";
+               internalName = "sceneAction2Button";
+               command = "mmSceneAction2();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "119 93";
+               extent = "48 18";
+               text = "Action 3";
+               internalName = "sceneAction3Button";
+               command = "mmSceneAction3();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "171 93";
+               extent = "48 18";
+               text = "Action 4";
+               internalName = "sceneAction4Button";
+               command = "mmSceneAction4();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "223 93";
+               extent = "48 18";
+               text = "Action 5";
+               internalName = "sceneAction5Button";
+               command = "mmSceneAction5();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "275 93";
+               extent = "48 18";
+               text = "Action 6";
+               internalName = "sceneAction6Button";
+               command = "mmSceneAction6();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "327 93";
+               extent = "48 18";
+               text = "Action 7";
+               internalName = "sceneAction7Button";
+               command = "mmSceneAction7();";
+               groupNum = "-1";
+            };
+            new GuiButtonCtrl() {
+               position = "379 93";
+               extent = "48 18";
+               text = "Action 8";
+               internalName = "sceneAction8Button";
+               command = "mmSceneAction8();";
                groupNum = "-1";
             };
          };

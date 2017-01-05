@@ -8,11 +8,22 @@ new Root(baitTree) {
       canSaveDynamicFields = "1";
 
       new ScriptEval() {
-         behaviorScript = "%obj.onStartup();  %obj.openSteerNavVehicle();";
+         behaviorScript = "%obj.onStartup();";
          defaultReturnStatus = "SUCCESS";
          canSave = "1";
          canSaveDynamicFields = "1";
       };
+      new Wait() {
+         waitMs = "2000";
+         canSave = "1";
+         canSaveDynamicFields = "1";
+      };
+      new ScriptEval() {
+         behaviorScript = "  %obj.openSteerNavVehicle();";
+         defaultReturnStatus = "SUCCESS";
+         canSave = "1";
+         canSaveDynamicFields = "1";
+      };      
       new Sequence() {
          canSave = "1";
          canSaveDynamicFields = "1";
@@ -30,6 +41,7 @@ new Root(baitTree) {
             canSave = "1";
             canSaveDynamicFields = "1";
          };
+         /*
          new Loop() {
             numLoops = "5";
             terminationPolicy = "ON_FAILURE";
@@ -55,7 +67,7 @@ new Root(baitTree) {
                //   canSaveDynamicFields = "1";
                //};
             };
-         };
+         };*/
          new ScriptedBehavior() {         
             preconditionMode = "ONCE";
             internalName = "playbellydancer";

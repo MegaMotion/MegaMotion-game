@@ -1,0 +1,161 @@
+%guiContent = new GuiWindowCtrl(addShapeMountWindow) {
+   position = "840 483";
+   extent = "320 300";
+   text = "";
+   canClose = "1";
+   useMouseEvents = "1";
+   closeCommand = "addShapeMountWindow.setVisible(false);";
+
+   new GuiMLTextCtrl() {
+      position = "10 30";
+      extent = "300 20";
+      text = "Choose the child shape and attachment nodes for \n  your new shapeMount.";
+      internalName = "instructionsLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 66";
+      extent = "80 20";
+      text = "Child Shape";
+      internalName = "childShapeLabel";
+      groupNum = "-1";
+   };
+   new GuiPopupMenuCtrl() {
+      position = "95 66";
+      extent = "200 20";
+      internalName = "childShapeList";
+      command = "mmSelectAddShapeMountChildShape();";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 92";
+      extent = "80 20";
+      text = "Parent Node";
+      internalName = "parentNodeLabel";
+      groupNum = "-1";
+   };
+   new GuiPopupMenuCtrl() {
+      position = "95 92";
+      extent = "200 20";
+      internalName = "parentNodeList";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 118";
+      extent = "80 20";
+      text = "Child Node";
+      internalName = "childNodeLabel";
+      groupNum = "-1";
+   };
+   new GuiPopupMenuCtrl() {
+      position = "95 118";
+      extent = "200 20";
+      internalName = "childNodeList";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "110 144";
+      extent = "30 20";
+      text = "X";
+      internalName = "xLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "175 144";
+      extent = "30 20";
+      text = "Y";
+      internalName = "yLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "240 144";
+      extent = "30 20";
+      text = "Z";
+      internalName = "zLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 170";
+      extent = "80 20";
+      text = "Offset";
+      internalName = "offsetLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 196";
+      extent = "80 20";
+      text = "Rotation";
+      internalName = "rotationLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 222";
+      extent = "80 20";
+      text = "Scale";
+      internalName = "scaleLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "95 170";
+      extent = "45 20";
+      internalName = "offsetX";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "160 170";
+      extent = "45 20";
+      internalName = "offsetY";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "225 170";
+      extent = "45 20";
+      internalName = "offsetZ";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "95 196";
+      extent = "45 20";
+      internalName = "rotationX";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "160 196";
+      extent = "45 20";
+      internalName = "rotationY";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "225 196";
+      extent = "45 20";
+      internalName = "rotationZ";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "95 222";
+      extent = "45 20";
+      internalName = "scaleX";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "160 222";
+      extent = "45 20";
+      internalName = "scaleY";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "225 222";
+      extent = "45 20";
+      internalName = "scaleZ";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "110 255";
+      extent = "120 30";
+      text = "Add ShapeMount";
+      internalName = "commitButton";
+      command = "mmReallyAddShapeMount();";
+      groupNum = "-1";
+   };
+};
+
