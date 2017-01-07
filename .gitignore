@@ -17,3 +17,6 @@ game/scripts/client/prefs.cs
 game/scripts/server/banlist.cs
 game/scripts/server/prefs.cs
 game/tools/settings.xml
+game/MegaMotion.db
+game/MegaMotion.torsion.opt
+game/OpenAL32.*
