@@ -18,6 +18,7 @@ $mmAddKeyframeSetWindowID = 544;
 $mmScene_ActorBlock_16x16_ID = 7;
 $mmScene_ActorBlock_4x4_ID = 8;
 $mmScene_ActorBlock_3x40_ID = 10;
+$mmScene_ActorBlock_2x2_ID = 11;
 
 
 $mmLastProject = 0;
@@ -513,8 +514,8 @@ function mmSetupAiTab()
    %resultSet = sqlite.query(%query, 0);
 
    %id = "0";
-   %name = "None";
-   $mmOpenSteerList.add(%name @ "   " @ %id,%id);
+   %name = "";
+   //$mmOpenSteerList.add(%name @ "   " @ %id,%id);
 
    if (%resultSet)
    {
@@ -1501,7 +1502,7 @@ function mmSceneSpecifics(%id)
 {  
    //One example of specific things one can do, on a per scene basis: grab all of the sceneShapes using 
    //a particular shape, in this case the Cube model, and put them in a special group for later access.
-   if ((%id==$mmScene_ActorBlock_16x16_ID)||(%id==$mmScene_ActorBlock_3x40_ID))
+   if ((%id==$mmScene_ActorBlock_16x16_ID)||(%id==$mmScene_ActorBlock_3x40_ID)||(%id==$mmScene_ActorBlock_2x2_ID))
    {
       %temp = new SimSet(CubeShapes);
       for (%i = 0; %i < SceneShapes.getCount();%i++)
@@ -1685,9 +1686,10 @@ function mmUnloadScene(%id)
 
 function mmSelectSceneShape()
 {
+   //if (($mmSceneShapeList.getSelected()<=0)||(SceneShapes.getCount()==0))
    if ($mmSceneShapeList.getSelected()<=0)
       return;
-        
+      
    %scene_shape_id = $mmSceneShapeList.getSelected();
    
    $mmSequenceList.clear();
@@ -3145,7 +3147,8 @@ function mmSelectSequence()
    $mmSelectedShape.pauseSeq();
    $mmSelectedShape.setSeqPos(0);
    
-   echo("setting up node list!");
+   
+   //echo("setting up node list!");
    %numNodes = $mmSelectedShape.getNumMattersNodes(%seq_id);
    for (%i=0;%i<%numNodes;%i++)
    {
@@ -3184,6 +3187,10 @@ function mmSelectSequence()
       sqlite.clearResult(%resultSet);
    }
    
+   
+   
+   MegaMotionSequenceWindow.visible = true;//Why not?
+   
    if (MegaMotionSequenceWindow.isVisible())
    {
       %frames = $mmSelectedShape.getSeqFrames(%seq_id);
@@ -3191,7 +3198,7 @@ function mmSelectSequence()
       $mmSequenceSlider.value = 0;
       $mmSequenceOutFrame.setText(%frames);
    }
-   echo("ended selectSequence!");
+   //echo("ended selectSequence!");
    
 }
 
@@ -3373,19 +3380,26 @@ function mmSelectKeyframeSet()
    %typenames[2]="adjust_rot";
    %typenames[3]="set_rot";
    
-   %set_id = $mmSequenceKeyframeSetList.getSelected();
+   
+   $mmSelectedShape.clearKeyframeSet();
+   //echo("APPLYING ULTRAFRAME SET!!!!!!");
+   $mmSelectedShape.applyKeyframeSet();//Hmm, sometimes this crashes. Other times it helps us reset. Hmmm.
+         
+   //If resetting to a set with no frames, need to restore starting position.
+   $mmSelectedShape.playSeqByNum($mmSequenceList.getSelected());
+   $mmSelectedShape.pauseSeq();
+   $mmSelectedShape.setSeqPos(0);   
    
    //If null option is chosen, simply restore sequence and exit.
+   %set_id = $mmSequenceKeyframeSetList.getSelected();
    if (%set_id==0)
    {
-      $mmSelectedShape.clearKeyframeSet();
-      $mmSelectedShape.applyKeyframeSet();
+
       return;
    }
    
    %seq_name = $mmSequenceList.getText();
-
-   $mmSelectedShape.clearKeyframeSet();
+   echo("ADDING ULTRAFRAME SET!!!!!! " @ %seq_name);
    $mmSelectedShape.addKeyframeSet(%seq_name);   
    
    $mmSequenceKeyframeSeriesList.clear();   
@@ -3399,7 +3413,7 @@ function mmSelectKeyframeSet()
       sqlite.clearResult(%resultSet);
       return;
    }
-   
+   echo("SELECTING KEYFRAME SET, numSeries " @ sqlite.numRows(%resultSet));
    while (!sqlite.endOfResult(%resultSet))
    {
       %series_id = sqlite.getColumn(%resultSet, "id");
@@ -3435,8 +3449,14 @@ function mmSelectKeyframeSet()
       } 
       sqlite.nextRow(%resultSet); 
    }
-   
+   echo("APPLYING KEYFRAME SET!!!!!!");
    $mmSelectedShape.applyKeyframeSet();
+   
+   //Now, we need to play the first frame again to show the change.
+   $mmSelectedShape.playSeqByNum($mmSequenceList.getSelected());
+   $mmSelectedShape.pauseSeq();
+   $mmSelectedShape.setSeqPos(0);
+   
 }
 
 function mmSelectKeyframeSeries()
@@ -3608,7 +3628,9 @@ function mmAddKeyframeSet()
    if (isObject(mmAddKeyframeSetWindow))
       mmAddKeyframeSetWindow.delete();
    
-   makeSqlGuiForm($mmAddKeyframeSetWindowID); 
+   //FIX! Create the gui once at the beginning, from the .gui file, and make it visible 
+   makeSqlGuiForm($mmAddKeyframeSetWindowID); // or not from here! For all guis!
+   //And put them somewhere reasonable while you're at it!
      
    mmSetupAddKeyframeSetWindow();
 }
@@ -4182,7 +4204,7 @@ function mmExportBvhSequence()
    else
       %saveFileName = mmGetSaveFilename($mmSelectedShape.getPath(),"bvh");
        
-   $mmSelectedShape.saveBvh($mmSequenceList.getSelected(),%saveFileName,$mmBvhExportProfileList.getText(),false);
+   $mmSelectedShape.saveBvh($mmSequenceList.getSelected(),%saveFileName,$mmBvhExportProfileList.getText(),$pref::MegaMotion::BvhGlobal);
    
 }
 
@@ -4502,22 +4524,21 @@ function setupMegaMotionSequenceWindow()
    if (!isDefined("MegaMotionSequenceWindow"))
       return;   
       
-   $mmSequenceSlider = MegaMotionSequenceWindow.findObjectByInternalName("sequenceSlider");
-   $mmSequenceSlider.ticks = 0;
-   
    $mmSequenceSliderIn = MegaMotionSequenceWindow.findObjectByInternalName("sequenceInBar");
    $mmSequenceSliderOut = MegaMotionSequenceWindow.findObjectByInternalName("sequenceOutBar");
+   $mmSequenceSlider = MegaMotionSequenceWindow.findObjectByInternalName("sequenceSlider");
+   $mmSequenceSlider.ticks = 0;   
    
    $mmSequenceInFrame = MegaMotionSequenceWindow.findObjectByInternalName("sequenceInFrame");
    $mmSequenceOutFrame = MegaMotionSequenceWindow.findObjectByInternalName("sequenceOutFrame");
    $mmSequenceFindLoopDelta = MegaMotionSequenceWindow.findObjectByInternalName("sequenceFindLoopDelta");
-   
-   $mmSequenceInFrame.setText("0");
-   $mmSequenceOutFrame.setText("1");
-   $mmSequenceFindLoopDelta.setText("0");
-   
    $mmSequenceFrame = MegaMotionSequenceWindow.findObjectByInternalName("sequenceFrame");
-   $mmSequenceInFrame.setText("0");
+   
+   $mmSequenceInFrame.setText("");
+   $mmSequenceOutFrame.setText("");
+   $mmSequenceFindLoopDelta.setText("");
+   
+   $mmSequenceFrame.setText("");
 }
 
 function mmSequenceSetInBar()
@@ -4946,6 +4967,7 @@ function makeSceneSequences()
    //       "scene_[%scene_id].[timestamp]"?
    // c) fill it with sequences
    
+   echo("Making scene sequences!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
    %sceneDirPath = "art/shapes/MegaMotionScenes/" @ $mmProjectList.getText() @ "/" 
                @ $mmSceneList.getText() @ "/" @ getTime() @ "/";
    createDirectory(%sceneDirPath);
@@ -5047,7 +5069,7 @@ function mmReallyExportSceneBVH(%path)
       %bvh_name = %shape.getSceneShapeID() @ ".bvh";
       %index = %shape.findSeq(%shape.getSceneShapeID());
       
-      %shape.saveBvh(%index,%path @ "/" @ %bvh_name,"OldTruebones",false);
+      %shape.saveBvh(%index,%path @ "/" @ %bvh_name,"OldTruebones",$pref::MegaMotion::BvhGlobal);
       //echo("Loaded sequence: " @ %path @ "/" @ %dsq_name);
       //No need to store this name, just make it again at play time from sceneShape ID.
    }   

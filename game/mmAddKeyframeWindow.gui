@@ -1,0 +1,84 @@
+%guiContent = new GuiWindowCtrl(mmAddKeyframeWindow) {
+   position = "840 483";
+   extent = "440 180";
+   text = "Add Keyframe";
+   canClose = "1";
+   useMouseEvents = "1";
+   closeCommand = "mmAddKeyframeWindow.setVisible(false);";
+
+   new GuiMLTextCtrl() {
+      position = "30 30";
+      extent = "400 40";
+      text = "Enter the frame number and XYZ values for your new keyframe. Each keyframe series may have only one keyframe at a given frame, so if one exists already you need to modify it instead, or else delete it before adding another.";
+      internalName = "instructionsLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "70 86";
+      extent = "40 20";
+      text = "Frame";
+      internalName = "frameLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "130 86";
+      extent = "45 20";
+      internalName = "frameEdit";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "110 112";
+      extent = "20 20";
+      text = "X";
+      internalName = "xLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "165 112";
+      extent = "20 20";
+      text = "Y";
+      internalName = "yLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "220 112";
+      extent = "20 20";
+      text = "Z";
+      internalName = "zLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "30 138";
+      extent = "40 20";
+      text = "Value";
+      internalName = "valueLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "90 138";
+      extent = "40 20";
+      internalName = "valueX";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "150 138";
+      extent = "40 20";
+      internalName = "valueY";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "210 138";
+      extent = "40 20";
+      internalName = "valueZ";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "285 112";
+      extent = "120 30";
+      text = "Add Keyframe";
+      internalName = "addKeyframeButton";
+      command = "mmReallyAddKeyframe();";
+      groupNum = "-1";
+   };
+};
+

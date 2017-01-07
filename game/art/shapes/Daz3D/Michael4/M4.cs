@@ -63,6 +63,8 @@ function M4Dts::onLoad(%this)
    %this.addSequence("art/shapes/Daz3D/Michael4/work/runscerd_738.dsq", "runscerd_738", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/work/scene_734.dsq", "scene_734", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/work/scene_738.dsq", "scene_738", "0", "-1");
+   %this.addSequence("art/shapes/Daz3D/Michael4/work/TPoseTest.dsq", "TPoseTest", "0", "-1");
+   %this.addSequence("art/shapes/Daz3D/Michael4/work/newTPose.dsq", "newTPose", "0", "-1");
 
    %this.setSequenceCyclic("ambient", "1");
    %this.setSequenceCyclic("walk", "1");

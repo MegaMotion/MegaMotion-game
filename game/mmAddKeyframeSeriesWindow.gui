@@ -1,0 +1,54 @@
+%guiContent = new GuiWindowCtrl(mmAddKeyframeSeriesWindow) {
+   position = "840 483";
+   extent = "320 160";
+   text = "Add Keyframe Series";
+   canClose = "1";
+   useMouseEvents = "1";
+   closeCommand = "mmAddKeyframeSeriesWindow.setVisible(false);";
+
+   new GuiTextCtrl() {
+      position = "20 30";
+      extent = "280 20";
+      text = "Choose the node and type of keyframe series.";
+      internalName = "instructionsLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "40 64";
+      extent = "40 20";
+      text = "Node";
+      internalName = "nodeLabel";
+      groupNum = "-1";
+   };
+   new GuiPopupMenuCtrl() {
+      position = "90 64";
+      extent = "160 20";
+      internalName = "nodeList";
+      groupNum = "-1";
+   };
+   new GuiRadioCtrl() {
+      position = "90 90";
+      extent = "60 20";
+      text = "Rotation";
+      internalName = "typeRotation";
+      variable = "$mmAddKeyframeRotation";
+      groupNum = "2";
+   };
+   new GuiRadioCtrl() {
+      position = "170 90";
+      extent = "60 20";
+      text = "Position";
+      internalName = "typePosition";
+      variable = "$mmAddKeyframePosition";
+      groupNum = "2";
+   };
+   new GuiButtonCtrl() {
+      position = "100 116";
+      extent = "120 30";
+      text = "Add Keyframe Series";
+      internalName = "addKeyframeSeriesButton";
+      command = "mmReallyAddKeyframeSeries();";
+      groupNum = "-1";
+   };
+};
+

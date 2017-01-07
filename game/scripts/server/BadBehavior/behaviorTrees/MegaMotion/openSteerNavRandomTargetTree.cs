@@ -8,7 +8,7 @@ new Root(openSteerNavRandomTargetTree) {
       canSaveDynamicFields = "1";
 
       new Wait() {
-         waitMs = "10000";
+         waitMs = "1000";
          canSave = "1";
          canSaveDynamicFields = "1";
       };
