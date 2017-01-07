@@ -33,7 +33,7 @@
       anchorLeft = "1";
       anchorRight = "0";
       position = "323 232";
-      extent = "377 355";
+      extent = "377 303";
       minExtent = "8 8";
       horizSizing = "center";
       vertSizing = "center";
@@ -51,7 +51,7 @@
          groupNum = "-1";
          buttonType = "PushButton";
          useMouseEvents = "0";
-         position = "304 319";
+         position = "306 271";
          extent = "60 23";
          minExtent = "8 8";
          horizSizing = "right";
@@ -117,7 +117,7 @@
                fitParentWidth = "1";
                clipColumnText = "0";
                position = "1 1";
-               extent = "329 780";
+               extent = "332 416";
                minExtent = "8 8";
                horizSizing = "right";
                vertSizing = "bottom";
@@ -288,7 +288,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "Null";
+            text = "OpenAL";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -338,7 +338,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "SFX Null Device";
+            text = "ASUS Xonar D2X Audio Device";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -603,7 +603,7 @@
       };
       new GuiBitmapBorderCtrl() {
          position = "9 55";
-         extent = "358 252";
+         extent = "358 210";
          minExtent = "8 8";
          horizSizing = "right";
          vertSizing = "bottom";
@@ -689,7 +689,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "ATI Radeon HD 5700 Series (D3D9)";
+            text = "NVIDIA GeForce GTX 660 Ti (D3D9)";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -697,8 +697,8 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "88 8";
-            extent = "258 18";
+            position = "89 8";
+            extent = "252 18";
             minExtent = "8 8";
             horizSizing = "right";
             vertSizing = "bottom";
@@ -716,7 +716,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "1024 x 768  (4:3)";
+            text = "1768 x 992  (16:9)";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -724,7 +724,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "67 35";
+            position = "89 35";
             extent = "127 18";
             minExtent = "8 8";
             horizSizing = "right";
@@ -749,7 +749,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "207 35";
+            position = "239 35";
             extent = "45 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -776,7 +776,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "252 35";
+            position = "292 35";
             extent = "49 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -801,7 +801,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "21 91";
+            position = "11 89";
             extent = "62 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -820,7 +820,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "Low";
+            text = "Custom";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -828,7 +828,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "90 91";
+            position = "90 89";
             extent = "78 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -850,7 +850,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "Low";
+            text = "Normal";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -858,7 +858,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "90 118";
+            position = "90 115";
             extent = "78 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -884,7 +884,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "11 118";
+            position = "11 115";
             extent = "77 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -903,7 +903,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "Low";
+            text = "Custom";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -911,7 +911,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "90 143";
+            position = "90 141";
             extent = "78 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -937,7 +937,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "11 143";
+            position = "11 140";
             extent = "73 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -960,7 +960,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "191 91";
+            position = "187 89";
             extent = "73 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -986,7 +986,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "263 91";
+            position = "263 89";
             extent = "78 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1012,7 +1012,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "186 118";
+            position = "187 115";
             extent = "77 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1031,7 +1031,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
-            text = "Low";
+            text = "High";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -1039,7 +1039,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "263 118";
+            position = "263 115";
             extent = "78 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1119,7 +1119,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "22 167";
+            position = "11 165";
             extent = "105 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1146,7 +1146,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "123 167";
+            position = "123 166";
             extent = "45 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1188,7 +1188,7 @@
             groupNum = "-1";
             buttonType = "PushButton";
             useMouseEvents = "0";
-            position = "205 152";
+            position = "231 157";
             extent = "110 27";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1208,6 +1208,7 @@
             sbUsesNAColor = "0";
             reverseTextList = "0";
             bitmapBounds = "16 16";
+            text = "4x";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -1232,7 +1233,7 @@
             canSaveDynamicFields = "0";
          };
          new GuiTextCtrl() {
-            text = "Anti-aliasing";
+            text = "Anti-aliasing:";
             maxLength = "255";
             margin = "0 0 0 0";
             padding = "0 0 0 0";
@@ -1240,7 +1241,7 @@
             anchorBottom = "0";
             anchorLeft = "1";
             anchorRight = "0";
-            position = "191 62";
+            position = "187 62";
             extent = "73 18";
             minExtent = "8 2";
             horizSizing = "right";
@@ -1253,66 +1254,6 @@
             isContainer = "0";
             canSave = "1";
             canSaveDynamicFields = "0";
-         };
-         new GuiControl() {
-            position = "0 227";
-            extent = "352 15";
-            minExtent = "8 2";
-            horizSizing = "width";
-            vertSizing = "bottom";
-            profile = "GuiDefaultProfile";
-            visible = "1";
-            active = "1";
-            tooltipProfile = "GuiToolTipProfile";
-            hovertime = "1000";
-            isContainer = "1";
-            internalName = "GammaSliderContainer";
-            canSave = "1";
-            canSaveDynamicFields = "0";
-
-            new GuiSliderCtrl() {
-               range = "0.5 1.5";
-               ticks = "0";
-               snap = "0";
-               value = "1";
-               position = "76 -1";
-               extent = "268 15";
-               minExtent = "8 2";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               profile = "GuiSliderProfile";
-               visible = "1";
-               active = "1";
-               variable = "$pref::Video::Contrast";
-               tooltipProfile = "GuiToolTipProfile";
-               hovertime = "1000";
-               isContainer = "0";
-               canSave = "1";
-               canSaveDynamicFields = "0";
-            };
-            new GuiTextCtrl() {
-               text = "Contrast:";
-               maxLength = "255";
-               margin = "0 0 0 0";
-               padding = "0 0 0 0";
-               anchorTop = "1";
-               anchorBottom = "0";
-               anchorLeft = "1";
-               anchorRight = "0";
-               position = "18 -4";
-               extent = "105 18";
-               minExtent = "8 2";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               profile = "GuiTextProfile";
-               visible = "1";
-               active = "1";
-               tooltipProfile = "GuiToolTipProfile";
-               hovertime = "1000";
-               isContainer = "0";
-               canSave = "1";
-               canSaveDynamicFields = "0";
-            };
          };
          new GuiControl() {
             position = "0 190";
@@ -1331,10 +1272,10 @@
             canSaveDynamicFields = "0";
 
             new GuiSliderCtrl() {
-               range = "2.0 2.5";
+               range = "0.001 2.2";
                ticks = "0";
                snap = "0";
-               value = "2.2";
+               value = "1.01527";
                position = "76 -1";
                extent = "268 15";
                minExtent = "8 2";
@@ -1359,67 +1300,7 @@
                anchorBottom = "0";
                anchorLeft = "1";
                anchorRight = "0";
-               position = "22 -4";
-               extent = "105 18";
-               minExtent = "8 2";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               profile = "GuiTextProfile";
-               visible = "1";
-               active = "1";
-               tooltipProfile = "GuiToolTipProfile";
-               hovertime = "1000";
-               isContainer = "0";
-               canSave = "1";
-               canSaveDynamicFields = "0";
-            };
-         };
-         new GuiControl() {
-            position = "0 208";
-            extent = "352 15";
-            minExtent = "8 2";
-            horizSizing = "width";
-            vertSizing = "bottom";
-            profile = "GuiDefaultProfile";
-            visible = "1";
-            active = "1";
-            tooltipProfile = "GuiToolTipProfile";
-            hovertime = "1000";
-            isContainer = "1";
-            internalName = "GammaSliderContainer";
-            canSave = "1";
-            canSaveDynamicFields = "0";
-
-            new GuiSliderCtrl() {
-               range = "-0.5 0.5";
-               ticks = "0";
-               snap = "0";
-               value = "0";
-               position = "76 -1";
-               extent = "268 15";
-               minExtent = "8 2";
-               horizSizing = "right";
-               vertSizing = "bottom";
-               profile = "GuiSliderProfile";
-               visible = "1";
-               active = "1";
-               variable = "$pref::Video::Brightness";
-               tooltipProfile = "GuiToolTipProfile";
-               hovertime = "1000";
-               isContainer = "0";
-               canSave = "1";
-               canSaveDynamicFields = "0";
-            };
-            new GuiTextCtrl() {
-               text = "Brightness:";
-               maxLength = "255";
-               margin = "0 0 0 0";
-               padding = "0 0 0 0";
-               anchorTop = "1";
-               anchorBottom = "0";
-               anchorLeft = "1";
-               anchorRight = "0";
-               position = "6 -3";
+               position = "12 -4";
                extent = "105 18";
                minExtent = "8 2";
                horizSizing = "right";
@@ -1518,7 +1399,7 @@
          groupNum = "-1";
          buttonType = "PushButton";
          useMouseEvents = "0";
-         position = "239 319";
+         position = "241 271";
          extent = "60 23";
          minExtent = "8 8";
          horizSizing = "right";

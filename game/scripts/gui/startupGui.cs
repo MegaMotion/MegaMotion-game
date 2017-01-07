@@ -33,7 +33,7 @@ function loadStartup()
    // to cycle through. Note that they have to
    // be in consecutive numerical order
    StartupGui.bitmap0     = "art/gui/background";
-   StartupGui.logo0       = "art/gui/Torque-3D-logo";
+   StartupGui.logo0       = "art/gui/Torque-3D-logo_alt";
    StartupGui.logoPos0    = "178 251";
    StartupGui.logoExtent0 = "443 139";
 
@@ -43,12 +43,6 @@ function loadStartup()
 
    // Play our startup sound
    //SFXPlayOnce(AudioGui, "art/sound/gui/startup");//SFXPlay(startsnd);
-}
-
-function StartupGui::onWake(%this)
-{
-   $enableDirectInput = "1";
-   activateDirectInput();
 }
 
 function StartupGui::click(%this)
