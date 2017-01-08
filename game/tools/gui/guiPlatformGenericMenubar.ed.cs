@@ -7,7 +7,7 @@ else
    %guiContent = new GuiControl(PlatformGenericMenubar) {
       profile = "GuiModelessDialogProfile";
       
-      new GuiControl()
+      new GuiControl(MyMenuBar)
       {
          internalName = "menubar";
          extent = "1024 20";

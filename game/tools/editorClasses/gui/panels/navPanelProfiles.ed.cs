@@ -71,7 +71,24 @@ singleton GuiControlProfile (menubarProfile : NavPanelProfile)
 };
 singleton GuiControlProfile (editorMenubarProfile : NavPanelProfile) 
 {
-   bitmap = "./editor-menubar";
+   
+   fillColor = "32 32 32 255";
+   fillColorHL = "72 72 72 255";
+   fillColorNA = "18 18 18 255";
+   borderColor = "98 163 229";
+   borderColorHL = "122 177 232";
+   
+   fontColor = "196 196 196 255";
+   fontColorSEL = "212 212 212 255";
+   fontColorHL = "255 255 255 255";
+   fontColorNA = "128 128 128 255";
+   
+   border = 0;
+   borderThickness = 1;
+   opaque = true;
+   mouseOverSelected = true;
+   category = "Editor";
+   bitmap = "tools/gui/images/checkbox-menubar";
    category = "Editor";
 };
 singleton GuiControlProfile (editorMenu_wBorderProfile : NavPanelProfile) 
