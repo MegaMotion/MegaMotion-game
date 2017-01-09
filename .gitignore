@@ -24,3 +24,4 @@ game/tools/settings.xml
 game/MegaMotion.db
 game/MegaMotion.torsion.opt
 game/OpenAL32.*
+*.cached.dts
