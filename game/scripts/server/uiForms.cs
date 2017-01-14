@@ -1884,7 +1884,6 @@ function getOpenXmlName()
    };
    if(%dlg.Execute())
    {
-      $Pref::DsqDir = filePath( %dlg.FileName );
       %filename = %dlg.FileName;      
       %dlg.delete();
       return %filename;
@@ -1904,7 +1903,6 @@ function getSaveXmlName()
    };
    if(%dlg.Execute())
    {
-      $Pref::DsqDir = filePath( %dlg.FileName );
       %filename = %dlg.FileName;      
       %dlg.delete();
       return %filename;

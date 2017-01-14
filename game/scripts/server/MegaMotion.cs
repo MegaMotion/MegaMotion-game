@@ -20,7 +20,6 @@ $mmScene_ActorBlock_4x4_ID = 8;
 $mmScene_ActorBlock_3x40_ID = 10;
 $mmScene_ActorBlock_2x2_ID = 11;
 
-
 $mmLastProject = 0;
 $mmLastScene = 0;  
 
@@ -57,7 +56,6 @@ $mmDebugRenderBodyAxes = 0;
 //Some of above should just be prefs, others should be local.
 
 exec("MegaMotionScenes.gui");
-
 
 /*
 
@@ -1413,9 +1411,8 @@ function mmLoadScene(%id)
          %datablock = sqlite.getColumn(%resultSet, "datablock");
          //%skeleton_id = sqlite.getColumn(%resultSet, "skeleton_id");
          
-         //echo("Found a sceneShape: " @ %sceneShape_id @ " " @ %pos_x @ " " @ %pos_y @ " " @ %pos_z @
-         //       " scenePos " @ %scene_pos_x @ " " @ %scene_pos_y @ " " @ %scene_pos_z @
-         //       " behavior tree " @ %behavior_tree );
+         echo("Found a sceneShape: " @ %sceneShape_id @ " pos " @ %pos_x @ " " @ %pos_y @ " " @ %pos_z @
+                " scale " @ %scale_x @ " " @ %scale_y @ " " @ %scale_z );
                 
          %position = (%pos_x + %scene_pos_x) @ " " @ (%pos_y + %scene_pos_y) @ " " @ (%pos_z + %scene_pos_z);
          %rotation = %rot_x @ " " @ %rot_y @ " " @ %rot_z @ " " @ %rot_a;
@@ -1483,7 +1480,7 @@ function mmLoadScene(%id)
             %pShape.schedule(300,"setBehavior",%behavior_tree);
             //echo(%pShape.getId() @ " assigning behavior tree: " @ %behavior_tree );
          }
-         %pShape.schedule(2000,"shapeSpecifics");
+         %pShape.schedule(1000,"shapeSpecifics");
          sqlite.nextRow(%resultSet);
       }
    }   
@@ -2069,7 +2066,7 @@ function mmSelectShape()
           //  $mmShapePartList.setSelected(%firstID);
       }
       sqlite.clearResult(%resultSet);
-   }   
+   }
 
    $mmShapePartBaseNodeList.clear();
    $mmShapePartChildNodeList.clear();
@@ -3265,8 +3262,8 @@ function mmAddSequence()
    if (!isObject($mmSelectedShape))
       return;
          
-   if (strlen($Pref::DsqDir))
-      %openFileName = mmGetOpenFilename($Pref::DsqDir,"dsq");
+   if (strlen($Pref::MegaMotion::DsqLoadDir))
+      %openFileName = mmGetOpenFilename($Pref::MegaMotion::DsqLoadDir,"dsq");
    else
       %openFileName = mmGetOpenFilename($mmSelectedShape.getPath(),"dsq");
    
@@ -3278,10 +3275,15 @@ function mmAddSequence()
    } else return;
 
    mmSelectShape();
-
+   
+   $mmSceneShapeList.setSelected($mmSelectedShape.sceneShapeID);
+   
+   //Now, add it to the sequenceList (and any others?) and then select it.
+   //%name = $mmSelectedShape.getSeqName($mmSequenceList.size()-1);
+   //$mmSequenceList.add(%name,$mmSequenceList.size()-1);
    $mmSequenceList.setSelected($mmSequenceList.size()-1);
    
-   echo("loaded sequence! " @ %openFileName );
+   echo("loaded sequence! " @ %openFileName @ ", sequence list: " @ $mmSequenceList.getText());
    return;
 }
 
@@ -3318,8 +3320,8 @@ function mmSaveSequence()
    if (!isObject($mmSelectedShape))
       return;      
        
-   if (strlen($Pref::DsqDir))
-      %saveFileName = mmGetSaveFileName($Pref::DsqDir,"dsq");
+   if (strlen($Pref::MegaMotion::DsqSaveDir))
+      %saveFileName = mmGetSaveFileName($Pref::MegaMotion::DsqSaveDir,"dsq");
    else
       %saveFileName = mmGetSaveFileName($actor.getPath(),"dsq");
          
@@ -4177,8 +4179,8 @@ function mmImportBvhSequence()
    if (!isObject($mmSelectedShape))
       return;
       
-   if (strlen($Pref::BvhDir))
-      %openFileName = mmGetOpenFilename($Pref::BvhDir,"bvh");
+   if (strlen($Pref::MegaMotion::BvhLoadDir))
+      %openFileName = mmGetOpenFilename($Pref::MegaMotion::BvhLoadDir,"bvh");
    else
       %openFileName = mmGetOpenFilename($mmSelectedShape.getPath(),"bvh");
         
@@ -4199,8 +4201,8 @@ function mmBvhImportScene()
 
 function mmExportBvhSequence()
 {
-   if (strlen($Pref::BvhDir))
-      %saveFileName = mmGetSaveFilename($Pref::BvhDir,"bvh");
+   if (strlen($Pref::MegaMotion::BvhSaveDir))
+      %saveFileName = mmGetSaveFilename($Pref::MegaMotion::BvhSaveDir,"bvh");
    else
       %saveFileName = mmGetSaveFilename($mmSelectedShape.getPath(),"bvh");
        
@@ -4223,8 +4225,8 @@ function mmAddBvhProfile()
    if (!isObject($mmSelectedShape))
       return;
          
-   if (strlen($Pref::BvhDir))
-      %openFileName = mmGetOpenFilename($Pref::BvhDir,"bvh");
+   if (strlen($Pref::MegaMotion::BvhLoadDir))
+      %openFileName = mmGetOpenFilename($Pref::MegaMotion::BvhLoadDir,"bvh");
    else
       %openFileName = mmGetOpenFilename($mmSelectedShape.getPath(),"bvh");
    
@@ -4712,6 +4714,22 @@ function mmSequenceSetOutBar()
 
 }
 
+function mmSequenceResetInOutBars()
+{  //FAIL, revisit.
+/*
+   %sliderPos = $mmSequenceSlider.getPosition();
+   %numFrames = $mmSequenceSlider.range.y;
+   %inPos = "12 " @ %sliderPos.y;
+   %outPos = ($mmSequenceSlider.extent.x - 12) @ " " @ (%sliderPos.y - 12);
+   
+   $mmSequenceSliderIn.setPosition(%inPos.x,%inPos.y);
+   $mmSequenceInFrame.setText("0");
+   
+   $mmSequenceSliderOut.setPosition(%outPos.x,%outPos.y);
+   $mmSequenceOutFrame.setText(%numFrames);
+*/
+}
+
 function mmSequenceSliderClick()
 {
    $mmSelectedShape.pauseSeq();
@@ -4746,8 +4764,8 @@ function mmCrop()
    if (!isObject($mmSelectedShape))
       return;
 
-   if (strlen($Pref::DsqDir))
-      %saveFileName = mmGetSaveFileName($Pref::DsqDir,"dsq");
+   if (strlen($Pref::MegaMotion::DsqSaveDir))
+      %saveFileName = mmGetSaveFileName($Pref::MegaMotion::DsqSaveDir,"dsq");
    else
       %saveFileName = mmGetSaveFileName($actor.getPath(),"dsq");
 
@@ -4758,15 +4776,20 @@ function mmCrop()
    %seqnum = $mmSelectedShape.getSeqNum($mmSequenceList.getText());
    
    $mmSelectedShape.cropSequence(%seqnum,%crop_start,%crop_stop ,%saveFileName);
- 
-   $mmSelectedShape.dropSequence($mmSelectedShape.getNumSeqs()-1);   
+   echo("cropping sequence " @ $mmSequenceList.getText() @ " start " @ %crop_start @ " stop " @ %crop_stop);
+   $mmSelectedShape.dropSequence($mmSelectedShape.getNumSeqs()-1);  
+   if (strstr(%saveFileName,".dsq")<0)
+      %saveFileName = %saveFileName @ ".dsq"; 
    $mmSelectedShape.loadSequence(%saveFileName);//maybe?
    
    //$mmSequenceSliderIn.setPosition();//Need a function for these, isolate the logic.
    //$mmSequenceSliderOut.setPosition();
    
-   mmRefreshSequenceList();
+   //mmRefreshSequenceList();
+   $mmSceneShapeList.setSelected($mmSelectedShape.sceneShapeID);
+   $mmSequenceList.setSelected($mmSequenceList.size()-1);
    
+   echo("loaded new crop sequence: " @ %saveFileName);
    //$mmSequenceList.setSelected($mmSequenceList.size()-1);
    //EcstasyToolsWindow::selectSequence();
 }
@@ -4815,11 +4838,11 @@ function mmGetOpenFileName(%defaultFilePath,%type)
    if(%dlg.Execute())
    {
       if (%type$="dts")
-           $Pref::DtsDir = filePath( %dlg.FileName );
+           $Pref::MegaMotion::DtsLoadDir = filePath( %dlg.FileName );
       else if (%type$="dsq")
-           $Pref::DsqDir = filePath( %dlg.FileName );
+           $Pref::MegaMotion::DsqLoadDir = filePath( %dlg.FileName );
       else if (%type$="bvh")
-           $Pref::BvhDir = filePath( %dlg.FileName );
+           $Pref::MegaMotion::BvhLoadDir = filePath( %dlg.FileName );
       %filename = %dlg.FileName;      
       %dlg.delete();
       return %filename;

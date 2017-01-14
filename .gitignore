@@ -9,8 +9,10 @@ game/core/fonts/*
 
 game/MegaMotion.exe
 game/MegaMotion_DEBUG.exe
-game/MegaMotion_DEBUG.ilk
-game/MegaMotion_DEBUG.pdb
+game/MegaMotion_public.exe
+game/MegaMotion_public_DEBUG.exe
+*.ilk
+*.pdb
 game/console.log
 game/core/prefs.cs
 game/scripts/client/prefs.cs

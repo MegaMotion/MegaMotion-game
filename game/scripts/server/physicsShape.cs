@@ -74,6 +74,8 @@ function PhysicsShape::shapeSpecifics(%this)
    //Misc section for things that haven't found a better place yet.
    if (%this.dataBlock $= "M4Physics") 
    {     
+      echo("Calling shape specifics for M4: " @ %this.sceneShapeID @ " isServer " @ %this.isServerObject());
+      
       %this.setActionSeq("walk","walk");      
       %this.setActionSeq("run","run");
       
