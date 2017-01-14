@@ -1,3 +1,8 @@
+////////////////////////////////
+//LICENSE INFO HERE
+// ...
+////////////////////////////////
+
 
 $MegaMotionScenesWindowID = 159;
 $MegaMotionSequenceWindowID = 395;
