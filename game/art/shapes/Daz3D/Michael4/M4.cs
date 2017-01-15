@@ -8,9 +8,11 @@ function M4Dts::onLoad(%this)
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/TPose.dsq", "tpose", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/Root4.dsq", "ambient", "0", "-1");
    //%this.addSequence("art/shapes/Daz3D/Michael4/sequences/CMU_16_22.dsq", "walk", "0", "-1");
-   //%this.addSequence("art/shapes/Daz3D/Michael4/work/01_02_step_smooth.dsq", "walk", "0", "-1");
-   %this.addSequence("art/shapes/Daz3D/Michael4/work/dribble01.dsq", "walk", "0", "-1");
-   %this.addSequence("art/shapes/Daz3D/Michael4/sequences/MedRun6.dsq", "run", "0", "-1");
+   %this.addSequence("art/shapes/Daz3D/Michael4/work/01_02_step_smooth.dsq", "walk", "0", "-1");
+   //%this.addSequence("art/shapes/Daz3D/Michael4/work/dribble01.dsq", "walk", "0", "-1");
+   //%this.addSequence("art/shapes/Daz3D/Michael4/sequences/MedRun6.dsq", "run", "0", "-1");
+   %this.addSequence("art/shapes/Daz3D/Michael4/work/jog_02_03.dsq", "run", "0", "-1");
+   %this.addSequence("art/shapes/Daz3D/Michael4/work/standing_jump.dsq", "jump", "0", "-1");
 
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/runscerd1.dsq", "runscerd", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/backGetup.dsq", "backGetup", "0", "-1");
@@ -59,7 +61,7 @@ function M4Dts::onLoad(%this)
    %this.addSequence("art/shapes/Daz3D/Michael4/work/blockfall_03.dsq", "blockfall_03", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/work/blockfall_04.dsq", "blockfall_04", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/work/blockfall_no_grav_.dsq", "blockfall_no_grav", "0", "-1");
-   //%this.addSequence("art/shapes/Daz3D/Michael4/work/cower_01.dsq", "cower", "0", "-1");
+   %this.addSequence("art/shapes/Daz3D/Michael4/work/cower_01.dsq", "cower", "0", "-1");
 
    %this.addSequence("art/shapes/Daz3D/Michael4/work/runscerd_738.dsq", "runscerd_738", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/work/scene_734.dsq", "scene_734", "0", "-1");
@@ -76,6 +78,7 @@ function M4Dts::onLoad(%this)
    %this.setSequenceCyclic("tpose", "1");
    %this.setSequenceCyclic("swingUnder", "1");
    %this.setSequenceCyclic("cower", "1");
+   %this.setSequenceCyclic("jump", "1");
       
    %this.addNode("Col-1","root");
    %this.addCollisionDetail(-1,"box","bounds");   

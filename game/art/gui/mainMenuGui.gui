@@ -54,7 +54,7 @@
       canSaveDynamicFields = "0";
 
       new GuiButtonCtrl() {
-         text = "Play";
+         text = "MegaMotion";
          groupNum = "-1";
          buttonType = "PushButton";
          useMouseEvents = "1";

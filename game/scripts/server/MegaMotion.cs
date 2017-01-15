@@ -1,6 +1,6 @@
 ////////////////////////////////
 //LICENSE INFO HERE
-// ...
+//The following source code is released  
 ////////////////////////////////
 
 
@@ -20,7 +20,7 @@ $mmAddKeyframeWindowID = 524;
 $mmAddKeyframeSeriesWindowID = 466;
 $mmAddKeyframeSetWindowID = 544;
 
-$mmScene_ActorBlock_16x16_ID = 7;
+$mmScene_ActorBlock_16x16_ID = 13;
 $mmScene_ActorBlock_4x4_ID = 8;
 $mmScene_ActorBlock_3x40_ID = 10;
 $mmScene_ActorBlock_2x2_ID = 11;
@@ -1485,7 +1485,7 @@ function mmLoadScene(%id)
             %pShape.schedule(300,"setBehavior",%behavior_tree);
             //echo(%pShape.getId() @ " assigning behavior tree: " @ %behavior_tree );
          }
-         %pShape.schedule(1000,"shapeSpecifics");
+         %pShape.schedule(2000,"shapeSpecifics");
          sqlite.nextRow(%resultSet);
       }
    }   
@@ -4721,6 +4721,13 @@ function mmSequenceSetOutBar()
 
 function mmSequenceResetInOutBars()
 {  //FAIL, revisit.
+   %newPos = $mmSequenceSlider.getPosition();
+   %newPos.x += ($mmSequenceSlider.extent.x - 12);
+   %newPos.y -= 12;
+   $mmSequenceSliderOut.setPosition(%newPos.x,%newPos.y);
+   $mmSequenceSliderIn.setPosition((%newPos.x + 12),%newPos.y);
+}
+
 /*
    %sliderPos = $mmSequenceSlider.getPosition();
    %numFrames = $mmSequenceSlider.range.y;
@@ -4733,7 +4740,6 @@ function mmSequenceResetInOutBars()
    $mmSequenceSliderOut.setPosition(%outPos.x,%outPos.y);
    $mmSequenceOutFrame.setText(%numFrames);
 */
-}
 
 function mmSequenceSliderClick()
 {
@@ -4801,10 +4807,26 @@ function mmCrop()
 
 function mmFindLoop()
 {
-   $mmRotDeltaSumMin = 999.0;
-   $mmRotDeltaSumDescending = 0;
-   $mmRotDeltaSumLast = 0;
-   $mmLoopDetecting = 1;
+   //FIX: let's make these dynamic script members of each sceneShape.
+   //$mmRotDeltaSumMin = 999.0;
+   //$mmRotDeltaSumDescending = false;
+   //$mmRotDeltaSumLast = 0;
+   //$mmRotDeltaSumLastMinusOne = 0;
+   //$mmRotDeltaSumLastMinusTwo = 0;
+   //$mmLoopDetecting = true;
+   
+   $mmSelectedShape.rotDeltaSumDescending = false;
+   $mmSelectedShape.rotDeltaSumMin = 999.0;
+   $mmSelectedShape.rotDeltaSumCurrentFrame = 0;
+   $mmSelectedShape.rotDeltaSumLastFrame = 0;
+   $mmSelectedShape.rotDeltaSumLast = 0;
+   $mmSelectedShape.rotDeltaSumLastMinusOne = 0;
+   $mmSelectedShape.rotDeltaSumLastMinusTwo = 0;
+   $mmSelectedShape.rotDeltaSumLastMinusThree = 0;
+   $mmSelectedShape.rotDeltaSumLastMinusFour = 0;//A value from (four?) frames ago, to estimate overall slope.
+         //But of course we have to save all frames from here to there in order to bump the values as we go.
+   $mmSelectedShape.loopDetecting = true;
+   
    EcstasySequenceSlider.paused = false;
    $mmSelectedShape.forwardSeq();
    echo("Find Loop! deltaSumMin " @ $mmRotDeltaSumMin);
@@ -4904,9 +4926,24 @@ function MegaMotionTick()
       %frame = mRound(%frame);    
       $mmSequenceFrame.setText(%frame);
       
+      /*
+   $mmSelectedShape.rotDeltaSumDescending = false;
+   $mmSelectedShape.rotDeltaSumMin = 999.0;
+   $mmSelectedShape.rotDeltaSumCurrentFrame = 0;
+   $mmSelectedShape.rotDeltaSumLastFrame = 0;
+   $mmSelectedShape.rotDeltaSumLast = 0;
+   $mmSelectedShape.rotDeltaSumLastMinusOne = 0;
+   $mmSelectedShape.rotDeltaSumLastMinusTwo = 0;
+   $mmSelectedShape.rotDeltaSumLastMinusThree = 0;
+   $mmSelectedShape.rotDeltaSumLastMinusFour = 0;
+   */
       //Loop Detection - checking for best animation cycle. 
-      if ($mmLoopDetecting)
+      if ($mmSelectedShape.loopDetecting)
       {
+         if ($mmSelectedShape.rotDeltaSumCurrentFrame == 0)
+         {
+            echo("starting loop detection!");
+         }
          //TimelineRotDeltaSum.visible = 1;
          //cropStopCyclicButton.visible = 1;
          %seq = $mmSequenceList.getSelected();
@@ -4923,41 +4960,79 @@ function MegaMotionTick()
          $mmSequenceFindLoopDelta.setText(%seqDeltaSum);
          //TimelineRotDeltaSum.setText(mFloatLength(%seqDeltaSum,3));
          %frame_from_start = %current_frame-%start_frame;
-         echo(" frame: " @ %current_frame @ ", deltaSum " @ %seqDeltaSum @ "  last " @ $mmRotDeltaSumLast @ 
-            ", deltaSumMin " @ $mmRotDeltaSumMin @ " isDescending " @ $mmRotDeltaSumDescending);
-         if ((%seqDeltaSum < $mmRotDeltaSumLast)&&(%frame_from_start > $mmLoopDetectorDelay))
-            $mmRotDeltaSumDescending = 1;
+         
+         
+         echo(" frame: " @ %current_frame @ ", deltaSum " @ %seqDeltaSum @ "  last " @ $mmSelectedShape.rotDeltaSumLast @ 
+            ", deltaSumMin " @ $mmSelectedShape.rotDeltaSumMin @ " isDescending " @ $mmSelectedShape.rotDeltaSumDescending);
+            
+        
+         if ($mmSelectedShape.rotDeltaSumCurrentFrame > 0)
+         {
+            if ($mmSelectedShape.rotDeltaSumCurrentFrame > 3) //if we're on frame four or more, move all four stored values.
+            {
+               echo("Last four diff: " @ (%seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusFour));
+               $mmSelectedShape.rotDeltaSumLastMinusFour = $mmSelectedShape.rotDeltaSumLastMinusThree;
+               $mmSelectedShape.rotDeltaSumLastMinusThree = $mmSelectedShape.rotDeltaSumLastMinusTwo;
+               $mmSelectedShape.rotDeltaSumLastMinusTwo = $mmSelectedShape.rotDeltaSumLastMinusOne;
+               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast;     
+                         
+            } 
+            else if ($mmSelectedShape.rotDeltaSumCurrentFrame == 3)
+            {
+               $mmSelectedShape.rotDeltaSumLastMinusThree = $mmSelectedShape.rotDeltaSumLastMinusTwo;
+               $mmSelectedShape.rotDeltaSumLastMinusTwo = $mmSelectedShape.rotDeltaSumLastMinusOne;
+               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast;
+            } 
+            else if ($mmSelectedShape.rotDeltaSumCurrentFrame == 2)
+            {
+               $mmSelectedShape.rotDeltaSumLastMinusTwo = $mmSelectedShape.rotDeltaSumLastMinusOne;
+               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast;
+            }
+            else if ($mmSelectedShape.rotDeltaSumCurrentFrame == 1)
+            {
+               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast;
+            }
+         }      
+            
+            
+         $mmSelectedShape.rotDeltaSumCurrentFrame++;
+            
+         if ((%seqDeltaSum < $mmSelectedShape.rotDeltaSumLast)&&(%frame_from_start > $mmLoopDetectorDelay))
+            $mmSelectedShape.rotDeltaSumDescending = true;
          else 
          {
-            if ($mmRotDeltaSumDescending)
+            if ($mmSelectedShape.rotDeltaSumDescending)
             {
-               if ($mmRotDeltaSumLast < $mmRotDeltaSumMin)
+               
+               if ($mmSelectedShape.rotDeltaSumLast < $mmSelectedShape.rotDeltaSumMin)
                {
                   echo("loop detector found out pos: " @ %current_frame @ " frame-from-start " @ %frame_from_start );
-                  $mmRotDeltaSumMin = $mmRotDeltaSumLast;
-                  $mmRotDeltaSumLastFrame = %current_frame-1;                  
+                  $mmSelectedShape.rotDeltaSumMin = $mmSelectedShape.rotDeltaSumLast;
+                  $mmSelectedShape.rotDeltaSumLastFrame = %current_frame-1;  //Are we sure about -1?                
                   //SequencesCropStopKeyframeText.setText($rotDeltaSumLastFrame);
-                  %markOutPos = mFloatLength($mmRotDeltaSumLastFrame / $mmSelectedShape.getSeqFrames(%seq),3);
+                  %markOutPos = mFloatLength($mmSelectedShape.rotDeltaSumLastFrame / $mmSelectedShape.getSeqFrames(%seq),3);
                   $mmSequenceOutFrame.setText(%markOutPos);
-                  $mmSequenceSlider.setValue($mmRotDeltaSumLastFrame);
+                  $mmSequenceSlider.setValue($mmSelectedShape.rotDeltaSumLastFrame);
                   mmSequenceSetOutBar();
-                  echo("found a minimum: " @ $mmRotDeltaSumMin @ ", frame " @ $mmRotDeltaSumLastFrame);
+                  echo("found a minimum: " @ $mmSelectedShape.rotDeltaSumMin @ ", frame " @ $mmSelectedShape.rotDeltaSumLastFrame);           
+                  $mmSelectedShape.loopDetecting = false;
+                  $mmSelectedShape.pauseSeq();
                }
-               $mmRotDeltaSumDescending = 0;
+               $mmSelectedShape.rotDeltaSumDescending = false;
             }
          }
-         $mmRotDeltaSumLast = %seqDeltaSum;
-         if (((%current_frame==0)&&($mmRotDeltaSumMin<999.0))||(%frame_from_start > $mmLoopDetectorMax))
-         {
+         $mmSelectedShape.rotDeltaSumLast = %seqDeltaSum;
+         if (((%current_frame==0)&&($mmSelectedShape.rotDeltaSumMin<999.0))||(%frame_from_start > $mmLoopDetectorMax))//Hmmm
+         {//FIX: not at all sure about any of this...
             echo("ending loop detection: current frame " @ %current_frame @ " frame-from-start " @ %frame_from_start @ 
                ", loop detector max: " @ $loopDetectorMax);
             //SequencesCropStopKeyframeText.setText($rotDeltaSumLastFrame);
-            %markOutPos = mFloatLength($mmRotDeltaSumLastFrame / $mmSelectedShape.getSeqFrames(%seq),3);
+            %markOutPos = mFloatLength($mmSelectedShape.rotDeltaSumLastFrame / $mmSelectedShape.getSeqFrames(%seq),3);
             //SequencesCropStopText.setText(%markOutPos);
             //$crop_stop = %markOutPos;//Note: this sucks, we should just check SequencesCropStopText.getText instead.
             //TimelineRotDeltaSum.setText(mFloatLength($rotDeltaSumMin,3));
             $mmSequenceOutFrame.setText(%markOutPos);            
-            $mmLoopDetecting = 0;
+            $mmSelectedShape.loopDetecting = false;
             $mmSequenceSlider.setValue($mmSequenceOutFrame.getText());
             mmSequenceSetOutBar();
             //EcstasySequenceSlider::setSliderToPos(SequencesCropStartText.getText());
@@ -4965,6 +5040,7 @@ function MegaMotionTick()
          }          
       }
    }
+   
    schedule(30,0,"MegaMotionTick");//30 MS =~ 32 times per second.
 }
 
