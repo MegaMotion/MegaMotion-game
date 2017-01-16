@@ -1063,7 +1063,14 @@ function MegaMotionSaveMission()
 
 function MegaMotionSaveSceneShapes()
 {
+   %startTime = getTime();
+   echo("Saving scene shapes, start time " @ %startTime);
    //NOW: find all physicsShapes, and save each of them 
+
+   //BUT: let's try doing this in the engine
+   
+   saveSceneShapes();//FIX: doing this later, this is a placeholder.   
+   /*
    for (%i = 0; %i < SceneShapes.getCount();%i++)
    {
       %obj = SceneShapes.getObject(%i);  
@@ -1092,6 +1099,10 @@ function MegaMotionSaveSceneShapes()
          sqlite.query(%query,0);          
       }
    }
+   */
+   %endTime = getTime();
+   %elapsed = %endTime - %startTime;
+   echo("Done saving scene shapes, end time " @ %endTime @ " elapsed " @ %elapsed);
 }
          
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1361,7 +1372,8 @@ function mmLoadScene(%id)
    }
    
    //HERE: all major SQL query loops need to be done in the engine, they take too long in script. (benchmark this btw)
-   loadSceneShapes(%id);//FIX: doing this later, this is a placeholder.
+   //loadSceneShapes(%id);//FIX: doing this later, this is a placeholder. 
+   //EXCEPT - this really isn't an issue now, because it is now only one query, and really quite fast even in script.
    
    %dyn = false;
    %grav = true;
@@ -1416,8 +1428,8 @@ function mmLoadScene(%id)
          %datablock = sqlite.getColumn(%resultSet, "datablock");
          //%skeleton_id = sqlite.getColumn(%resultSet, "skeleton_id");
          
-         echo("Found a sceneShape: " @ %sceneShape_id @ " pos " @ %pos_x @ " " @ %pos_y @ " " @ %pos_z @
-                " scale " @ %scale_x @ " " @ %scale_y @ " " @ %scale_z );
+         //echo("Found a sceneShape: " @ %sceneShape_id @ " pos " @ %pos_x @ " " @ %pos_y @ " " @ %pos_z @
+         //       " scale " @ %scale_x @ " " @ %scale_y @ " " @ %scale_z );
                 
          %position = (%pos_x + %scene_pos_x) @ " " @ (%pos_y + %scene_pos_y) @ " " @ (%pos_z + %scene_pos_z);
          %rotation = %rot_x @ " " @ %rot_y @ " " @ %rot_z @ " " @ %rot_a;
@@ -1974,6 +1986,9 @@ function mmReallyAddPhysicsShape()
    %resultSet = sqlite.query(%query,0);
    %id = sqlite.getColumn(%resultSet,"id");
    sqlite.clearResult(%resultSet);
+   
+   //sqlite.getLastRowId();//Maybe?
+   
    
    %file.writeLine("");
    %file.writeLine("datablock PhysicsShapeData( " @ %shapeName @ "Physics )");
