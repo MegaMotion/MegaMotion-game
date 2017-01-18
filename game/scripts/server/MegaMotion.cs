@@ -1058,6 +1058,10 @@ function MegaMotionSaveMission()
    
    EditorGui.saveAs = false;
    
+   //Now, since we've moved to an all-cached DB context, save it out to disk every time we save mission, in order to 
+   %dbname = $pref::MegaMotion::DB;   //help minimize data losses in case of a crash.
+   sqlite.loadOrSaveDb(%dbname,true);
+   
    return true;
 }
 
@@ -1068,8 +1072,9 @@ function MegaMotionSaveSceneShapes()
    //NOW: find all physicsShapes, and save each of them 
 
    //BUT: let's try doing this in the engine
-   
-   saveSceneShapes();//FIX: doing this later, this is a placeholder.   
+   saveSceneShapes();//AND, there we have it. Prepared statements in sqlite helped quite a bit, though
+   //it will probably still be too slow until we implement a cached database. 
+     
    /*
    for (%i = 0; %i < SceneShapes.getCount();%i++)
    {
@@ -4397,8 +4402,6 @@ function mmBvhUnlinkNode()
 }
 
 /*
-
-
 function EcstasyToolsWindow::unlinkBvhNode()
 {
    //if(!EcstasyToolsWindow::StartSQL())
