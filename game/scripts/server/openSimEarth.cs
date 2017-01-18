@@ -9,14 +9,16 @@ $numScenes = 0;
 
 function startSQL(%dbname)
 {//Create the sqlite object that we will use in all the scripts.
-   %sqlite = new SQLiteObject(sqlite);
+   %temp = new SQLiteObject(sqlite);
+   //HMMM... Maybe?? Radical new method: make a new SQLiteObject that copies m_pDatabase from existing one.
    
-   if (%sqlite.openDatabase(%dbname))
-      echo("Successfully opened database: " @ %dbname );
-   else {
-      echo("We had a problem involving database: " @ %dbname );
-      return;
-   }
+   //if (%sqlite.openDatabase(%dbname))
+   //if (sqlite.loadOrSaveDb(%dbname,false))
+   //   echo("Successfully loaded database: " @ %dbname );
+   //else {
+   //   echo("We had a problem involving database: " @ %dbname );
+   //   return;
+   //}
 }
 
    //TESTING - SpatiaLite.  Exciting promise, disappointing failure... so far.
@@ -40,8 +42,9 @@ function startSQL(%dbname)
    
 function stopSQL()
 {
-   sqlite.closeDatabase();
-   sqlite.delete();      
+   //sqlite.closeDatabase();
+   //sqlite.loadOrSaveDb(%dbname,true);
+   //sqlite.delete();      
 }
 
 function openSimEarthTick()
