@@ -211,6 +211,16 @@
       internalName = "sequenceFindLoopDelta";
       groupNum = "-1";
    };
+   new GuiButtonCtrl() {
+      position = "18 68";
+      extent = "36 18";
+      text = "reset";
+      internalName = "sequenceResetMarksButton";
+      command = "mmSequenceResetInOutBars();";
+      tooltip = "Resets in/out markers.";
+      tooltipprofile = "GuiToolTipProfile";
+      groupNum = "-1";
+   };
    new GuiTextCtrl() {
       position = "384 92";
       extent = "35 20";

@@ -3214,16 +3214,17 @@ function mmSelectSequence()
    MegaMotionSequenceWindow.visible = true;//Why not?
    
    if (MegaMotionSequenceWindow.isVisible())
-   {
+   {      
       %frames = $mmSelectedShape.getSeqFrames(%seq_id);
       $mmSequenceSlider.range = "0 " @ %frames;
       $mmSequenceSlider.value = 0;
+      $mmSequenceInFrame.setText("0");
       $mmSequenceOutFrame.setText(%frames);
+      
+      //Above is redundantly repeated in the function below, for testing, problems occurred with them only in the function.
+      mmSequenceResetInOutBars();
    }
-   //echo("ended selectSequence!");
-   
 }
-
 
 /*
 ////(FROM EM) //////0
@@ -4580,21 +4581,25 @@ function mmSequenceSetInBar()
    %slider_value = $mmSequenceSlider.getValue() / %numFrames;
    %extent_x = $mmSequenceSlider.extent.x;
    %newPos_x = %pos_x + (%slider_value * %extent_x);
-   %newPos_y = getWord(%outPos,1);
+   %newPos_y = $mmSequenceSlider.position.y - 16;
    %newPos = %newPos_x @ " " @ %newPos_y;
    //%newPos = $mmSequenceSlider.getPosition() + $mmSequenceSlider.getValue() ;
    //%newPos.x += (%frame / %numFrames) * ($mmSequenceSlider.extent.x - 12);//Slider can't go to end.
-   //%newPos.y -= 12;
+   //%newPos.y -= 16;
    
    echo("setting In position " @ %newPos @ " out position is " @ %outPos @ " posX " @ %pos_x @
          " value " @ %slider_value @ " extent x " @ %extent_x);
    
-   
-   if (%outPos.x < %newPos.x)
+   if (%outPos.x > %newPos.x)
+   {
+      $mmSequenceSliderIn.setPosition(%newPos.x,%newPos.y);
+      $mmSequenceInFrame.setText(%frame);
+   }
+   else if (%outPos.x < %newPos.x)
    {
       $mmSequenceSliderOut.setPosition(%newPos.x,%newPos.y);
       $mmSequenceOutFrame.setText(%frame);
-      $mmSequenceSliderIn.setPosition(%outPos.x,%outPos.y);
+      $mmSequenceSliderIn.setPosition(%outPos.x,%newPos.y);
       %sliderPos = $mmSequenceSlider.getPosition().x;
       %frame = mCeil(((%outPos.x - %sliderPos)/$mmSequenceSlider.extent.x)*$mmSequenceSlider.range.y);
       $mmSequenceInFrame.setText(%frame);
@@ -4606,15 +4611,69 @@ function mmSequenceSetInBar()
       %frame += 1;
       %newPos = $mmSequenceSlider.getPosition();
       %newPos.x += (%frame / %numFrames) * ($mmSequenceSlider.extent.x - 12);
-      %newPos.y -= 12;
+      $mmSequenceSliderOut.setPosition(%newPos.x,%newPos.y - 16);
+      $mmSequenceOutFrame.setText(%frame);
+   }      
+}
+
+function mmSequenceSetOutBar()
+{   
+   %inPos = $mmSequenceSliderIn.getPosition();
+   
+   %frame = $mmSequenceSlider.value;
+   %frame = mCeil(%frame);
+   %numFrames = $mmSequenceSlider.range.y;
+   %newPos = $mmSequenceSlider.getPosition();
+   %newPos.x += (%frame / %numFrames) * ($mmSequenceSlider.extent.x - 12);
+   %newPos.y -= 16;
+   
+   if (%inPos.x > %newPos.x)
+   {
+      $mmSequenceSliderIn.setPosition(%newPos.x,%newPos.y);
+      $mmSequenceInFrame.setText(%frame);
+      $mmSequenceSliderOut.setPosition(%inPos.x,%inPos.y);
+      %sliderPos = $mmSequenceSlider.getPosition().x;
+      %frame = mCeil(((%inPos.x - %sliderPos)/$mmSequenceSlider.extent.x)*$mmSequenceSlider.range.y);
+      $mmSequenceOutFrame.setText(%frame);
+   }
+   else if (%inPos.x == %newPos.x)
+   {      
+      $mmSequenceSliderIn.setPosition(%newPos.x,%newPos.y);
+      $mmSequenceInFrame.setText(%frame);
+      %frame += 1;
+      %newPos = $mmSequenceSlider.getPosition();
+      %newPos.x += (%frame / %numFrames) * ($mmSequenceSlider.extent.x - 12);
+      %newPos.y -= 16;
       $mmSequenceSliderOut.setPosition(%newPos.x,%newPos.y);
       $mmSequenceOutFrame.setText(%frame);
    }
    else
    {
-      $mmSequenceSliderIn.setPosition(%newPos.x,%newPos.y);
-      $mmSequenceInFrame.setText(%frame);
-   }      
+      $mmSequenceSliderOut.setPosition(%newPos.x,%newPos.y);
+      $mmSequenceOutFrame.setText(%frame);
+   }
+   //echo("out bar, frame " @ %frame @ " numFrames " @ %numFrames @ " pos " @
+   //       %newPos.x @ " startpos " @ $mmSequenceSlider.getPosition().x @ " extent " 
+   //       @ $mmSequenceSlider.extent.x);
+
+}
+
+function mmSequenceResetInOutBars()
+{
+   if ($mmSelectedShape)
+   {
+      //%frames = $mmSelectedShape.getSeqFrames(%seq_id);
+      //$mmSequenceSlider.range = "0 " @ %frames;
+      //$mmSequenceSlider.value = 0;
+      $mmSequenceInFrame.setText("0");
+      $mmSequenceOutFrame.setText($mmSequenceSlider.range.y);
+   }
+   
+   %newPos = $mmSequenceSlider.getPosition();
+   %newPos.y -= 16;
+   $mmSequenceSliderIn.setPosition((%newPos.x),%newPos.y);
+   %newPos.x += ($mmSequenceSlider.extent.x - 10);
+   $mmSequenceSliderOut.setPosition(%newPos.x,%newPos.y);
 }
 
 function mmSequenceBackwardToIn()
@@ -4695,56 +4754,6 @@ function mmSequenceForwardToOut()
 }
 
 
-function mmSequenceSetOutBar()
-{   
-   %inPos = $mmSequenceSliderIn.getPosition();
-   
-   %frame = $mmSequenceSlider.value;
-   %frame = mCeil(%frame);
-   %numFrames = $mmSequenceSlider.range.y;
-   %newPos = $mmSequenceSlider.getPosition();
-   %newPos.x += (%frame / %numFrames) * ($mmSequenceSlider.extent.x - 12);
-   %newPos.y -= 12;
-   
-   if (%inPos.x > %newPos.x)
-   {
-      $mmSequenceSliderIn.setPosition(%newPos.x,%newPos.y);
-      $mmSequenceInFrame.setText(%frame);
-      $mmSequenceSliderOut.setPosition(%inPos.x,%inPos.y);
-      %sliderPos = $mmSequenceSlider.getPosition().x;
-      %frame = mCeil(((%inPos.x - %sliderPos)/$mmSequenceSlider.extent.x)*$mmSequenceSlider.range.y);
-      $mmSequenceOutFrame.setText(%frame);
-   }
-   else if (%inPos.x == %newPos.x)
-   {      
-      $mmSequenceSliderIn.setPosition(%newPos.x,%newPos.y);
-      $mmSequenceInFrame.setText(%frame);
-      %frame += 1;
-      %newPos = $mmSequenceSlider.getPosition();
-      %newPos.x += (%frame / %numFrames) * ($mmSequenceSlider.extent.x - 12);
-      %newPos.y -= 12;
-      $mmSequenceSliderOut.setPosition(%newPos.x,%newPos.y);
-      $mmSequenceOutFrame.setText(%frame);
-   }
-   else
-   {
-      $mmSequenceSliderOut.setPosition(%newPos.x,%newPos.y);
-      $mmSequenceOutFrame.setText(%frame);
-   }
-   //echo("out bar, frame " @ %frame @ " numFrames " @ %numFrames @ " pos " @
-   //       %newPos.x @ " startpos " @ $mmSequenceSlider.getPosition().x @ " extent " 
-   //       @ $mmSequenceSlider.extent.x);
-
-}
-
-function mmSequenceResetInOutBars()
-{  //FAIL, revisit.
-   %newPos = $mmSequenceSlider.getPosition();
-   %newPos.x += ($mmSequenceSlider.extent.x - 12);
-   %newPos.y -= 12;
-   $mmSequenceSliderOut.setPosition(%newPos.x,%newPos.y);
-   $mmSequenceSliderIn.setPosition((%newPos.x + 12),%newPos.y);
-}
 
 /*
    %sliderPos = $mmSequenceSlider.getPosition();

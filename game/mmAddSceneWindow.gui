@@ -1,5 +1,5 @@
 %guiContent = new GuiWindowCtrl(mmAddSceneWindow) {
-   position = "840 483";
+   position = "512 374";
    extent = "320 160";
    text = "Add Scene";
    canClose = "1";
