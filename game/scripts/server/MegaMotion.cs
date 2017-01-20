@@ -39,6 +39,8 @@ $mmRotDeltaSumMin = 0;
 $mmRotDeltaSumDescending = 0;
 $mmRotDeltaSumLast = 0;
 
+$mmShapeMountChildSceneShape = 0;
+
 //$mmKeyframesRotation = 1;
 //$mmKeyframesPosition = 0;
 
@@ -849,10 +851,10 @@ function mmUpdateSceneShapeTab()
    echo("Updated pos " @ MegaMotionScenes.pos_id @ ", rot " @ MegaMotionScenes.rot_id @ 
          " shapeMount " @ %shapeMountID @  " Stored child shape " @ MegaMotionScenes.mount_child_id);
          
-   if (%shapeMountID <= 0)
+   if ((%shapeMountID <= 0)&&($mmLoadedScenes>0))
    {
-      mmUnloadScene();
-      mmLoadScene();
+      mmUnloadScene($mmSceneList.getSelected());
+      mmLoadScene($mmSceneList.getSelected());
       return;
    }
    
@@ -867,8 +869,11 @@ function mmUpdateSceneShapeTab()
       sqlite.query(%query,0);
    }
    
-   mmUnloadScene();
-   mmLoadScene();
+   if ($mmLoadedScenes>0)
+   {
+      mmUnloadScene($mmSceneList.getSelected());
+      mmLoadScene($mmSceneList.getSelected());
+   }
    
    echo("Reloaded scene after updating sceneShapeTab!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 }
@@ -1440,8 +1445,8 @@ function mmLoadScene(%id)
          %rotation = %rot_x @ " " @ %rot_y @ " " @ %rot_z @ " " @ %rot_a;
          %scale = %scale_x @ " " @ %scale_y @ " " @ %scale_z;
          
-         //echo("loading sceneShape id " @ %shape_id @ " position " @ %position @ " rotation " @ 
-         //      %rotation @ " scale " @ %scale);
+         echo("loading sceneShape id " @ %shape_id @ " position " @ %position @ " rotation " @ 
+               %rotation @ " scale " @ %scale);
          
          //TEMP -- use name from sceneShape table
          //%name = "";          
@@ -1482,8 +1487,11 @@ function mmLoadScene(%id)
          };
          //skeletonID = %skeleton_id;
          
+         %pShape.setScale(%scale);//Maybe? Scale above is broken. 
+         
          MissionGroup.add(%pShape);   
-         SceneShapes.add(%pShape);   
+         SceneShapes.add(%pShape);  
+         
 
          
          if ($mmSelectedSceneShape>0)
@@ -1537,7 +1545,6 @@ function mmSceneSpecifics(%id)
 
 function mmSetBehaviors(%id)
 {
-   //Now, do all shapeMounts - except only for shapes from this scene, so we don't do it twice.
    for (%i = 0; %i < SceneShapes.getCount();%i++)
    {
       %obj = SceneShapes.getObject(%i); 
@@ -1727,7 +1734,7 @@ function mmSelectSceneShape()
       }
    }
    
-   //%query = "SELECT * FROM sceneShape WHERE id=" @ %sceneShapeId @ ";";  
+   //%query = "SELECT * FROM sceneShape WHERE id=" @ %sceneShapeId @ ";";
 	%query = "SELECT shape_id,name,shapeGroup_id,behavior_tree,openSteerProfile_id," @ 
 	         "pos_x,pos_y,pos_z," @ 
 	         "rot_x,rot_y,rot_z,rot_a," @ 
@@ -1784,21 +1791,26 @@ function mmSelectSceneShape()
       sqlite.clearResult(%resultSet);
       
       $mmShapeMountList.clear();
+      %first_id = 0;
       %query = "SELECT * FROM shapeMount WHERE parent_shape_id=" @ $mmSelectedShape.sceneShapeID @ ";";
       %resultSet2 = sqlite.query(%query, 0); 
       if (sqlite.numRows(%resultSet2)>0)
       {         
-         $mmShapeMountList.add("",0);   
+         //$mmShapeMountList.add("",0);   
          while (!sqlite.endOfResult(%resultSet2))
          { //Next, get a human friendly child shape name.
             %id = sqlite.getColumn(%resultSet2, "id");
             %child = sqlite.getColumn(%resultSet2, "child_shape_id");
             %name = %child @ " - " @ %id;
+            if (%first_id == 0)
+               %first_id = %id;
             $mmShapeMountList.add(%name,%id);
             sqlite.nextRow(%resultSet2);         
          }       
          sqlite.clearResult(%resultSet2);
       }
+      if (%first_id>0)
+         $mmShapeMountList.setSelected(%first_id);
    }
 }
 
@@ -1933,8 +1945,8 @@ function mmAddPhysicsShape()
 
 function mmBrowsePhysicsShape()
 {
-   if (strlen($Pref::DtsDir))
-      %openFileName = mmGetOpenFilename($Pref::DtsDir,"dts");
+   if (strlen($Pref::MegaMotion::DtsDir))
+      %openFileName = mmGetOpenFilename($Pref::MegaMotion::DtsDir,"dts");
    else
       %openFileName = mmGetOpenFilename("art/shapes","dts");
    
@@ -2516,9 +2528,11 @@ function mmReallyAddSceneShape()
       
    exposeMegaMotionScenesForm();
    
-   mmUnloadScene($mmSceneList.getSelected());
-   mmLoadScene($mmSceneList.getSelected());
-   
+   if ($mmLoadedScenes>0)
+   {
+      mmUnloadScene($mmSceneList.getSelected());
+      mmLoadScene($mmSceneList.getSelected());
+   }
 }
 
 
@@ -2894,13 +2908,12 @@ function mmSelectShapeMount()
       MegaMotionScenes.mount_parent_node = %parentNode;      
       MegaMotionScenes.mount_child_shape = %childShape;
       MegaMotionScenes.mount_child_node = %childNode;    
-      MegaMotionScenes.mount_child_id = %childSceneShape;
+      MegaMotionScenes.mount_child_id = %childSceneShape;      
       
-      
-      echo("selecting child shape: " @ %childShape );
+      //echo("selecting child shape: " @ %childShape );
       $mmShapeMountChildShapeList.setSelected(%childShape);
       
-      echo("Setting child shape node: " @ %childNode);
+      //echo("Setting child shape node: " @ %childNode);
       $mmShapeMountChildNodeList.setSelected(%childNode);
       
       %offsetX.setText(sqlite.getColumn(%resultSet,"offset_x"));
@@ -3012,6 +3025,53 @@ function mmSelectAddShapeMountChildShape()
    sqlite.clearResult(%resultSet);
 }
 
+function mmDeleteShapeMount()
+{
+   
+   %shapeMount_id = $mmShapeMountList.getSelected();
+   if (%shapeMount_id<=0)
+      return;
+      
+   MessageBoxOKCancel( "Warning", 
+      "Are you sure you want to delete this shapeMount?", 
+      "mmReallyDeleteShapeMount();",
+      "" ); 
+}
+
+function mmReallyDeleteShapeMount()
+{
+   //SO: to delete a shapeMount:
+   // 1) get the child sceneShape id, because we are going to need to delete it from the scene (stored in selectShapeMount)
+   // 2) //unmount the child shape from the parent shape - NOPE! We're just gonna unload/reload scene.
+   // 3) delete the child sceneShape
+   // 4) delete the shapeMount
+   // 5) unload and reload the scene
+   %shapeMount_id = $mmShapeMountList.getSelected();
+   if (%shapeMount_id<=0)
+      return;
+      
+   if (MegaMotionScenes.mount_child_id<=0)
+      return;
+   
+   //%sceneShape_id = $mmSelectedSceneShape.sceneShapeID;
+   %sceneShape_id = $mmSceneShapeList.getSelected();
+   
+   %query = "DELETE FROM sceneShape WHERE id=" @ MegaMotionScenes.mount_child_id @ ";";
+   sqlite.query(%query,0);
+   
+   %query = "DELETE FROM shapeMount WHERE id=" @ %shapeMount_id @ ";";
+   sqlite.query(%query,0);
+      
+   if ($mmLoadedScenes>0)
+   {
+      //echo("refreshing scene! " @ $mmSceneList.getSelected() );
+      mmUnloadScene($mmSceneList.getSelected());
+      mmLoadScene($mmSceneList.getSelected());
+   }
+   
+   //echo("mmReallyDeleteShapeMount - SELECTING SCENE SHAPE " @ %sceneShape_id );
+   $mmSceneShapeList.setSelected(%sceneShape_id);
+}
 
 function mmSelectMountChildShape()
 {
@@ -3037,7 +3097,9 @@ function mmReallyAddShapeMount()
 {
    if (($mmSelectedShape<=0)||($mmSelectedShape.sceneID<=0))
       return;
-      
+   
+   %sceneShape_id = $mmSelectedShape.sceneShapeID;
+   
    %parentNodeList = addShapeMountWindow.findObjectByInternalName("parentNodeList");
    %childShapeList = addShapeMountWindow.findObjectByInternalName("childShapeList");
    %childNodeList = addShapeMountWindow.findObjectByInternalName("childNodeList");
@@ -3079,13 +3141,24 @@ function mmReallyAddShapeMount()
             %scaleX @ "," @ %scaleY @ "," @ %scaleZ @ ");";
    sqlite.query(%query,0);
    
+   %shapeMount_id = sqlite.getLastRowId();
+   
    //%query = "SELECT last_insert_rowid() AS id;";
    //%resultSet = sqlite.query(%query,0);
    //%sm_id = sqlite.getColumn(%resultSet,"id");
    
    //And, WHEW! Really gotta take a look at optimizations here... 
-   mmUnloadScene();
-   mmLoadScene();
+   
+   if ($mmLoadedScenes>0)
+   {   
+      mmUnloadScene($mmSceneList.getSelected());
+      mmLoadScene($mmSceneList.getSelected());
+   }
+   
+   $mmSceneShapeList.setSelected(%sceneShape_id);
+   $mmShapeMountList.setSelected(%shapeMount_id);
+   
+   addShapeMountWindow.visible = false;
 }
 
 /*
@@ -3441,14 +3514,16 @@ function mmSelectKeyframeSet()
       sqlite.clearResult(%resultSet);
       return;
    }
-   echo("SELECTING KEYFRAME SET, numSeries " @ sqlite.numRows(%resultSet));
+   //echo("SELECTING KEYFRAME SET, numSeries " @ sqlite.numRows(%resultSet));
+   %first_id = 0;
    while (!sqlite.endOfResult(%resultSet))
    {
       %series_id = sqlite.getColumn(%resultSet, "id");
+      if (%first_id==0) %first_id = %series_id;
       %type = sqlite.getColumn(%resultSet, "type");
       %typename = %typenames[%type];
       %node = sqlite.getColumn(%resultSet, "node"); 
-      echo("filling keyframeSeries list, series id " @ %series_id @ " node " @ %node);
+      //echo("filling keyframeSeries list, series id " @ %series_id @ " node " @ %node);
       %nodename =  $mmSelectedShape.getNodeName(%node); 
       %name =  %nodename @ " - " @ %typename @ " " @ %series_id;
       $mmSequenceKeyframeSeriesList.add(%name,%series_id);
@@ -3480,11 +3555,14 @@ function mmSelectKeyframeSet()
    echo("APPLYING KEYFRAME SET!!!!!!");
    $mmSelectedShape.applyKeyframeSet();
    
+   if ($mmSequenceKeyframeSeriesList.size()>1)
+      $mmSequenceKeyframeSeriesList.setSelected(%first_id);
+   
+   
    //Now, we need to play the first frame again to show the change.
    $mmSelectedShape.playSeqByNum($mmSequenceList.getSelected());
    $mmSelectedShape.pauseSeq();
    $mmSelectedShape.setSeqPos(0);
-   
 }
 
 function mmSelectKeyframeSeries()
@@ -3492,9 +3570,12 @@ function mmSelectKeyframeSeries()
    $mmSequenceKeyframeList.clear();
    mmResetKeyframeValues();
    
+   %series_id = $mmSequenceKeyframeSeriesList.getSelected();
+   if (%series_id==0)
+      return;
+      
    %firstID = 0;
-   %query = "SELECT id,frame,x,y,z FROM keyframe WHERE series_id=" @
-            $mmSequenceKeyframeSeriesList.getSelected() @ " ORDER BY frame;";
+   %query = "SELECT id,frame,x,y,z FROM keyframe WHERE series_id=" @ %series_id @ " ORDER BY frame;";
    %resultSet = sqlite.query(%query, 0); 
    
    if (%resultSet)
@@ -3527,13 +3608,17 @@ function mmSelectKeyframe()
    if (!isObject($mmSelectedShape))
       return;     
    
+   $mmKeyframeID = $mmSequenceKeyframeList.getSelected();
+   
+   if ($mmKeyframeID==0)
+      return;
+      
    %panel = $mmSequenceTab.findObjectByInternalName("sequencePanel");
    %sumX = %panel.findObjectByInternalName("sequenceKeyframeSumX");
    %sumY = %panel.findObjectByInternalName("sequenceKeyframeSumY");
    %sumZ = %panel.findObjectByInternalName("sequenceKeyframeSumZ");
    //%frame = %panel.findObjectByInternalName("sequenceKeyframeFrame");
    
-   $mmKeyframeID = $mmSequenceKeyframeList.getSelected();
    %query = "SELECT id,frame,x,y,z FROM keyframe WHERE id=" @ $mmKeyframeID @ ";";
    %resultSet = sqlite.query(%query, 0); 
    if (%resultSet)
@@ -3674,11 +3759,14 @@ function mmReallyAddKeyframeSet()
             ",'" @ %seq_name @ "','" @ %name @ "');";   
    sqlite.query(%query,0);
    
+   %set_id = sqlite.getLastRowId();
    
    mmAddKeyframeSetWindow.delete();
       
    %seq = $mmSequenceList.getSelected();
    $mmSequenceList.setSelected(%seq);   
+   
+   $mmSequenceKeyframeSetList.setSelected(%set_id);
 }
 
 function mmDeleteKeyframeSet()
@@ -3747,11 +3835,15 @@ function mmReallyAddKeyframeSeries()
    %query = "INSERT INTO keyframeSeries (set_id,type,node) VALUES (" @ %set_id @
             ",'" @ %type @ "','" @ %node @ "');";   
    sqlite.query(%query,0);
+      
+   %series_id = sqlite.getLastRowId();
    
    mmAddKeyframeSeriesWindow.delete();
    
    %set = $mmSequenceKeyframeSetList.getSelected();
    $mmSequenceKeyframeSetList.setSelected(%set);  
+   
+   $mmSequenceKeyframeSeriesList.setSelected(%series_id);
 }
 
 function mmDeleteKeyframeSeries()
@@ -3816,6 +3908,7 @@ function mmReallyAddKeyframe()
    
    %shape_id = $mmSelectedShape.shapeID;
    %series_id = $mmSequenceKeyframeSeriesList.getSelected();
+   %set_id = $mmSequenceKeyframeSetList.getSelected();
    if (%series_id<=0)
    {
       echo("Please select the keyframe series before adding a keyframe!");
@@ -3840,13 +3933,7 @@ function mmReallyAddKeyframe()
     
    echo("finished mmAddKeyframeset()!");
    
-   %query = "SELECT last_insert_rowid() as last_id;";
-   %resultSet = sqlite.query(%query,0);
-   if (sqlite.numRows(%resultSet)==1)
-   {
-      %last_id = sqlite.getColumn(%resultSet,"last_id");
-      echo("inserted keyframe: " @ %last_id);
-   }
+   %keyframe_id = sqlite.getLastRowId();
    
    //if ($mmLoadedScenes>0)
    //{//FIX: would be better to load/unload just this shape, but then we need all instances of this
@@ -3859,8 +3946,11 @@ function mmReallyAddKeyframe()
    
    $mmSelectedShape.applyKeyframeSet();//HERE: we need to set mUltraframeSet on selectKeyframeSet
    
-   %series = $mmSequenceKeyframeSeriesList.getSelected();
-   $mmSequenceKeyframeSeriesList.setSelected(%series); 
+   $mmSequenceKeyframeSetList.setSelected(%set_id);    
+   
+   $mmSequenceKeyframeSeriesList.setSelected(%series_id); 
+   
+   $mmSequenceKeyframeList.setSelected(%keyframe_id);
 }
 
 
@@ -4924,7 +5014,7 @@ function mmGetSaveFileName(%defaultFilePath,%type)
    };
    if(%dlg.Execute())
    {
-      $Pref::DsqDir = filePath( %dlg.FileName );
+      $Pref::MegaMotion::DsqDir = filePath( %dlg.FileName );
       %filename = %dlg.FileName;      
       %dlg.delete();
       return %filename;
@@ -4988,21 +5078,26 @@ function MegaMotionTick()
          //TimelineRotDeltaSum.setText(mFloatLength(%seqDeltaSum,3));
          %frame_from_start = %current_frame-%start_frame;
          
+         %seqDeltaMinusOne = 0;
+         %seqDeltaMinusTwo = 0;
+         %seqDeltaMinusThree = 0;
+         %seqDeltaMinusFour = 0;         
          
-         echo(" frame: " @ %current_frame @ ", deltaSum " @ %seqDeltaSum @ "  last " @ $mmSelectedShape.rotDeltaSumLast @ 
-            ", deltaSumMin " @ $mmSelectedShape.rotDeltaSumMin @ " isDescending " @ $mmSelectedShape.rotDeltaSumDescending);
-            
-        
+         //This is ugly, but we need a rolling array of last five values.
          if ($mmSelectedShape.rotDeltaSumCurrentFrame > 0)
          {
             if ($mmSelectedShape.rotDeltaSumCurrentFrame > 3) //if we're on frame four or more, move all four stored values.
             {
-               echo("Last four diff: " @ (%seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusFour));
+               //echo("Last four diff: " @ (%seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusFour));
                $mmSelectedShape.rotDeltaSumLastMinusFour = $mmSelectedShape.rotDeltaSumLastMinusThree;
                $mmSelectedShape.rotDeltaSumLastMinusThree = $mmSelectedShape.rotDeltaSumLastMinusTwo;
                $mmSelectedShape.rotDeltaSumLastMinusTwo = $mmSelectedShape.rotDeltaSumLastMinusOne;
-               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast;     
-                         
+               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast; 
+               
+               %seqDeltaMinusOne = %seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusOne;
+               %seqDeltaMinusTwo = %seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusTwo;
+               %seqDeltaMinusThree = %seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusThree;
+               %seqDeltaMinusFour = %seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusFour;  
             } 
             else if ($mmSelectedShape.rotDeltaSumCurrentFrame == 3)
             {
@@ -5021,6 +5116,8 @@ function MegaMotionTick()
             }
          }      
             
+         echo(" frame: " @ %current_frame @ ", deltaSum " @ %seqDeltaSum @ ", -4 " @  %seqDeltaMinusFour @
+               ", -3 " @ %seqDeltaMinusThree @ ", -2 " @ %seqDeltaMinusTwo @ ", -1 " @ %seqDeltaMinusOne );
             
          $mmSelectedShape.rotDeltaSumCurrentFrame++;
             
@@ -5116,20 +5213,41 @@ function mmLoadSceneSequences()
    %path = "";
    %dlg = new OpenFolderDialog()
    {
-      DefaultPath    = $Pref::SceneDsqDir;
+      DefaultPath    = $Pref::MegaMotion::SceneDsqDir;
       Filters        = "DSQ Files (*.dsq)|*.dsq|All Files (*.*)|*.*|";
    };
    
    if(%dlg.Execute())
    {
-      $Pref::SceneDsqDir = %dlg.FileName ;
+      $Pref::MegaMotion::SceneDsqDir = %dlg.FileName ;
       %path = %dlg.FileName;     
    }
+   echo("dialog executed! path = " @ %path);
+   
    %dlg.delete();
+   
    
    if (strlen(%path)>0)
       mmReallyLoadSceneSequences(%path);
 }
+/*
+function testFolderDialog()
+{
+   %dlg = new OpenFolderDialog()
+   {
+      DefaultPath    = "";
+      Filters        = "";
+   };
+   
+   if(%dlg.Execute())
+   {
+      %path = %dlg.FileName;     
+      echo("dialog executed! path = " @ %path);
+   } else {
+      echo("dialog failed to execute! path = " @ %path);
+   }
+   %dlg.delete();
+}*/
 
 function mmReallyLoadSceneSequences(%path)
 {
@@ -5175,13 +5293,13 @@ function mmExportSceneBVH()
    %path = "";
    %dlg = new OpenFolderDialog()
    {
-      DefaultPath    = $Pref::SceneDsqDir;
+      DefaultPath    = $Pref::MegaMotion::SceneDsqDir;
       Filters        = "DSQ Files (*.dsq)|*.dsq|All Files (*.*)|*.*|";
    };
    
    if(%dlg.Execute())
    {
-      $Pref::SceneDsqDir = %dlg.FileName ;
+      $Pref::MegaMotion::SceneDsqDir = %dlg.FileName ;
       %path = %dlg.FileName;     
    }
    %dlg.delete();

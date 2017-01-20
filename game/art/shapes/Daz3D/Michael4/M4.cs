@@ -11,7 +11,7 @@ function M4Dts::onLoad(%this)
    %this.addSequence("art/shapes/Daz3D/Michael4/work/01_02_step_smooth.dsq", "walk", "0", "-1");
    //%this.addSequence("art/shapes/Daz3D/Michael4/work/dribble01.dsq", "walk", "0", "-1");
    //%this.addSequence("art/shapes/Daz3D/Michael4/sequences/MedRun6.dsq", "run", "0", "-1");
-   %this.addSequence("art/shapes/Daz3D/Michael4/work/jog_02_03.dsq", "run", "0", "-1");
+   %this.addSequence("art/shapes/Daz3D/Michael4/work/jog_02_03_three.dsq", "run", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/work/standing_jump.dsq", "jump", "0", "-1");
 
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/runscerd1.dsq", "runscerd", "0", "-1");
