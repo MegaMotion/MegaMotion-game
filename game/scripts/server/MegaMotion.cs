@@ -15,6 +15,7 @@ $mmAddOpenSteerWindowID = 378;
 $mmAddShapeMountWindowID = 594;
 $mmAddShapeWindowID = 619;
 $mmAddShapePartWindowID = 629;
+$mmAddBVHProfileWindowID = 674;
 
 $mmAddKeyframeWindowID = 524;
 $mmAddKeyframeSeriesWindowID = 466;
@@ -1063,9 +1064,9 @@ function MegaMotionSaveMission()
    
    EditorGui.saveAs = false;
    
-   //Now, since we've moved to an all-cached DB context, save it out to disk every time we save mission, in order to 
+   //NOW: since we've moved to an all-cached DB context, save it out to disk every time we save mission, in order to 
    %dbname = $pref::MegaMotion::DB;   //help minimize data losses in case of a crash.
-   sqlite.loadOrSaveDb(%dbname,true);
+   sqlite.loadOrSaveDb(%dbname,true); 
    
    return true;
 }
@@ -1395,7 +1396,7 @@ function mmLoadScene(%id)
 	         "ss.rot_x,ss.rot_y,ss.rot_z,ss.rot_a," @ 
 	         "ss.scale_x,ss.scale_y,ss.scale_z," @ 
 	         "s.pos_x AS scene_pos_x,s.pos_y AS scene_pos_y,s.pos_z AS scene_pos_z," @ 
-	         "sh.datablock as datablock " @ 
+	         "sh.datablock AS datablock, sh.skeleton_id AS skeleton_id " @ 
 	         "FROM sceneShape ss " @ 
 	         "JOIN scene s ON s.id=scene_id " @
 	         "JOIN physicsShape sh ON ss.shape_id=sh.id " @ 
@@ -1436,7 +1437,7 @@ function mmLoadScene(%id)
          %scene_pos_z = sqlite.getColumn(%resultSet, "scene_pos_z");
          
          %datablock = sqlite.getColumn(%resultSet, "datablock");
-         //%skeleton_id = sqlite.getColumn(%resultSet, "skeleton_id");
+         %skeleton_id = sqlite.getColumn(%resultSet, "skeleton_id");
          
          //echo("Found a sceneShape: " @ %sceneShape_id @ " pos " @ %pos_x @ " " @ %pos_y @ " " @ %pos_z @
          //       " scale " @ %scale_x @ " " @ %scale_y @ " " @ %scale_z );
@@ -1476,6 +1477,7 @@ function mmLoadScene(%id)
             shapeID = %shape_id;
             sceneShapeID = %sceneShape_id;
             sceneID = %id;
+            skeletonID = %skeleton_id;
             openSteerID = %openSteer_id;
             actionProfileID = %actionProfile_id;
             shapeGroupID = %shapeGroup_id;
@@ -4341,20 +4343,41 @@ function mmAddBvhProfile()
    if (!isObject($mmSelectedShape))
       return;
          
+         
+   makeSqlGuiForm($mmAddBVHProfileWindowID);         
+}
+
+function mmReallyAddBvhProfile()
+{  
+   if (!isObject($mmSelectedShape))
+      return;
+      
+   %profileName = mmAddBVHProfileWindow.findObjectByInternalName("nameEdit").getText();
+   
+   %profileSample = mmAddBVHProfileWindow.findObjectByInternalName("sampleBVHEdit").getText();
+   
+   $mmSelectedShape.importBvhSkeleton(%profileSample,%profileName);
+   
+   mmAddBVHProfileWindow.delete();
+   
+   return;
+}
+
+function mmBrowseBVHProfileSample()
+{
+
    if (strlen($Pref::MegaMotion::BvhLoadDir))
       %openFileName = mmGetOpenFilename($Pref::MegaMotion::BvhLoadDir,"bvh");
    else
       %openFileName = mmGetOpenFilename($mmSelectedShape.getPath(),"bvh");
    
-   %profileName = "test";//Whoops, need an add bvh profile form now, to get this
-   //as well as provide an option for supplying scale, etc. Try this to test 
-   //import function though.
-   
-   $mmSelectedShape.importBvhSkeleton(%openFileName,%profileName);
-       
-   return;
+   if (strlen(%openFileName)>0)
+   {
+      mmAddBVHProfileWindow.findObjectByInternalName("sampleBVHEdit").setText(%openFileName);
+   }
 }
-
+   
+   
 function mmDeleteBvhProfile()
 {
    

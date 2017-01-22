@@ -1,7 +1,7 @@
 %guiContent = new GuiWindowCtrl(uiFormWindow) {
    position = "806 96";
    extent = "475 570";
-   text = "";
+   text = "User Interface Manager";
    canClose = "1";
    useMouseEvents = "1";
    closeCommand = "uiFormWindow.setVisible(false);";

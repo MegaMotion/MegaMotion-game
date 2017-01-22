@@ -182,7 +182,8 @@ CREATE TABLE physicsShape (
     name       TEXT    NOT NULL
                        DEFAULT ( '' ),
     datablock  TEXT    DEFAULT ( '' ),
-    path       TEXT 
+    path       TEXT,
+    skeleton_id INTEGER DEFAULT ( 0 ),
 );
 
 -- Table: physicsShapePart
@@ -411,4 +412,13 @@ CREATE TABLE shapeMount (
     joint_id        INTEGER DEFAULT ( 0 ),
     parent_node     INTEGER DEFAULT ( 0 ),
     child_node      INTEGER DEFAULT ( 0 )
+);
+
+-- Table: skeleton
+CREATE TABLE skeleton ( 
+    id              INTEGER PRIMARY KEY AUTOINCREMENT
+                            NOT NULL
+                            UNIQUE,
+    name            TEXT    NOT NULL
+    		    	    UNIQUE
 );
