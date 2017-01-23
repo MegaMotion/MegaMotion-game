@@ -109,8 +109,8 @@ function mmTabBook::onTabSelected(%this, %text, %index)
          if (MissionGroup.getObject(%i).getClassName() $= "TerrainBlock")
             %haveTerrain = 1;
       }
-      if (!%haveTerrain)
-         physicsDebugDraw(0);//(1)//Kill this for now, it causes major problems.
+      if ((!%haveTerrain)&&($Pref::MegaMotion::AllowDebugDraw))
+         physicsDebugDraw(1);
       else
          physicsDebugDraw(0);
    }
