@@ -138,7 +138,10 @@ function StartupGui::onDone(%this)
          //BlankGui.delete();
          //flushTextureCache();
          
-         loadMainMenu();
+         //MegaMotion: we really don't even need the main menu, let's just go straight to choosing a level.
+         Canvas.pushDialog( ChooseLevelDlg );   
+         //loadMainMenu();
+         
       }
       else
       {
