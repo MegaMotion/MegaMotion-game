@@ -164,7 +164,7 @@ function exposeMegaMotionScenesForm()
    %scene_id = 0;
    %sceneShape_id = 0;
    %sequence_id = 0;
-   %tab_page = 4;//SceneShapeTab=4
+   %tab_page = 5;//SceneTab=5
    
    if (isDefined("MegaMotionScenes"))
    {
@@ -173,7 +173,7 @@ function exposeMegaMotionScenesForm()
       %sceneShape_id = $mmSceneShapeList.getSelected();
       %targetShape_id = $mmTargetShapeList.getSelected();
       %sequence_id = $mmSequenceList.getSelected();
-      %tab_page = $mmTabBook.getSelectedPage();
+      //%tab_page = $mmTabBook.getSelectedPage();
       MegaMotionScenes.delete();
    }
    
