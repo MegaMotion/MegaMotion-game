@@ -20,7 +20,7 @@ new SimGroup(MissionGroup) {
       soundDistanceModel = "Linear";
       canSave = "1";
       canSaveDynamicFields = "1";
-         desc = "A \'one of everything\' test level that demonstrates lots of stock classes.";
+         desc = "A Torque3D test level demonstrating a diversity of game object types.";
          levelName = "Outpost";
    };
    new ScatterSky() {

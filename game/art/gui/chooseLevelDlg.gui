@@ -144,7 +144,7 @@
          horizSizing = "right";
          vertSizing = "bottom";
          profile = "GuiCheckBoxProfile";
-         visible = "1";
+         visible = "0";
          active = "1";
          variable = "pref::HostMultiPlayer";
          tooltipProfile = "GuiToolTipProfile";

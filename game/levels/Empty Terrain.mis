@@ -21,7 +21,7 @@ new SimGroup(MissionGroup) {
       soundDistanceModel = "Linear";
       canSave = "1";
       canSaveDynamicFields = "1";
-         desc0 = "An empty terrain ready to be populated with Torque objects.";
+         desc0 = "A Torque3D game level demonstrating terrain objects.";
          levelName = "Empty Terrain";
    };
    new ScatterSky() {

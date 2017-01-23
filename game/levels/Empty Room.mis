@@ -21,7 +21,7 @@ new SimGroup(MissionGroup) {
       soundDistanceModel = "Linear";
       canSave = "1";
       canSaveDynamicFields = "1";
-         desc0 = "An empty room ready to be populated with Torque objects.";
+         desc0 = "The base MegaMotion test level.";
          enabled = "1";
          levelName = "Empty Room";
    };
@@ -29,8 +29,8 @@ new SimGroup(MissionGroup) {
       Material = "DesertSkyMat";
       drawBottom = "0";
       fogBandHeight = "0";
-      position = "0 0 0";
-      rotation = "1 0 0 0";
+      position = "6.24167 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "1 1 1";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -62,8 +62,8 @@ new SimGroup(MissionGroup) {
       representedInLightmap = "0";
       shadowDarkenColor = "0 0 0 -1";
       includeLightmappedGeometryInShadow = "0";
-      position = "0 0 0";
-      rotation = "1 0 0 0";
+      position = "6.24167 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "1 1 1";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -130,8 +130,8 @@ new SimGroup(MissionGroup) {
       minRegionArea = "8";
       mergeRegionArea = "20";
       maxPolysPerTile = "128";
-      position = "0 0 0";
-      rotation = "1 0 0 0";
+      position = "6.24167 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "200 200 20";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -154,7 +154,7 @@ new SimGroup(MissionGroup) {
       oseId = "0";
       isDirty = "1";
       position = "22.8678 32.0528 -0.325011";
-      rotation = "1 0 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "4 4 3";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -177,7 +177,7 @@ new SimGroup(MissionGroup) {
       oseId = "0";
       isDirty = "1";
       position = "28.5762 40.8266 -0.670801";
-      rotation = "1 0 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "5 5 3";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -200,7 +200,7 @@ new SimGroup(MissionGroup) {
       oseId = "0";
       isDirty = "1";
       position = "31.8994 32.264 -2.56089";
-      rotation = "1 0 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "10 10 5";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -223,7 +223,7 @@ new SimGroup(MissionGroup) {
       oseId = "0";
       isDirty = "1";
       position = "47.1581 18.7732 -3.24765";
-      rotation = "1 0 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "10 10 5";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -246,7 +246,7 @@ new SimGroup(MissionGroup) {
       oseId = "0";
       isDirty = "1";
       position = "32.91 24.5555 -1.01177";
-      rotation = "1 0 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "4 4 3";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -269,7 +269,7 @@ new SimGroup(MissionGroup) {
       oseId = "0";
       isDirty = "1";
       position = "40.9637 26.1272 -1.35756";
-      rotation = "1 0 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "5 5 3";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -361,7 +361,7 @@ new SimGroup(MissionGroup) {
       oseId = "0";
       isDirty = "1";
       position = "47.9463 27.4809 -0.304834";
-      rotation = "1 0 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "4 4 3";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -614,7 +614,7 @@ new SimGroup(MissionGroup) {
       oseId = "0";
       isDirty = "1";
       position = "-15.7639 33.772 0.320322";
-      rotation = "1 0 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "4 4 3";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -706,7 +706,7 @@ new SimGroup(MissionGroup) {
       oseId = "0";
       isDirty = "1";
       position = "-22.7465 32.4183 -0.732403";
-      rotation = "1 0 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "5 5 3";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -729,7 +729,7 @@ new SimGroup(MissionGroup) {
       oseId = "0";
       isDirty = "1";
       position = "-16.5521 25.0643 -2.62249";
-      rotation = "1 0 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "10 10 5";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -936,7 +936,7 @@ new SimGroup(MissionGroup) {
       oseId = "0";
       isDirty = "1";
       position = "17.3246 60.8934 -0.521116";
-      rotation = "1 0 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "4 4 3";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -1028,7 +1028,7 @@ new SimGroup(MissionGroup) {
       oseId = "0";
       isDirty = "1";
       position = "10.342 59.5397 -1.57384";
-      rotation = "1 0 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "5 5 3";
       canSave = "1";
       canSaveDynamicFields = "1";
@@ -1051,7 +1051,7 @@ new SimGroup(MissionGroup) {
       oseId = "0";
       isDirty = "1";
       position = "16.5364 52.1857 -3.46393";
-      rotation = "1 0 0 0";
+      rotation = "1 0 0 0.216705";
       scale = "10 10 5";
       canSave = "1";
       canSaveDynamicFields = "1";
