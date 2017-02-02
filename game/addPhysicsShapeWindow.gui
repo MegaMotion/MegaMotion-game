@@ -1,0 +1,59 @@
+%guiContent = new GuiWindowCtrl(addPhysicsShapeWindow) {
+   position = "840 483";
+   extent = "320 180";
+   text = "";
+   canClose = "1";
+   useMouseEvents = "1";
+   closeCommand = "addPhysicsShapeWindow.setVisible(false);";
+
+   new GuiMLTextCtrl() {
+      position = "10 30";
+      extent = "300 40";
+      text = "Choose a name and a model file for your shape. Multiple shapes can share a model file, but names must be unique.";
+      internalName = "instructionsLabel";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 75";
+      extent = "60 20";
+      text = "Name";
+      internalName = "nameLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "75 75";
+      extent = "180 20";
+      internalName = "nameField";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 100";
+      extent = "60 20";
+      text = "Model File";
+      internalName = "fileLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "75 100";
+      extent = "180 20";
+      internalName = "fileText";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "260 100";
+      extent = "30 18";
+      text = "...";
+      internalName = "fileBrowseButton";
+      command = "mmBrowsePhysicsShape();";
+      groupNum = "-1";
+   };
+   new GuiButtonCtrl() {
+      position = "110 135";
+      extent = "120 30";
+      text = "Add Shape";
+      internalName = "addShapeButton";
+      command = "mmReallyAddPhysicsShape();";
+      groupNum = "-1";
+   };
+};
+

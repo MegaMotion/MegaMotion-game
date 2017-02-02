@@ -201,6 +201,8 @@ function exposeMegaMotionScenesForm()
       
    $mmTabBook.selectPage(%tab_page);
    
+   MegaMotionSequenceWindow.visible = false;
+   
 }
 
 function openMegaMotionScenes()
@@ -870,7 +872,29 @@ function mmUpdateSceneShapeTab()
       sqlite.query(%query,0);
    }
    
-   if ($mmLoadedScenes>0)
+   %mount_offset_x = %panel.findObjectByInternalName("shapeMountOffsetX").getText();
+   %mount_offset_y = %panel.findObjectByInternalName("shapeMountOffsetY").getText();
+   %mount_offset_z = %panel.findObjectByInternalName("shapeMountOffsetZ").getText();
+   
+   %mount_orient_x = %panel.findObjectByInternalName("shapeMountRotationX").getText();
+   %mount_orient_y = %panel.findObjectByInternalName("shapeMountRotationY").getText();
+   %mount_orient_z = %panel.findObjectByInternalName("shapeMountRotationZ").getText();
+   
+   %mount_scale_x = %panel.findObjectByInternalName("shapeMountScaleX").getText();
+   %mount_scale_y = %panel.findObjectByInternalName("shapeMountScaleY").getText();
+   %mount_scale_z = %panel.findObjectByInternalName("shapeMountScaleZ").getText();
+   
+   if (%shapeMountID>0)
+   {
+      %query = "UPDATE shapeMount SET " @ 
+         "offset_x=" @ %mount_offset_x @ ",offset_y=" @ %mount_offset_y @ ",offset_z=" @ %mount_offset_z @
+         ",orient_x=" @ %mount_orient_x @ ",orient_y=" @ %mount_orient_y @ ",orient_z=" @ %mount_orient_z @
+         ",scale_x=" @ %mount_scale_x @ ",scale_y=" @ %mount_scale_y @ ",scale_z=" @ %mount_scale_z @ 
+         " WHERE id=" @ %shapeMountID @ ";";
+      sqlite.query(%query,0);
+   }
+   
+   if (1)//($mmLoadedScenes>0)
    {
       mmUnloadScene($mmSceneList.getSelected());
       mmLoadScene($mmSceneList.getSelected());
@@ -1505,14 +1529,13 @@ function mmLoadScene(%id)
             }
          }
          
-         //echo("Adding a scene shape: " @ %sceneShape_id @ ", position " @ %position );
+         %pShape.schedule(1000,"shapeSpecifics");
          
          if ((strlen(%behavior_tree)>0)&&(%behavior_tree!$="NULL")&&($mmSceneAutoplay))
          {
-            %pShape.schedule(300,"setBehavior",%behavior_tree);
+            %pShape.schedule(1500,"setBehavior",%behavior_tree);
             //echo(%pShape.getId() @ " assigning behavior tree: " @ %behavior_tree );
          }
-         %pShape.schedule(2000,"shapeSpecifics");
          sqlite.nextRow(%resultSet);
       }
    }   
@@ -1531,7 +1554,9 @@ function mmSceneSpecifics(%id)
 {  
    //One example of specific things one can do, on a per scene basis: grab all of the sceneShapes using 
    //a particular shape, in this case the Cube model, and put them in a special group for later access.
-   if ((%id==$mmScene_ActorBlock_16x16_ID)||(%id==$mmScene_ActorBlock_3x40_ID)||(%id==$mmScene_ActorBlock_2x2_ID))
+   //I was doing this for only certain scenes, but that gets old fast. Should designate a special shape
+   //for this purpose however, better suited for it than cubes.
+   if (1)//((%id==$mmScene_ActorBlock_16x16_ID)||(%id==$mmScene_ActorBlock_3x40_ID)||(%id==$mmScene_ActorBlock_2x2_ID))
    {
       %temp = new SimSet(CubeShapes);
       for (%i = 0; %i < SceneShapes.getCount();%i++)
@@ -2785,6 +2810,37 @@ function mmReallyDeleteOpenSteer()
 function mmSelectOpenSteer()
 {   
    %openSteerID = $mmOpenSteerList.getSelected();
+   
+   //Now: although we should insert a warning message here, what we are now doing is saving new openSteer ID
+   //to either all selected sceneShapes in the editor, *or* the selected single shape on the list
+   %selectedShape = $mmSceneShapeList.getSelected();
+   %id_list = "";
+   if (EWorldEditor.getSelectionSize()>0)
+   {   
+      for (%i=0;%i<EWorldEditor.getSelectionSize();%i++)
+      {
+         %obj = EWorldEditor.getSelectedObject( %i );
+         if ((%obj.getClassName() $= "PhysicsShape")&&(%obj.sceneShapeID>0))
+         {
+            if (strlen(%id_list)==0)
+               %id_list =  %obj.sceneShapeID;
+            else
+               %id_list = %id_list @ "," @ %obj.sceneShapeID;
+         }
+      }
+      
+      %query = "UPDATE sceneShape SET openSteerProfile_id='" @ %openSteerID @ "'" @ 
+                     " WHERE id IN (" @ %id_list @ ");";
+      sqlite.query(%query,0);
+      
+   } else if (%selectedShape>0) {
+      
+      %query = "UPDATE sceneShape SET openSteerProfile_id='" @ %openSteerID @ "'" @ 
+                     " WHERE id=" @ %selectedShape @ ";";
+      sqlite.query(%query,0);
+   }
+   
+   //Next, load up the UI with this profile.
    if (%openSteerID<=0)
       return;
       
@@ -2822,25 +2878,6 @@ function mmSelectOpenSteer()
       %detectEdge.setText(sqlite.getColumn(%resultSet,"detectNavMeshEdgeRange")); 
    }
    
-   //HERE, AS ELSEWHERE: insert an OK/CANCEL message before making changes!   
-   if (EWorldEditor.getSelectionSize()==0)
-      return;
- 
-   %id_list = "";
-   for (%i=0;%i<EWorldEditor.getSelectionSize();%i++)
-   {
-      %obj = EWorldEditor.getSelectedObject( %i );
-      if ((%obj.getClassName() $= "PhysicsShape")&&(%obj.sceneShapeID>0))
-      {
-         if (strlen(%id_list)==0)
-            %id_list =  %obj.sceneShapeID;
-         else
-            %id_list = %id_list @ "," @ %obj.sceneShapeID;
-      }
-   }
-   %query = "UPDATE sceneShape SET openSteerProfile_id='" @ %openSteerID @ "'" @ 
-                  " WHERE id IN (" @ %id_list @ ");";
-   sqlite.query(%query,0);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -2944,6 +2981,82 @@ function mmAddShapeMount()
    
    mmSetupAddShapeMountWindow();
    
+}
+
+function mmReallyAddShapeMount()
+{
+   if (($mmSelectedShape<=0)||($mmSelectedShape.sceneID<=0))
+      return;
+   
+   %sceneShape_id = $mmSelectedShape.sceneShapeID;
+   
+   %parentNodeList = addShapeMountWindow.findObjectByInternalName("parentNodeList");
+   %childShapeList = addShapeMountWindow.findObjectByInternalName("childShapeList");
+   %childNodeList = addShapeMountWindow.findObjectByInternalName("childNodeList");
+   
+   %parentNode = %parentNodeList.getSelected();
+   %childShapeID = %childShapeList.getSelected();
+   %childNode = %childNodeList.getSelected();
+   
+   %offsetX = addShapeMountWindow.findObjectByInternalName("offsetX").getText();
+   %offsetY = addShapeMountWindow.findObjectByInternalName("offsetY").getText();
+   %offsetZ = addShapeMountWindow.findObjectByInternalName("offsetZ").getText();
+   
+   %rotationX = addShapeMountWindow.findObjectByInternalName("rotationX").getText();
+   %rotationY = addShapeMountWindow.findObjectByInternalName("rotationY").getText();
+   %rotationZ = addShapeMountWindow.findObjectByInternalName("rotationZ").getText();
+   
+   %scaleX = addShapeMountWindow.findObjectByInternalName("scaleX").getText();
+   %scaleY = addShapeMountWindow.findObjectByInternalName("scaleY").getText();
+   %scaleZ = addShapeMountWindow.findObjectByInternalName("scaleZ").getText();
+   
+   //NOW: insert the actual values! Mount a new shape! But first, add the child shape
+   //to sceneShapes! Since it's going to be a mount, using default pos and rot values.
+   //But do add the scale, because that needs to be here as well as stored in shapeMount.
+   %query = "INSERT INTO sceneShape (name,scene_id,shape_id,shapeGroup_id," @
+            "pos_x,pos_y,pos_z,rot_x,rot_y,rot_z,rot_a,scale_x,scale_y,scale_z)" @
+            " VALUES ('" @ %childShapeList.getText() @ "'," @ $mmSelectedShape.sceneID @ "," @ 
+            %childShapeList.getSelected() @ "," @ $mmSelectedShape.shapeGroupID @ "," @ 
+            "0,0,0,0,0,1,0," @ %scaleX @ "," @ %scaleY @ "," @ %scaleZ @ ");";
+   sqlite.query(%query,0);
+   
+   //%query = "SELECT last_insert_rowid() AS id;";
+   //%resultSet = sqlite.query(%query,0);
+   //%child_id = sqlite.getColumn(%resultSet,"id");
+   %child_id = sqlite.getLastRowId();
+   
+   //Now, fix the name with the id as well, so we don't have name conflicts in the scene.
+   %query = "UDPATE sceneShape SET name=" @ %childShapeList.getText() @ "_" @ %child_id @ " WHERE id=" @ %child_id @ ";";
+   sqlite.query(%query,0);
+
+   //And, finally, insert the shapeMount object itself.
+   %query = "INSERT INTO shapeMount (parent_shape_id,child_shape_id,parent_node,child_node," @ 
+            "offset_x,offset_y,offset_z,orient_x,orient_y,orient_z,scale_x,scale_y,scale_z) " @
+            " VALUES (" @ $mmSelectedShape.sceneShapeID @ "," @ %child_id @ "," @
+            %parentNodeList.getSelected() @ "," @ %childNodeList.getSelected() @ "," @
+            %offsetX @ "," @ %offsetY @ "," @ %offsetZ @ "," @ 
+            %rotationX @ "," @ %rotationY @ "," @ %rotationZ @ "," @ 
+            %scaleX @ "," @ %scaleY @ "," @ %scaleZ @ ");";
+   sqlite.query(%query,0);
+   
+   %shapeMount_id = sqlite.getLastRowId();
+   
+   //%query = "SELECT last_insert_rowid() AS id;";
+   //%resultSet = sqlite.query(%query,0);
+   //%sm_id = sqlite.getColumn(%resultSet,"id");
+   
+   //And, WHEW! Really gotta take a look at optimizations here... 
+   
+   if ($mmLoadedScenes>0)
+   {   
+      mmUnloadScene($mmSceneList.getSelected());
+      mmLoadScene($mmSceneList.getSelected());
+   }
+   
+   $mmSceneShapeList.setSelected(%sceneShape_id);
+   $mmShapeMountList.setSelected(%shapeMount_id);
+   
+   addShapeMountWindow.visible = false;
 }
 
 function mmSetupAddShapeMountWindow()
@@ -3093,74 +3206,6 @@ function mmSelectMountChildShape()
       sqlite.nextRow(%resultSet);
    }
    sqlite.clearResult(%resultSet);
-}
-
-function mmReallyAddShapeMount()
-{
-   if (($mmSelectedShape<=0)||($mmSelectedShape.sceneID<=0))
-      return;
-   
-   %sceneShape_id = $mmSelectedShape.sceneShapeID;
-   
-   %parentNodeList = addShapeMountWindow.findObjectByInternalName("parentNodeList");
-   %childShapeList = addShapeMountWindow.findObjectByInternalName("childShapeList");
-   %childNodeList = addShapeMountWindow.findObjectByInternalName("childNodeList");
-   
-   %parentNode = %parentNodeList.getSelected();
-   %childShapeID = %childShapeList.getSelected();
-   %childNode = %childNodeList.getSelected();
-   
-   %offsetX = addShapeMountWindow.findObjectByInternalName("offsetX").getText();
-   %offsetY = addShapeMountWindow.findObjectByInternalName("offsetY").getText();
-   %offsetZ = addShapeMountWindow.findObjectByInternalName("offsetZ").getText();
-   
-   %rotationX = addShapeMountWindow.findObjectByInternalName("rotationX").getText();
-   %rotationY = addShapeMountWindow.findObjectByInternalName("rotationY").getText();
-   %rotationZ = addShapeMountWindow.findObjectByInternalName("rotationZ").getText();
-   
-   %scaleX = addShapeMountWindow.findObjectByInternalName("scaleX").getText();
-   %scaleY = addShapeMountWindow.findObjectByInternalName("scaleY").getText();
-   %scaleZ = addShapeMountWindow.findObjectByInternalName("scaleZ").getText();
-   
-   //NOW: insert the actual values! Mount a new shape! But first, add the child shape
-   //to sceneShapes! Since it's going to be a mount, using default pos and rot values.
-   %query = "INSERT INTO sceneShape (name,scene_id,shape_id,shapeGroup_id," @
-            "pos_x,pos_y,pos_z,rot_x,rot_y,rot_z,rot_a,scale_x,scale_y,scale_z)" @
-            " VALUES ('" @ %childShapeList.getText() @ "'," @ $mmSelectedShape.sceneID @ "," @ 
-            %childShapeList.getSelected() @ "," @ $mmSelectedShape.shapeGroupID @ "," @ 
-            "0,0,0,0,0,1,0,1,1,1);";//In fact, ignoring scale for now too, since it's stored in shapeMount.
-   sqlite.query(%query,0);
-   %query = "SELECT last_insert_rowid() AS id;";
-   %resultSet = sqlite.query(%query,0);
-   %child_id = sqlite.getColumn(%resultSet,"id");
-   
-   %query = "INSERT INTO shapeMount (parent_shape_id,child_shape_id,parent_node,child_node," @ 
-            "offset_x,offset_y,offset_z,orient_x,orient_y,orient_z,scale_x,scale_y,scale_z) " @
-            " VALUES (" @ $mmSelectedShape.sceneShapeID @ "," @ %child_id @ "," @
-            %parentNodeList.getSelected() @ "," @ %childNodeList.getSelected() @ "," @
-            %offsetX @ "," @ %offsetY @ "," @ %offsetZ @ "," @ 
-            %rotationX @ "," @ %rotationY @ "," @ %rotationZ @ "," @ 
-            %scaleX @ "," @ %scaleY @ "," @ %scaleZ @ ");";
-   sqlite.query(%query,0);
-   
-   %shapeMount_id = sqlite.getLastRowId();
-   
-   //%query = "SELECT last_insert_rowid() AS id;";
-   //%resultSet = sqlite.query(%query,0);
-   //%sm_id = sqlite.getColumn(%resultSet,"id");
-   
-   //And, WHEW! Really gotta take a look at optimizations here... 
-   
-   if ($mmLoadedScenes>0)
-   {   
-      mmUnloadScene($mmSceneList.getSelected());
-      mmLoadScene($mmSceneList.getSelected());
-   }
-   
-   $mmSceneShapeList.setSelected(%sceneShape_id);
-   $mmShapeMountList.setSelected(%shapeMount_id);
-   
-   addShapeMountWindow.visible = false;
 }
 
 /*
@@ -3682,6 +3727,8 @@ function mmAssignSequenceAction()
    if ((%profile_id<=0)||(strlen(%seqFile)==0)||(%action_id<=0))
       return;
    
+   $mmSelectedShape.setActionSeq($mmSequenceActionList.getText(),$mmSequenceList.getText());
+   
    %query = "SELECT id FROM actionProfileSequence WHERE " @
             "profile_id=" @ %profile_id @ " AND action_id=" @ 
             %action_id @ ";";
@@ -3702,8 +3749,11 @@ function mmAssignSequenceAction()
 }
 
 function mmUnassignSequenceAction()
-{
-   echo("mmUnassignSequenceAction is currently unavailable.");   
+{  
+   //Delete from database? Are we even using actionSeq info in the db yet?
+   
+   $mmSelectedShape.setActionSeq($mmSequenceActionList.getText(),"");
+      
 }
 
 function mmAddMattersNode()

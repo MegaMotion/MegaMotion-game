@@ -1,0 +1,85 @@
+%guiContent = new GuiWindowCtrl(addFormWindow) {
+   position = "924 241";
+   extent = "320 180";
+   text = "Add Form";
+   canClose = "1";
+   useMouseEvents = "1";
+   closeCommand = "addFormWindow.setVisible(false);";
+
+   new GuiButtonCtrl() {
+      position = "100 142";
+      extent = "120 30";
+      text = "Add Form";
+      internalName = "addFormButton";
+      command = "reallyAddUIForm();";
+      tooltip = "Create a new form.";
+      tooltipprofile = "GuiToolTipProfile";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 70";
+      extent = "45 20";
+      text = "Name";
+      internalName = "nameLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "55 70";
+      extent = "240 20";
+      internalName = "nameEdit";
+      variable = "$addUIFormName";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 93";
+      extent = "45 20";
+      text = "Type";
+      internalName = "typeLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "55 93";
+      extent = "240 20";
+      internalName = "typeEdit";
+      variable = "$addUIFormType";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "10 116";
+      extent = "45 20";
+      text = "Width";
+      internalName = "widthLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "55 116";
+      extent = "80 20";
+      text = "320";
+      internalName = "widthEdit";
+      variable = "$addUIFormWidth";
+      groupNum = "-1";
+   };
+   new GuiTextCtrl() {
+      position = "145 116";
+      extent = "45 20";
+      text = "Height";
+      internalName = "heightLabel";
+      groupNum = "-1";
+   };
+   new GuiTextEditCtrl() {
+      position = "190 116";
+      extent = "80 20";
+      text = "160";
+      internalName = "heightEdit";
+      variable = "$addUIFormHeight";
+      groupNum = "-1";
+   };
+   new GuiMLTextCtrl() {
+      position = "20 23";
+      extent = "280 50";
+      text = "Name must be a unique character string, with no spaces and no special characters. Type must be a valid Torque GUI window class.";
+      internalName = "instructionsLabel";
+      groupNum = "-1";
+   };
+};
+

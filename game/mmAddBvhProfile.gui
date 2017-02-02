@@ -1,37 +1,36 @@
-%guiContent = new GuiWindowCtrl(mmAddSceneWindow) {
+%guiContent = new GuiWIndowCtrl(mmAddBvhProfile) {
    position = "840 483";
    extent = "320 160";
-   text = "Add Scene";
+   text = "";
    canClose = "1";
    useMouseEvents = "1";
-   closeCommand = "mmAddSceneWindow.setVisible(false);";
+   closeCommand = "mmAddBvhProfile.setVisible(false);";
 
    new GuiMLTextCtrl() {
-      position = "20 30";
+      position = "10 30";
       extent = "280 40";
       text = "Name must be a unique character string, with no spaces and no special characters.";
       internalName = "instructionsLabel";
       groupNum = "-1";
    };
    new GuiTextCtrl() {
-      position = "20 77";
+      position = "10 76";
       extent = "45 20";
       text = "Name";
       internalName = "nameLabel";
       groupNum = "-1";
    };
    new GuiTextEditCtrl() {
-      position = "70 77";
-      extent = "220 20";
+      position = "65 76";
+      extent = "180 20";
       internalName = "nameEdit";
       groupNum = "-1";
    };
    new GuiButtonCtrl() {
-      position = "100 110";
+      position = "90 112";
       extent = "120 30";
-      text = "Add Scene";
-      internalName = "addSceneButton";
-      command = "mmReallyAddScene();";
+      text = "Add BVH Profile";
+      internalName = "addBvhProfileButton";
       groupNum = "-1";
    };
 };
