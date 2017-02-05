@@ -3271,7 +3271,7 @@ function mmSelectSequence()
    $mmSequenceKeyframeList.clear();
    mmResetKeyframeValues();
    
-   if (($mmSequenceList.getSelected()<=0)||($mmSelectedShape<=0) || (!isObject($mmSelectedShape)))
+   if (($mmSequenceList.getSelected()<0)||($mmSelectedShape<=0) || (!isObject($mmSelectedShape)))
    {
       $mmSequenceFileText.setText("");
       return;
@@ -3353,7 +3353,7 @@ toolsWindow::selectSequence()
 {
    ...
    
-      if ($actor.getSeqNumKeyframes(%seqnum) == $actor.getSeqNumGroundFrames(%seqnum))
+      if ($actor.getSeqFrames(%seqnum) == $actor.getSeqNumGroundFrames(%seqnum))
       {
          $sequence_ground_animate = true;
          groundCaptureSeqButton.setText("Un Ground Capture");
@@ -4243,6 +4243,10 @@ function mmStartCentered()
       %deltaPos = %deltaX @ " " @ %deltaY @ " " @ %deltaZ;
       $mmSelectedShape.adjustBaseNodePosRegion(%seq,%deltaPos,0.0,1.0);
    }
+   
+   $mmSelectedShape.playSeqByNum($mmSequenceList.getSelected());
+   $mmSelectedShape.pauseSeq();
+   $mmSelectedShape.setSeqPos(0);
 }
 
 function mmFaceForward()
@@ -4256,10 +4260,14 @@ function mmFaceForward()
       %initialRot = $mmSelectedShape.getNodeRot(%seq,0,0);//returns frame zero
       %deltaX = 0;//-1 * getWord(%initialRot,0); //See how this works...
       %deltaY = 0;//-1 * getWord(%initialRot,1);
-      %deltaZ = getWord(%initialRot,2);
-      %deltaRot = %deltaX @ " " @ %deltaY @ " " @ %deltaZ;
+      %deltaZ = -1 * getWord(%initialRot,2);
+      %deltaRot = %deltaX @ " " @ %deltaY @ " " @ mRadToDeg(%deltaZ);
       $mmSelectedShape.adjustNodeRotRegion(%seq,0,%deltaRot,0.0,1.0);
    }
+   
+   $mmSelectedShape.playSeqByNum($mmSequenceList.getSelected());
+   $mmSelectedShape.pauseSeq();
+   $mmSelectedShape.setSeqPos(0);
 }
 
 function mmMoveForward()
@@ -4271,9 +4279,10 @@ function mmMoveForward()
    if (%seq > -1)
    {
       %startPos = $mmSelectedShape.getNodeTrans(%seq,0);
-      %finalPos = $mmSelectedShape.getNodeTrans(%seq,$mmSelectedShape.getSeqNumKeyframes(%seq)-1);
+      %finalPos = $mmSelectedShape.getNodeTrans(%seq,$mmSelectedShape.getSeqFrames(%seq)-1);
       %diff = VectorNormalize(VectorSub(%finalPos,%startPos));
-
+      echo("anim start pos: " @ %startPos @ " endPos " @ %finalPos @ " normalized diff " @ %diff); 
+      
       %forward = "0 1 0";
       %eulerArc = "0 0 0";
       if (VectorDot(%diff,%forward) < -0.999)//(ie, within small tolerance of 180 degrees opposite)
@@ -4282,11 +4291,22 @@ function mmMoveForward()
       {
          //HERE: find the Z rotation!
          %eulerArc = rotationArcDegrees(%diff,%forward);//Actually, all rotations...
+         
+         //Hm, I guess rotationArcDegrees doesn't actually give us degrees??
+         %euler_x = 0;//mRadToDeg(getWord(%eulerArc,0));
+         %euler_y = 0;//mRadToDeg(getWord(%eulerArc,1));
+         %euler_z = -1 * mRadToDeg(getWord(%eulerArc,2));
+         %eulerArc = %euler_x @ " " @ %euler_y @ " " @ %euler_z;
          echo("anim diff: " @ %diff @ ", euler arc: " @ %eulerArc);         
       }
       //%deltaRot = "0 0 " @ %deltaZ;
+      echo("move Forward adjustment: " @ %eulerArc);
       $mmSelectedShape.adjustNodeRotRegion(%seq,0,%eulerArc,0.0,1.0); 
    }
+   
+   $mmSelectedShape.playSeqByNum($mmSequenceList.getSelected());
+   $mmSelectedShape.pauseSeq();
+   $mmSelectedShape.setSeqPos(0);
 }
 
 
@@ -4309,6 +4329,9 @@ function mmGroundCaptureSeq(%this)
       //SequenceNumGroundframes.setText($actor.getSeqNumGroundFrames(%seq));
    }
    //EcstasyToolsWindow::updateSeqForm(%this);
+   $mmSelectedShape.playSeqByNum($mmSequenceList.getSelected());
+   $mmSelectedShape.pauseSeq();
+   $mmSelectedShape.setSeqPos(0);
 }
 
 function mmSequenceBlendToggle()
@@ -5030,6 +5053,10 @@ function mmSmoothLoop()
    
    %seq = $mmSequenceList.getSelected();
    $mmSelectedShape.smoothLoopTransition(%seq,$mmLoopDetectorSmooth);
+   
+   $mmSelectedShape.playSeqByNum($mmSequenceList.getSelected());
+   $mmSelectedShape.pauseSeq();
+   $mmSelectedShape.setSeqPos(0);
 }
 
 ////////////////////////////////////////////////////
@@ -5396,6 +5423,7 @@ function mmReallyExportSceneBVH(%path)
       //No need to store this name, just make it again at play time from sceneShape ID.
    }   
 }
+
 //////////////////////////////////////////////////////////////////////
 
 function shapesAct()
