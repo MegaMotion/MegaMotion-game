@@ -162,10 +162,10 @@
       internalName = "groupLabel";
       groupNum = "-1";
    };
-   new GuiTextEditCtrl() {
+   new GuiPopupMenuCtrl() {
       position = "75 119";
       extent = "220 20";
-      internalName = "behaviorTree";
+      internalName = "behaviorList";
       groupNum = "-1";
    };
    new GuiPopupMenuCtrl() {
