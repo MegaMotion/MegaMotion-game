@@ -908,13 +908,13 @@ function mmUpdateAiTab()
    %multiselect = false;
    %panel = $mmAiTab.findObjectByInternalName("aiPanel");
    
-   //if 
    %sceneShapeId = $mmSceneShapeList.getSelected();
+   %openSteer_id = $mmOpenSteerList.getSelected();
    
-   if (%openSteer_id>0)
+   if (%openSteer_id>0)//Might be nice to check for if dirty here.
    {
-      %tab = $mmTabBook.findObjectByInternalName("sceneShapeTab");
-      %panel = %tab.findObjectByInternalName("sceneShapePanel");
+      %tab = $mmTabBook.findObjectByInternalName("aiTab");
+      %panel = %tab.findObjectByInternalName("aiPanel");
    
       %mass = %panel.findObjectByInternalName("sceneShapeOpenSteerMass");
       %radius = %panel.findObjectByInternalName("sceneShapeOpenSteerRadius");
@@ -1470,7 +1470,7 @@ function mmLoadScene(%id)
          %rotation = %rot_x @ " " @ %rot_y @ " " @ %rot_z @ " " @ %rot_a;
          %scale = %scale_x @ " " @ %scale_y @ " " @ %scale_z;
          
-         echo("loading sceneShape id " @ %shape_id @ " position " @ %position @ " rotation " @ 
+         echo("loading sceneShape id " @ %sceneShape_id @ " position " @ %position @ " rotation " @ 
                %rotation @ " scale " @ %scale);
          
          //TEMP -- use name from sceneShape table
@@ -1518,8 +1518,6 @@ function mmLoadScene(%id)
          MissionGroup.add(%pShape);   
          SceneShapes.add(%pShape);  
          
-
-         
          if ($mmSelectedSceneShape>0)
          {
             if ($mmSelectedSceneShape==%sceneShape_id)
@@ -1528,20 +1526,16 @@ function mmLoadScene(%id)
                echo("reselecting selected shape! " @ %temp @ " sceneShape " @ %sceneShape_id);
             }
          }
-         
-         %pShape.schedule(1000,"shapeSpecifics");
-         
-         if ((strlen(%behavior_tree)>0)&&(%behavior_tree!$="NULL")&&($mmSceneAutoplay))
-         {
-            %pShape.schedule(1500,"setBehavior",%behavior_tree);
-            //echo(%pShape.getId() @ " assigning behavior tree: " @ %behavior_tree );
-         }
          sqlite.nextRow(%resultSet);
       }
    }   
    sqlite.clearResult(%resultSet);
+      
+   schedule(3000,0,"mmShapeSpecifics");   
    
-   mmMountShapes(%id);   
+   //mmSetBehaviors(%id);
+   
+   mmMountShapes(%id); 
    
    mmSceneSpecifics(%id);
    
@@ -1567,6 +1561,15 @@ function mmSceneSpecifics(%id)
             CubeShapes.add(%obj);            
          }
       }
+   }
+}
+
+function mmShapeSpecifics()
+{
+   for (%i = 0; %i < SceneShapes.getCount();%i++)
+   {
+      %obj = SceneShapes.getObject(%i); 
+      %obj.shapeSpecifics();   
    }
 }
 

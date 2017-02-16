@@ -75,7 +75,7 @@ function PhysicsShape::shapeSpecifics(%this)
    if (%this.dataBlock $= "M4Physics") 
    {     
       //echo("Calling shape specifics for M4: " @ %this.sceneShapeID @ " isServer " @ %this.isServerObject());
-      
+
       %this.setActionSeq("walk","walk");      
       %this.setActionSeq("run","run");
       
@@ -86,7 +86,7 @@ function PhysicsShape::shapeSpecifics(%this)
       %this.setActionSeq("leftGetup","lSideGetup");
       %this.setActionSeq("frontGetup","frontGetup");
       %this.setActionSeq("backGetup","backGetup");   
-        
+
    } 
    else if (%this.dataBlock $= "bo105Physics") 
    {            
