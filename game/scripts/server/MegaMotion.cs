@@ -1274,8 +1274,8 @@ function mmSelectScene()
    echo("calling selectMegaMotionScene on scene " @ $mmSceneList.getSelected());
    
    %firstID = 0;
-   %query = "SELECT ss.id,ps.id AS ps_id, ps.name FROM sceneShape ss " @
-	         "JOIN physicsShape ps ON ps.id=ss.shape_id " @
+   %query = "SELECT ss.id,ps.id AS ps_id, ss.name AS sceneShapeName, ps.name AS shapeName " @ 
+            "FROM sceneShape ss " @ "JOIN physicsShape ps ON ps.id=ss.shape_id " @
             "WHERE scene_id=" @ $mmSceneList.getSelected() @ ";";  
    %resultSet = sqlite.query(%query, 0); 
    if (%resultSet)
@@ -1287,7 +1287,14 @@ function mmSelectScene()
          while (!sqlite.endOfResult(%resultSet))
          {
             %id = sqlite.getColumn(%resultSet, "id");
-            %name = sqlite.getColumn(%resultSet, "name") @ " - " @ %id;
+            %ssName = sqlite.getColumn(%resultSet, "sceneShapeName");
+            %psName = sqlite.getColumn(%resultSet, "shapeName");
+            if (strlen(%ssName)>0)
+               %name = %ssName;
+            else
+               %name = %psName;
+               
+            %name = %name @ " - " @ %id;//Adding sceneShape id in case of duplicate names.
             $mmSceneShapeList.add(%name,%id);
             $mmTargetShapeList.add(%name,%id);
             sqlite.nextRow(%resultSet);         
@@ -2163,8 +2170,6 @@ function mmSelectShape()
       MessageBoxYesNo("","Really assign sceneShape " @ %sceneShapeId @ " to shape " @ 
          $mmShapeList.getText() @ "?","mmReassignShape();","");
    }
-   
-   
 }
 
 //Not currently hooked in, can't associate it with selectShape() above until we remove all the times
