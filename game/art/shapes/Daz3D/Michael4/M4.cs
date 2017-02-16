@@ -9,6 +9,7 @@ function M4Dts::onLoad(%this)
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/Root4.dsq", "ambient", "0", "-1");
    //%this.addSequence("art/shapes/Daz3D/Michael4/sequences/CMU_16_22.dsq", "walk", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/work/01_02_step_smooth.dsq", "walk", "0", "-1");
+   %this.addSequence("art/shapes/Daz3D/Michael4/work/sneak_step.dsq", "sneak_walk", "0", "-1");
    //%this.addSequence("art/shapes/Daz3D/Michael4/work/dribble01.dsq", "walk", "0", "-1");
    //%this.addSequence("art/shapes/Daz3D/Michael4/sequences/MedRun6.dsq", "run", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/work/jog_02_03_three.dsq", "run", "0", "-1");
@@ -22,8 +23,8 @@ function M4Dts::onLoad(%this)
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/zombiePunt2.dsq", "zombiePunt", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/Mime.dsq", "mime", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/Sneak.dsq", "sneak", "0", "-1");
-   %this.addSequence("art/shapes/Daz3D/Michael4/sequences/SneakCrop01.dsq", "sneakCrop01", "0", "-1");
-   %this.addSequence("art/shapes/Daz3D/Michael4/sequences/SneakCrop02.dsq", "sneakCrop02", "0", "-1");
+   //%this.addSequence("art/shapes/Daz3D/Michael4/sequences/SneakCrop01.dsq", "sneakCrop01", "0", "-1");
+   //%this.addSequence("art/shapes/Daz3D/Michael4/sequences/SneakCrop02.dsq", "sneakCrop02", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/power_punch_down.dsq", "power_punch_down", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/punch_uppercut.dsq", "punch_uppercut", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/RoundHouse.dsq", "roundhouse", "0", "-1");
@@ -56,10 +57,10 @@ function M4Dts::onLoad(%this)
    %this.addSequence("art/shapes/Daz3D/Michael4/work/underside_climb1.dsq", "underside_climb", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/work/walk_06.dsq", "walk_06", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/work/sneak_idle.dsq", "sneak_idle", "0", "-1");
-   %this.addSequence("art/shapes/Daz3D/Michael4/work/blockfall_01_.dsq", "blockfall_01", "0", "-1");
-   %this.addSequence("art/shapes/Daz3D/Michael4/work/blockfall_02_.dsq", "blockfall_02", "0", "-1");
-   %this.addSequence("art/shapes/Daz3D/Michael4/work/blockfall_03.dsq", "blockfall_03", "0", "-1");
-   %this.addSequence("art/shapes/Daz3D/Michael4/work/blockfall_04.dsq", "blockfall_04", "0", "-1");
+   //%this.addSequence("art/shapes/Daz3D/Michael4/work/blockfall_01_.dsq", "blockfall_01", "0", "-1");
+   //%this.addSequence("art/shapes/Daz3D/Michael4/work/blockfall_02_.dsq", "blockfall_02", "0", "-1");
+   //%this.addSequence("art/shapes/Daz3D/Michael4/work/blockfall_03.dsq", "blockfall_03", "0", "-1");
+   //%this.addSequence("art/shapes/Daz3D/Michael4/work/blockfall_04.dsq", "blockfall_04", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/work/blockfall_no_grav_.dsq", "blockfall_no_grav", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/work/cower_01.dsq", "cower", "0", "-1");
 
@@ -71,6 +72,7 @@ function M4Dts::onLoad(%this)
 
    %this.setSequenceCyclic("ambient", "1");
    %this.setSequenceCyclic("walk", "1");
+   %this.setSequenceCyclic("sneak_walk", "1");
    %this.setSequenceCyclic("strut", "1");   
    %this.setSequenceCyclic("march", "1");
    %this.setSequenceCyclic("run", "1");

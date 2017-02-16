@@ -484,6 +484,7 @@ function mmSetupAiTab()
    $mmOpenSteerList = %panel.findObjectByInternalName("sceneShapeOpenSteerList");//AiOpenSteerList
    $mmSceneAutoplay = $pref::MegaMotion::SceneAutoplay;
    
+   $mmSceneShapeBehaviorTreeList.clear();
    $mmSceneShapeBehaviorTreeList.add("",0);
    for (%i=0;%i<BehaviorTreeGroup.getCount();%i++)
    {
@@ -644,7 +645,7 @@ function updateMegaMotionForm()
       mmUpdateAiTab();    
    }
    
-   if ($mmLoadedScenes>0)
+   if ($mmSceneList.getSelected()>0)
    {//FIX: need to track which scenes are currently loaded, and reload all of them and only them.)
       mmUnloadScene($mmSceneList.getSelected());
       mmLoadScene($mmSceneList.getSelected());
@@ -753,7 +754,7 @@ function mmUpdatePhysicsTab()
    
    loadJointData();
    
-   if ($mmLoadedScenes>0) //TEMP! Better ways, from worst to best:
+   if ($mmSceneList.getSelected()>0) //TEMP! Better ways, from worst to best:
    {   // 1) delete/load just this character 2) delete/load physics bodies on this character
        //(Except, actually all instance of this shape. Maybe whole scene reload is not so bad.)
       %sceneID = $mmSelectedShape.sceneID;
@@ -854,7 +855,7 @@ function mmUpdateSceneShapeTab()
    echo("Updated pos " @ MegaMotionScenes.pos_id @ ", rot " @ MegaMotionScenes.rot_id @ 
          " shapeMount " @ %shapeMountID @  " Stored child shape " @ MegaMotionScenes.mount_child_id);
          
-   if ((%shapeMountID <= 0)&&($mmLoadedScenes>0))
+   if ((%shapeMountID <= 0)&&($mmSceneList.getSelected()>0))
    {
       mmUnloadScene($mmSceneList.getSelected());
       mmLoadScene($mmSceneList.getSelected());
@@ -894,7 +895,7 @@ function mmUpdateSceneShapeTab()
       sqlite.query(%query,0);
    }
    
-   if (1)//($mmLoadedScenes>0)
+   if ($mmSceneList.getSelected()>0)
    {
       mmUnloadScene($mmSceneList.getSelected());
       mmLoadScene($mmSceneList.getSelected());
@@ -939,7 +940,7 @@ function mmUpdateAiTab()
                " WHERE id=" @ %openSteer_id @ ";";
       echo("Changing openSteer data: \n " @ %query);
       sqlite.query(%query,0);
-   }   
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1860,7 +1861,7 @@ function mmDeleteSceneShape()
    
    exposeMegaMotionScenesForm();   
    
-   if ($mmLoadedScenes>0)
+   if ($mmSceneList.getSelected()>0)
    {
       mmUnloadScene($mmSceneList.getSelected());
       mmLoadScene($mmSceneList.getSelected());
@@ -2180,7 +2181,7 @@ function mmReassignShape()
    echo("reassigning shape: " @ %query );
    sqlite.query(%query,0);
    
-   if ($mmLoadedScenes>0)
+   if ($mmSceneList.getSelected()>0)
    {
       mmUnloadScene($mmSceneList.getSelected());
       mmLoadScene($mmSceneList.getSelected());
@@ -2366,7 +2367,7 @@ function mmSetupAddSceneShapeWindow()
    
    %shapeList = mmAddSceneShapeWindow.findObjectByInternalName("shapeList"); 
    %groupList = mmAddSceneShapeWindow.findObjectByInternalName("groupList"); 
-   %behaviorTree = mmAddSceneShapeWindow.findObjectByInternalName("behaviorTree"); 
+   %behaviorList = mmAddSceneShapeWindow.findObjectByInternalName("behaviorList"); 
    if ((!isDefined(%shapeList))||(!isDefined(%groupList)))
       return;
    
@@ -2418,8 +2419,17 @@ function mmSetupAddSceneShapeWindow()
    if ($mmShapeGroupList.getSelected()>0)
       %groupList.setSelected($mmShapeGroupList.getSelected());
       
-   if (strlen($mmSceneShapeBehaviorTreeList.getText())>0)
-      %behaviorTree.setText($mmSceneShapeBehaviorTreeList.getText());
+   //behaviorList
+   %behaviorList.clear();
+   %behaviorList.add("",0);
+   for (%i=0;%i<BehaviorTreeGroup.getCount();%i++)
+   {
+      %name = BehaviorTreeGroup.getObject(%i).getName();
+      %behaviorList.add(%name,%i+1);//Can't start with zero, because that is blank line.
+   }
+      
+   //if (strlen($mmSceneShapeBehaviorTreeList.getText())>0)
+   //   %behaviorTree.setText($mmSceneShapeBehaviorTreeList.getText());
       
    %posX = mmAddSceneShapeWindow.findObjectByInternalName("shapePositionX"); 
    %posY = mmAddSceneShapeWindow.findObjectByInternalName("shapePositionY"); 
@@ -2482,7 +2492,7 @@ function mmReallyAddSceneShape()
    %scene_id = $mmSceneList.getSelected();
    %shape_id = mmAddSceneShapeWindow.findObjectByInternalName("shapeList").getSelected();
    %group_id = mmAddSceneShapeWindow.findObjectByInternalName("groupList").getSelected();
-   %behavior_tree = mmAddSceneShapeWindow.findObjectByInternalName("behaviorTree").getText();
+   %behavior_tree = mmAddSceneShapeWindow.findObjectByInternalName("behaviorList").getText();
    
    %pos_x = mmAddSceneShapeWindow.findObjectByInternalName("shapePositionX").getText();
    %pos_y = mmAddSceneShapeWindow.findObjectByInternalName("shapePositionY").getText();
@@ -2521,10 +2531,8 @@ function mmReallyAddSceneShape()
    sqlite.query(%query,0);
 
 
-   %query = "SELECT last_insert_rowid() AS id;";
-   %resultSet = sqlite.query(%query,0);
-   %ss_id = sqlite.getColumn(%resultSet,"id");
-   sqlite.clearResult(%resultSet);
+   %ss_id = sqlite.getLastRowId();
+   
    if (%ss_id==0)
       return;
       
@@ -2533,32 +2541,13 @@ function mmReallyAddSceneShape()
             ",scale_x="  @ %scale_x @ ",scale_y="  @ %scale_y @ ",scale_z="  @ %scale_z @
             " WHERE id=" @ %ss_id @ ";";
             
+   sqlite.query(%query,0);         
             
-            
-/*
-   //For first pass at least, just add default values and spawn the character at scene origin.
-   %query = "INSERT INTO vector3 (x,y,z) VALUES (" @ %pos_x @ "," @ %pos_y @ "," @ %pos_z @ ");";
-   sqlite.query(%query,0);
-   %query = "UPDATE sceneShape SET pos_id=last_insert_rowid() WHERE id=" @ %ss_id @ ";";
-   sqlite.query(%query, 0);  
-         
-   %query = "INSERT INTO rotation (x,y,z,angle) VALUES (" @ %ori_x @ "," @ %ori_y @ "," @ 
-                  %ori_z @  "," @ %ori_a @ ");";      
-   sqlite.query(%query,0);
-   %query = "UPDATE sceneShape SET rot_id=last_insert_rowid() WHERE id=" @ %ss_id @ ";";
-   sqlite.query(%query, 0);  
-   
-   %query = "INSERT INTO vector3 (x,y,z) VALUES (" @ %scale_x @ "," @ %scale_y @ "," @ %scale_z @ ");";      
-   sqlite.query(%query,0);
-   %query = "UPDATE sceneShape SET scale_id=last_insert_rowid() WHERE id=" @ %ss_id @ ";";
-   sqlite.query(%query, 0);  
-  */
-   
    mmAddSceneShapeWindow.delete();
       
    exposeMegaMotionScenesForm();
    
-   if ($mmLoadedScenes>0)
+   if ($mmSceneList.getSelected()>0)
    {
       mmUnloadScene($mmSceneList.getSelected());
       mmLoadScene($mmSceneList.getSelected());
@@ -2630,7 +2619,7 @@ function mmAddSceneShapeBlock()
    echo("finished adding characters, clock  " @ getClock() @ " elapsed " @ getClock()-%lastClock);
    %lastClock = getClock();
    
-   if ($mmLoadedScenes>0)
+   if ($mmSceneList.getSelected()>0)
    {
       mmUnloadScene($mmSceneList.getSelected());
       mmLoadScene($mmSceneList.getSelected());
@@ -3050,7 +3039,7 @@ function mmReallyAddShapeMount()
    
    //And, WHEW! Really gotta take a look at optimizations here... 
    
-   if ($mmLoadedScenes>0)
+   if ($mmSceneList.getSelected()>0)
    {   
       mmUnloadScene($mmSceneList.getSelected());
       mmLoadScene($mmSceneList.getSelected());
@@ -3180,7 +3169,7 @@ function mmReallyDeleteShapeMount()
    %query = "DELETE FROM shapeMount WHERE id=" @ %shapeMount_id @ ";";
    sqlite.query(%query,0);
       
-   if ($mmLoadedScenes>0)
+   if ($mmSceneList.getSelected()>0)
    {
       //echo("refreshing scene! " @ $mmSceneList.getSelected() );
       mmUnloadScene($mmSceneList.getSelected());
