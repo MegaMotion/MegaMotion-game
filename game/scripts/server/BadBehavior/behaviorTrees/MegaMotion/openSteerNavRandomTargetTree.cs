@@ -34,39 +34,39 @@ new Root(openSteerNavRandomTargetTree) {
                canSave = "1";
                canSaveDynamicFields = "1";
             };
-            new RandomSelector(){
-               canSave = "1";
-               canSaveDynamicFields = "1";   
-               internalName = "choose find target reaction";
+            //new RandomSelector(){
+               //canSave = "1";
+               //canSaveDynamicFields = "1";   
+               //internalName = "choose find target reaction";
                
-               new ScriptedBehavior() {         
-                  preconditionMode = "ONCE";
-                  class = "playSequence";
-                  behaviorSequence = "cower";
-                  canSave = "1";
-                  canSaveDynamicFields = "1";
-               };
-               new ScriptedBehavior() {         
-                  preconditionMode = "ONCE";
-                  class = "playSequence";
-                  behaviorSequence = "jump";
-                  canSave = "1";
-                  canSaveDynamicFields = "1";
-               };
-               new ScriptedBehavior() {         
-                  preconditionMode = "ONCE";
-                  class = "playSequence";
-                  behaviorSequence = "ambient";
-                  canSave = "1";
-                  canSaveDynamicFields = "1";
-               };
-            };
-            new ScriptEval() {
-               behaviorScript = "%obj.findRandomTargetPos();";
-               defaultReturnStatus = "SUCCESS";
-               canSave = "1";
-               canSaveDynamicFields = "1";
-            };
+               //new ScriptedBehavior() {         
+                  //preconditionMode = "ONCE";
+                  //class = "playSequence";
+                  //behaviorSequence = "cower";
+                  //canSave = "1";
+                  //canSaveDynamicFields = "1";
+               //};
+               //new ScriptedBehavior() {         
+                  //preconditionMode = "ONCE";
+                  //class = "playSequence";
+                  //behaviorSequence = "jump";
+                  //canSave = "1";
+                  //canSaveDynamicFields = "1";
+               //};
+               //new ScriptedBehavior() {         
+                  //preconditionMode = "ONCE";
+                  //class = "playSequence";
+                  //behaviorSequence = "ambient";
+                  //canSave = "1";
+                  //canSaveDynamicFields = "1";
+               //};
+            //};
+            //new ScriptEval() {
+            //   behaviorScript = "%obj.findRandomTargetPos();";
+            //   defaultReturnStatus = "SUCCESS";
+            //   canSave = "1";
+            //   canSaveDynamicFields = "1";
+            //};
             
          };
       };

@@ -8,7 +8,8 @@ function M4Dts::onLoad(%this)
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/TPose.dsq", "tpose", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/sequences/Root4.dsq", "ambient", "0", "-1");
    //%this.addSequence("art/shapes/Daz3D/Michael4/sequences/CMU_16_22.dsq", "walk", "0", "-1");
-   %this.addSequence("art/shapes/Daz3D/Michael4/work/01_02_step_smooth.dsq", "walk", "0", "-1");
+   //%this.addSequence("art/shapes/Daz3D/Michael4/work/01_02_step_smooth.dsq", "walk", "0", "-1");
+   %this.addSequence("art/shapes/CMU_clips/heavyset_walk_17_08.dsq", "walk", "0", "-1");
    %this.addSequence("art/shapes/Daz3D/Michael4/work/sneak_step.dsq", "sneak_walk", "0", "-1");
    //%this.addSequence("art/shapes/Daz3D/Michael4/work/dribble01.dsq", "walk", "0", "-1");
    //%this.addSequence("art/shapes/Daz3D/Michael4/sequences/MedRun6.dsq", "run", "0", "-1");

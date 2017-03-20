@@ -184,7 +184,6 @@ function goToGround::behavior(%this, %obj)
 */
 
 
-
 /////////////////////////////////////////////////
 
 function osePullStatics(%simGroup)

@@ -986,6 +986,117 @@ function mmPushSceneShapes(%simGroup)
 //but we are still going to have problems with all the plugins until we keep them 
 //from calling MissionGroup.save() on their own.
 
+function mmSaveStaticsToXml()
+{
+   %xml = new SimXMLDocument() {};
+   %xml.addHeader();
+	
+   %xml_file = "levels/staticsExport.xml";
+   
+   %columns[0] = "id";
+   %columns[1] = "name";
+   %columns[2] = "path";
+   %columns[3] = "pos_x";
+   %columns[4] = "pos_y";
+   %columns[5] = "pos_z";
+   %columns[6] = "rot_x";
+   %columns[7] = "rot_y";
+   %columns[8] = "rot_z";
+   %columns[9] = "rot_a";
+   %columns[10] = "scale_x";
+   %columns[11] = "scale_y";
+   %columns[12] = "scale_z";
+   
+   %xml.pushNewElement("staticGroup");   
+   for (%i = 0; %i < MissionGroup.getCount();%i++)
+   {
+      %obj = MissionGroup.getObject(%i);  
+      if (%obj.getClassName()$="TSStatic")
+      {
+         %trans = %obj.getTransform(); 
+         %scale = %obj.getScale();
+         %xml.pushNewElement("staticShape");
+      
+         %xml.setAttribute(%columns[0],%obj.getSceneShapeID());
+         %xml.setAttribute(%columns[1],%obj.getName());
+         %xml.setAttribute(%columns[2],%obj.shapeName);
+         %xml.setAttribute(%columns[3],getWord(%trans,0));
+         %xml.setAttribute(%columns[4],getWord(%trans,1));
+         %xml.setAttribute(%columns[5],getWord(%trans,2));      
+         %xml.setAttribute(%columns[6],getWord(%trans,3));
+         %xml.setAttribute(%columns[7],getWord(%trans,4));
+         %xml.setAttribute(%columns[8],getWord(%trans,5));
+         %xml.setAttribute(%columns[9],getWord(%trans,6));
+         %xml.setAttribute(%columns[10],getWord(%scale,0));
+         %xml.setAttribute(%columns[11],getWord(%scale,1));
+         %xml.setAttribute(%columns[12],getWord(%scale,2));
+         
+         
+         %xml.popElement();//staticShape
+      }
+   }
+   %xml.popElement();//sceneShapeGroup
+   %xml.saveFile(%xml_file);  
+}
+
+/*
+%xml = new SimXMLDocument() {};
+   %xml.addHeader();
+	
+   %xml_file = %sceneDirPath @ "/bvhExport.xml";
+   
+   %columns[0] = "id";
+   %columns[1] = "name";
+   %columns[2] = "shapeGroup";
+   %columns[3] = "pos_x";
+   %columns[4] = "pos_y";
+   %columns[5] = "pos_z";
+   %columns[6] = "rot_x";
+   %columns[7] = "rot_y";
+   %columns[8] = "rot_z";
+   %columns[9] = "rot_a";
+   %columns[10] = "scale_x";
+   %columns[11] = "scale_y";
+   %columns[12] = "scale_z";
+   
+   %xml.pushNewElement("sceneShapeGroup");
+   
+   for (%i=0;%i<SceneShapes.getCount();%i++)
+   {
+      %shape = SceneShapes.getObject(%i);  
+      %dsq_name = %shape.getSceneShapeID();
+      %shape.makeSequence(%sceneDirPath @ "/" @ %dsq_name);
+      echo("making scene sequence: " @ %sceneDirPath @ "/" @ %dsq_name);
+
+      //%trans = %shape.getTransform(); 
+      %trans = %shape.RecordStartTransform;//This is the transform we saved at startSceneRecording().
+      %scale = %shape.getScale(); 
+      
+      %xml.pushNewElement("sceneShape");
+      
+      %xml.setAttribute(%columns[0],%shape.getSceneShapeID());
+      %xml.setAttribute(%columns[1],%shape.getName());
+      %xml.setAttribute(%columns[2],%shape.ShapeGroupID);
+      %xml.setAttribute(%columns[3],getWord(%trans,0));
+      %xml.setAttribute(%columns[4],getWord(%trans,1));
+      %xml.setAttribute(%columns[5],getWord(%trans,2));      
+      %xml.setAttribute(%columns[6],getWord(%trans,3));
+      %xml.setAttribute(%columns[7],getWord(%trans,4));
+      %xml.setAttribute(%columns[8],getWord(%trans,5));
+      %xml.setAttribute(%columns[9],getWord(%trans,6));
+      %xml.setAttribute(%columns[10],getWord(%scale,0));
+      %xml.setAttribute(%columns[11],getWord(%scale,1));
+      %xml.setAttribute(%columns[12],getWord(%scale,2));
+      
+      echo("sceneShape " @ %shape.sceneShapeID @ " pos " @ %pos);
+      
+      %xml.popElement();//sceneShape
+   }   
+   %xml.popElement();//sceneShapeGroup
+   %xml.saveFile(%xml_file);   
+*/
+
+
 function MegaMotionSaveMission()
 {
    echo("Calling MegaMotionSaveMission!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -1018,6 +1129,7 @@ function MegaMotionSaveMission()
       }
    }
   
+  
    // now write the terrain and mission files out - for now, only one option, always do it.
    %tempSceneShapes = new SimSet();
    //if ($pref::MegaMotion::saveSceneShapes)//Do this regardless of terrainPager or not.
@@ -1026,6 +1138,8 @@ function MegaMotionSaveMission()
    //   mmPullSceneShapes(%tempSceneShapes); //but for now we do, so unload them or leave them 
                                              // where you wnat them before working on mission.
       
+   //TEMP, let's give this its own button after we get it working.
+   mmSaveStaticsToXml();
    
    ///////////////////////////   
    //For terrainPager/openSimEarth, we need to save many things to the database instead of to 
@@ -1526,6 +1640,8 @@ function mmLoadScene(%id)
          MissionGroup.add(%pShape);   
          SceneShapes.add(%pShape);  
          
+         %pShape.getClientObject().sceneShapeID = %sceneShape_id;
+         
          if ($mmSelectedSceneShape>0)
          {
             if ($mmSelectedSceneShape==%sceneShape_id)
@@ -1539,11 +1655,12 @@ function mmLoadScene(%id)
    }   
    sqlite.clearResult(%resultSet);
       
-   schedule(3000,0,"mmShapeSpecifics");   
    
    //mmSetBehaviors(%id);
    
-   mmMountShapes(%id); 
+   schedule(3000,0,"mmShapeSpecifics");   
+   
+   schedule(1000,0,"mmMountShapes",%id);
    
    mmSceneSpecifics(%id);
    
@@ -1553,11 +1670,11 @@ function mmLoadScene(%id)
 } 
 
 function mmSceneSpecifics(%id)
-{  
-   //One example of specific things one can do, on a per scene basis: grab all of the sceneShapes using 
-   //a particular shape, in this case the Cube model, and put them in a special group for later access.
-   //I was doing this for only certain scenes, but that gets old fast. Should designate a special shape
-   //for this purpose however, better suited for it than cubes.
+{  //TEMP - FIX - Not really doing anything scene specific here anymore, instead doing this weird 
+   //CubeShapes group - making temporary navigation targets out of all the cube shapes in the level. 
+   //We need something much more involved than this, of course, something like separate groups of 
+   //navigation aid objects for each actor group or individual actor. With other actors frequently 
+   //serving this role, either as leader in a pack or as quarry in a chase.
    if (1)//((%id==$mmScene_ActorBlock_16x16_ID)||(%id==$mmScene_ActorBlock_3x40_ID)||(%id==$mmScene_ActorBlock_2x2_ID))
    {
       %temp = new SimSet(CubeShapes);
@@ -1577,7 +1694,7 @@ function mmShapeSpecifics()
    for (%i = 0; %i < SceneShapes.getCount();%i++)
    {
       %obj = SceneShapes.getObject(%i); 
-      %obj.shapeSpecifics();   
+      %obj.shapeSpecifics();  //Defined in physicsShape.cs
    }
 }
 
@@ -1592,7 +1709,6 @@ function mmSetBehaviors(%id)
          {
             %obj.setBehavior(%obj.behaviorTreeName);   
             //%obj.getClientObject().setBehavior(%obj.behaviorTree);        
-            //echo(%obj.getId() @ " assigning behavior tree: " @ %obj.behaviorTreeName @ " is server " @ %obj.isServerObject() );
          }         
       }
    }
@@ -1637,7 +1753,7 @@ function mmSceneAction3()
       if (%obj.shapeGroupID==1)
       {
          %client = %obj.getClientObject();
-         %delay = 10 + getRandom(4000);
+         %delay = 10 + getRandom(3000);
          %client.schedule(%delay,"applyImpulseToPart","2","0 0 0","0 -0.045 0.025"); 
          %obj.setBehavior("FallingTree");                    
       }
@@ -1652,7 +1768,7 @@ function mmSceneAction4()
       if (%obj.shapeGroupID==1)
       {
          %client = %obj.getClientObject();
-         %delay = 10 + getRandom(4000);
+         %delay = 10 + getRandom(3000);
          %client.schedule(%delay,"applyImpulseToPart","2","0 0 0","0 0.045 0.025"); 
          %obj.setBehavior("FallingTree");                    
       }
@@ -1691,12 +1807,32 @@ function mmSceneAction6()
 
 function mmSceneAction7()
 {
-   echo("sceneAction7!");   
+   for (%i = 0; %i < SceneShapes.getCount();%i++)
+   {
+      %obj = SceneShapes.getObject(%i); 
+      if (%obj.shapeGroupID==1)
+      {
+         %client = %obj.getClientObject();
+         %delay = 10 + getRandom(600);
+         %client.schedule(%delay,"applyImpulseToPart","2","0 0 0","-0.01 0 0.005"); 
+         %obj.setBehavior("FallingTree");                    
+      }
+   } 
 }
 
 function mmSceneAction8()
 {
-   echo("sceneAction8!");   
+   for (%i = 0; %i < SceneShapes.getCount();%i++)
+   {
+      %obj = SceneShapes.getObject(%i); 
+      if (%obj.shapeGroupID==1)
+      {
+         %client = %obj.getClientObject();
+         %delay = 10 + getRandom(600);
+         %client.schedule(%delay,"applyImpulseToPart","2","0 0 0","0.01 0 0.005"); 
+         %obj.setBehavior("FallingTree");                    
+      }
+   } 
 }
 
 function mmMountShapes(%id)
@@ -1746,7 +1882,6 @@ function mmUnloadScene(%id)
       }
    }   
 }
-
 
 function mmSelectSceneShape()
 {
@@ -5271,6 +5406,8 @@ function startSceneRecording()
    {
       %shape = SceneShapes.getObject(%i);  
       %shape.setIsRecording(true);
+      %shape.RecordStartTransform = %shape.getTransform();
+      echo( %shape.SceneShapeID @ " saving record start transform: " @ %shape.RecordStartTransform );
    }
 }
 
@@ -5281,28 +5418,74 @@ function stopSceneRecording()
       %shape = SceneShapes.getObject(%i);  
       %shape.setIsRecording(false);
    }   
+   
    makeSceneSequences();
 }
 
 function makeSceneSequences()
 {
-   //OKAY... here we go. We now need to:
-   // a) find our model's home directory   
-   // b) in that directory, create a new directory with a naming protocol
-   //       "scene_[%scene_id].[timestamp]"?
-   // c) fill it with sequences
-   
-   echo("Making scene sequences!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
    %sceneDirPath = "art/shapes/MegaMotionScenes/" @ $mmProjectList.getText() @ "/" 
                @ $mmSceneList.getText() @ "/" @ getTime() @ "/";
    createDirectory(%sceneDirPath);
+   
+   //NOW: a new thing! We are going to start prepping our scene bvh files for import into the receiving 
+   //application, in the first case Blender3D. The way we are going to do this is to create an XML file
+   //that stores position, rotation and scale, as well as actor group, and anything else we might need.
+   %xml = new SimXMLDocument() {};
+   %xml.addHeader();
+	
+   %xml_file = %sceneDirPath @ "/bvhExport.xml";
+   
+   %columns[0] = "id";
+   %columns[1] = "name";
+   %columns[2] = "shapeGroup";
+   %columns[3] = "pos_x";
+   %columns[4] = "pos_y";
+   %columns[5] = "pos_z";
+   %columns[6] = "rot_x";
+   %columns[7] = "rot_y";
+   %columns[8] = "rot_z";
+   %columns[9] = "rot_a";
+   %columns[10] = "scale_x";
+   %columns[11] = "scale_y";
+   %columns[12] = "scale_z";
+   
+   %xml.pushNewElement("sceneShapeGroup");
+   
    for (%i=0;%i<SceneShapes.getCount();%i++)
    {
       %shape = SceneShapes.getObject(%i);  
       %dsq_name = %shape.getSceneShapeID();
       %shape.makeSequence(%sceneDirPath @ "/" @ %dsq_name);
       echo("making scene sequence: " @ %sceneDirPath @ "/" @ %dsq_name);
-   }
+
+      //%trans = %shape.getTransform(); 
+      %trans = %shape.RecordStartTransform;//This is the transform we saved at startSceneRecording().
+      %scale = %shape.getScale(); 
+      
+      %xml.pushNewElement("sceneShape");
+      
+      %xml.setAttribute(%columns[0],%shape.getSceneShapeID());
+      %xml.setAttribute(%columns[1],%shape.getName());
+      %xml.setAttribute(%columns[2],%shape.ShapeGroupID);
+      %xml.setAttribute(%columns[3],getWord(%trans,0));
+      %xml.setAttribute(%columns[4],getWord(%trans,1));
+      %xml.setAttribute(%columns[5],getWord(%trans,2));      
+      %xml.setAttribute(%columns[6],getWord(%trans,3));
+      %xml.setAttribute(%columns[7],getWord(%trans,4));
+      %xml.setAttribute(%columns[8],getWord(%trans,5));
+      %xml.setAttribute(%columns[9],getWord(%trans,6));
+      %xml.setAttribute(%columns[10],getWord(%scale,0));
+      %xml.setAttribute(%columns[11],getWord(%scale,1));
+      %xml.setAttribute(%columns[12],getWord(%scale,2));
+      
+      echo("sceneShape " @ %shape.sceneShapeID @ " pos " @ %pos);
+      
+      %xml.popElement();//sceneShape
+   }   
+   %xml.popElement();//sceneShapeGroup
+   %xml.saveFile(%xml_file);   
 }
 
 function mmLoadSceneSequences()
@@ -5374,6 +5557,7 @@ function mmPlaySceneSequences()
    for (%i=0;%i<SceneShapes.getCount();%i++)
    {
       %shape = SceneShapes.getObject(%i);
+      %shape.unmountAll();//Can't keep shapes mounted because they need to play their own global sequences.
       if (%shape.findSeq(%shape.getSceneShapeID())>-1)
       {
          //%shape.clearGroundMove();
@@ -5414,11 +5598,41 @@ function mmReallyExportSceneBVH(%path)
       %shape = SceneShapes.getObject(%i);  
       %bvh_name = %shape.getSceneShapeID() @ ".bvh";
       %index = %shape.findSeq(%shape.getSceneShapeID());
+      if (%shape.getNumBodies()>1)
+         %shape.saveBvh(%index,%path @ "/" @ %bvh_name,"OldTruebones",$pref::MegaMotion::BvhGlobal);
+      else
+         %shape.saveBvh(%index,%path @ "/" @ %bvh_name,"NATIVE NODES",$pref::MegaMotion::BvhGlobal);
+            
       
-      %shape.saveBvh(%index,%path @ "/" @ %bvh_name,"OldTruebones",$pref::MegaMotion::BvhGlobal);
       //echo("Loaded sequence: " @ %path @ "/" @ %dsq_name);
       //No need to store this name, just make it again at play time from sceneShape ID.
+      
+      //%trans = %shape.getTransform(); 
+      %trans = %shape.RecordStartTransform;//This is the transform we saved at startSceneRecording().
+      %scale = %shape.getScale(); 
+      
+      %xml.pushNewElement("sceneShape");
+      
+      %xml.setAttribute(%columns[0],%shape.sceneShapeID);
+      %xml.setAttribute(%columns[1],%shape.getName());
+      %xml.setAttribute(%columns[2],%shape.shapeGroupID);
+      %xml.setAttribute(%columns[3],getWord(%trans,0));
+      %xml.setAttribute(%columns[4],getWord(%trans,1));
+      %xml.setAttribute(%columns[5],getWord(%trans,2));      
+      %xml.setAttribute(%columns[6],getWord(%trans,3));
+      %xml.setAttribute(%columns[7],getWord(%trans,4));
+      %xml.setAttribute(%columns[8],getWord(%trans,5));
+      %xml.setAttribute(%columns[9],getWord(%trans,6));
+      %xml.setAttribute(%columns[10],getWord(%scale,0));
+      %xml.setAttribute(%columns[11],getWord(%scale,1));
+      %xml.setAttribute(%columns[12],getWord(%scale,2));
+      
+      echo("sceneShape " @ %shape.sceneShapeID @ " pos " @ %pos);
+      
+      %xml.popElement();//sceneShape
    }   
+   %xml.popElement();//sceneShapeGroup
+   %xml.saveFile(%xml_file);   
 }
 
 //////////////////////////////////////////////////////////////////////
