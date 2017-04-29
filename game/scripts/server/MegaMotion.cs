@@ -1,8 +1,6 @@
-////////////////////////////////
-//LICENSE INFO HERE
-//The following source code is released  
-////////////////////////////////
-
+//-----------------------------------------------------------------------------
+// Copyright (c) 2017 MegaMotion Software, LLC
+//-----------------------------------------------------------------------------
 
 $MegaMotionScenesWindowID = 159;
 $MegaMotionSequenceWindowID = 395;
@@ -26,8 +24,11 @@ $mmScene_ActorBlock_4x4_ID = 8;
 $mmScene_ActorBlock_3x40_ID = 10;
 $mmScene_ActorBlock_2x2_ID = 11;
 
+$mmPlayingScene = false;
 $mmLastProject = 0;
 $mmLastScene = 0;  
+$mmMaxShapeGroup = 0;  
+$mmShapeGroupCount = 0;
 
 $mmLoadedScenes = 0;
 $mmLoadedShapes = 0;
@@ -61,12 +62,12 @@ $mmDebugRenderCollisions = 1;
 $mmDebugRenderJointLimits = 0;
 $mmDebugRenderBodyAxes = 0;
 
-//Some of above should just be prefs, others should be local.
+$mmGroupThinkFrequency = 1;//How many ticks to skip between group thinks.
+$mmTicks = 0;//Global tick counter.
 
 exec("MegaMotionScenes.gui");
 
 /*
-
 //AND, for tomorrow: EWorldEditor.getSelectionSize(), %obj = EWorldEditor.getSelectedObject( %i ).
 //Multi-select, for the masses of sceneShapes. Wherever applicable, make it so.
 
@@ -203,6 +204,7 @@ function exposeMegaMotionScenesForm()
    
    MegaMotionSequenceWindow.visible = false;
    
+   schedule(30,0,"MegaMotionTick");
 }
 
 function openMegaMotionScenes()
@@ -1374,6 +1376,220 @@ function mmUnloadProject()
    
 }
 
+
+function mmLoadScene(%scene_id)
+{
+   if (%scene_id<=0)
+      return;
+      
+   //FIRST: check to see if we've already loaded this scene! Which we are going
+   //to do by checking if there are any existing sceneShapes from this scene.
+   for (%i = 0; %i < SceneShapes.getCount();%i++)
+   {
+      %obj = SceneShapes.getObject(%i); 
+      if (%obj.sceneID==%scene_id)
+      {
+         MessageBoxOK("Scene already loaded.","Shapes from this scene are already present. Unload scene before adding again.","");
+         return;  
+      }
+   }
+   
+   //HERE: all major SQL query loops need to be done in the engine, they take too long in script. (benchmark this btw)
+   //loadSceneShapes(%id);//FIX: doing this later, this is a placeholder. 
+   //EXCEPT - this really isn't an issue now, because it is now only one query, and really quite fast even in script.
+   
+   %dyn = false;
+   %grav = true;
+   %ambient = true;
+   
+   $mmShapeGroupCount = 0;
+	%query = "SELECT ss.id AS ss_id,ss.name AS ss_name,shape_id,shapeGroup_id," @ 
+	         "behavior_tree,openSteerProfile_id,actionProfile_id,target_shape_id," @ 
+	         "ss.pos_x,ss.pos_y,ss.pos_z," @ 
+	         "ss.rot_x,ss.rot_y,ss.rot_z,ss.rot_a," @ 
+	         "ss.scale_x,ss.scale_y,ss.scale_z," @ 
+	         "s.pos_x AS scene_pos_x,s.pos_y AS scene_pos_y,s.pos_z AS scene_pos_z," @ 
+	         "sh.datablock AS datablock, sh.skeleton_id AS skeleton_id " @ 
+	         "FROM sceneShape ss " @ 
+	         "JOIN scene s ON s.id=scene_id " @
+	         "JOIN physicsShape sh ON ss.shape_id=sh.id " @ 
+	         "WHERE scene_id=" @ %scene_id @ ";";  
+	%resultSet = sqlite.query(%query, 0);
+	
+	echo("calling loadScene, result " @ %resultSet);
+   echo( "Query: " @ %query );	
+	
+   if (%resultSet)
+   {
+      while (!sqlite.endOfResult(%resultSet))
+      {
+         %sceneShape_id = sqlite.getColumn(%resultSet, "ss_id");   
+         %shape_id = sqlite.getColumn(%resultSet, "shape_id");
+         %name = sqlite.getColumn(%resultSet, "ss_name");
+         %shapeGroup_id = sqlite.getColumn(%resultSet, "shapeGroup_id");//not used yet
+         %behavior_tree = sqlite.getColumn(%resultSet, "behavior_tree");
+         %openSteer_id = sqlite.getColumn(%resultSet, "openSteerProfile_id");
+         %actionProfile_id = sqlite.getColumn(%resultSet, "actionProfile_id");
+         %target_shape = sqlite.getColumn(%resultSet, "target_shape_id");
+         
+         %pos_x = sqlite.getColumn(%resultSet, "pos_x");
+         %pos_y = sqlite.getColumn(%resultSet, "pos_y");
+         %pos_z = sqlite.getColumn(%resultSet, "pos_z");
+         
+         %rot_x = sqlite.getColumn(%resultSet, "rot_x");
+         %rot_y = sqlite.getColumn(%resultSet, "rot_y");
+         %rot_z = sqlite.getColumn(%resultSet, "rot_z");
+         %rot_a = sqlite.getColumn(%resultSet, "rot_a");
+         
+         %scale_x = sqlite.getColumn(%resultSet, "scale_x");
+         %scale_y = sqlite.getColumn(%resultSet, "scale_y");
+         %scale_z = sqlite.getColumn(%resultSet, "scale_z");
+         
+         %scene_pos_x = sqlite.getColumn(%resultSet, "scene_pos_x");
+         %scene_pos_y = sqlite.getColumn(%resultSet, "scene_pos_y");
+         %scene_pos_z = sqlite.getColumn(%resultSet, "scene_pos_z");
+         
+         %datablock = sqlite.getColumn(%resultSet, "datablock");
+         %skeleton_id = sqlite.getColumn(%resultSet, "skeleton_id");
+         
+         //echo("Found a sceneShape: " @ %sceneShape_id @ " pos " @ %pos_x @ " " @ %pos_y @ " " @ %pos_z @
+         //       " scale " @ %scale_x @ " " @ %scale_y @ " " @ %scale_z );
+                
+         %position = (%pos_x + %scene_pos_x) @ " " @ (%pos_y + %scene_pos_y) @ " " @ (%pos_z + %scene_pos_z);
+         %rotation = %rot_x @ " " @ %rot_y @ " " @ %rot_z @ " " @ %rot_a;
+         %scale = %scale_x @ " " @ %scale_y @ " " @ %scale_z;
+         
+         echo("loading sceneShape id " @ %sceneShape_id @ " position " @ %position @ " rotation " @ 
+               %rotation @ " scale " @ %scale);
+         
+         //TEMP -- use name from sceneShape table
+         //%name = "";          
+         //if (%shape_id==4)
+         //   %name = "ka50";   
+         //else if (%shape_id==3)
+         //   %name = "bo105";
+         //else if (%shape_id==2)
+         //   %name = "dragonfly";
+         //TEMP
+            
+         %pShape =  new PhysicsShape(%name) {
+            playAmbient = %ambient;
+            dataBlock = %datablock;
+            position = %position;
+            rotation = %rotation;
+            scale = %scale;
+            canSave = "1";
+            canSaveDynamicFields = "1";
+            areaImpulse = "0";
+            damageRadius = "0";
+            invulnerable = "0";
+            minDamageAmount = "0";
+            radiusDamage = "0";
+            hasGravity = %grav;
+            isDynamic = %dyn;
+            shapeID = %shape_id;
+            sceneShapeID = %sceneShape_id;
+            sceneID = %scene_id;
+            skeletonID = %skeleton_id;
+            openSteerID = %openSteer_id;
+            actionProfileID = %actionProfile_id;
+            shapeGroupID = %shapeGroup_id;
+            shapeGroupPosition = -1;
+            targetShapeID = %target_shape;
+            behaviorTreeName = %behavior_tree;
+            targetType = "Health";//"AmmoClip" "Player" //Obsolete?
+            targetItem = 0;
+            isDirty = false;
+            lastDist = 999.0;//Temp, maybe? Helps us avoid overshooting nav goals.
+         };
+         //skeletonID = %skeleton_id;
+         
+         %pShape.setScale(%scale);//Maybe? Scale above is broken. 
+         
+         MissionGroup.add(%pShape);   
+         SceneShapes.add(%pShape);  
+         
+         %pShape.getClientObject().sceneShapeID = %sceneShape_id;
+         
+         if (%shapeGroup_id)
+         {
+            %found = 0;
+            for (%i=0;%i<$mmShapeGroupCount;%i++)
+            {
+               if (%shapeGroup_id == $mmShapeGroupIDs[%i])
+                  %found = 1;
+            }
+            if (%found == 0)
+            {
+               $mmShapeGroupIDs[$mmShapeGroupCount] = %shapeGroup_id;
+               $mmShapeGroupCount++;               
+            }
+         }
+         
+         if ($mmSelectedSceneShape>0)
+         {
+            if ($mmSelectedSceneShape==%sceneShape_id)
+            {
+               $mmSelectedShape = %pShape;
+               echo("reselecting selected shape! " @ %temp @ " sceneShape " @ %sceneShape_id);
+            }
+         }
+         sqlite.nextRow(%resultSet);
+      }
+   }   
+   sqlite.clearResult(%resultSet);
+      
+   echo("Finished loading scene shapes.");
+   //mmSetBehaviors(%id);
+   
+   //FIX these arbitrary delays need to be replaced
+   schedule(1000,0,"mmMountShapes",%scene_id);
+   schedule(1500,0,"mmShapeSpecifics");   
+   schedule(2000,0,"mmShapeGroups",%scene_id);
+   
+   
+   mmSceneSpecifics(%scene_id);
+   
+   $mmLoadedScenes++;
+   
+   //schedule(40, 0, "mmLoadKeyframeSets");
+} 
+
+function mmUnloadScene(%id)
+{
+   if (%id<=0)
+      return;
+      
+   if ($mmSelectedShape>0)
+      $mmSelectedSceneShape = $mmSelectedShape.sceneShapeID;
+      
+   //HERE: look up all the sceneShapes from the scene in question, and drop them all from the current mission.
+   %shapesCount = SceneShapes.getCount();
+   for (%i=0;%i<%shapesCount;%i++)
+   {
+      %shape = SceneShapes.getObject(%i);  
+      //echo("shapesCount " @ %shapesCount @ ", sceneShape id " @ %shape.sceneShapeID @ 
+      //         " scene " @ %shape.sceneID ); 
+      if (%shape.sceneID==%id)
+      {       
+         //Whoops - *first*, we need to delete all physics shapes! (and joints? or is that automatic?)           
+         //%shape.deletePhysicsBodies?
+         
+         MissionGroup.remove(%shape);
+         SceneShapes.remove(%shape);//Wuh oh... removing from SceneShapes shortens the array...
+         %shape.delete();//Maybe??
+         
+         %shapesCount = SceneShapes.getCount();
+         if (%shapesCount>0)
+            %i=-1;//So start over every time we remove one, until we loop through and remove none.
+         else 
+            %i=1;//Or else we run out of shapes, and just need to exit the loop.   
+            
+         $mmLoadedScenes--;
+      }
+   }   
+}
+
 function mmSelectScene()
 {
    echo("calling selectMegaMotionScene");
@@ -1511,164 +1727,6 @@ function mmReallyDeleteScene(%id)
    exposeMegaMotionScenesForm();
 }
 
-function mmLoadScene(%id)
-{      
-   if (%id<=0)
-      return;
-      
-   //FIRST: check to see if we've already loaded this scene! Which we are going
-   //to do by checking if there are any existing sceneShapes from this scene.
-   for (%i = 0; %i < SceneShapes.getCount();%i++)
-   {
-      %obj = SceneShapes.getObject(%i); 
-      if (%obj.sceneID==%id)
-      {
-         MessageBoxOK("Scene already loaded.","Shapes from this scene are already present. Unload scene before adding again.","");
-         return;  
-      }
-   }
-   
-   //HERE: all major SQL query loops need to be done in the engine, they take too long in script. (benchmark this btw)
-   //loadSceneShapes(%id);//FIX: doing this later, this is a placeholder. 
-   //EXCEPT - this really isn't an issue now, because it is now only one query, and really quite fast even in script.
-   
-   %dyn = false;
-   %grav = true;
-   %ambient = true;
-
-	%query = "SELECT ss.id AS ss_id,ss.name AS ss_name,shape_id,shapeGroup_id," @ 
-	         "behavior_tree,openSteerProfile_id,actionProfile_id,target_shape_id," @ 
-	         "ss.pos_x,ss.pos_y,ss.pos_z," @ 
-	         "ss.rot_x,ss.rot_y,ss.rot_z,ss.rot_a," @ 
-	         "ss.scale_x,ss.scale_y,ss.scale_z," @ 
-	         "s.pos_x AS scene_pos_x,s.pos_y AS scene_pos_y,s.pos_z AS scene_pos_z," @ 
-	         "sh.datablock AS datablock, sh.skeleton_id AS skeleton_id " @ 
-	         "FROM sceneShape ss " @ 
-	         "JOIN scene s ON s.id=scene_id " @
-	         "JOIN physicsShape sh ON ss.shape_id=sh.id " @ 
-	         "WHERE scene_id=" @ %id @ ";";  
-	%resultSet = sqlite.query(%query, 0);
-	
-	echo("calling loadScene, result " @ %resultSet);
-   echo( "Query: " @ %query );	
-	
-   if (%resultSet)
-   {
-      while (!sqlite.endOfResult(%resultSet))
-      {
-         %sceneShape_id = sqlite.getColumn(%resultSet, "ss_id");   
-         %shape_id = sqlite.getColumn(%resultSet, "shape_id");
-         %name = sqlite.getColumn(%resultSet, "ss_name");
-         %shapeGroup_id = sqlite.getColumn(%resultSet, "shapeGroup_id");//not used yet
-         %behavior_tree = sqlite.getColumn(%resultSet, "behavior_tree");
-         %openSteer_id = sqlite.getColumn(%resultSet, "openSteerProfile_id");
-         %actionProfile_id = sqlite.getColumn(%resultSet, "actionProfile_id");
-         %target_shape = sqlite.getColumn(%resultSet, "target_shape_id");
-         
-         %pos_x = sqlite.getColumn(%resultSet, "pos_x");
-         %pos_y = sqlite.getColumn(%resultSet, "pos_y");
-         %pos_z = sqlite.getColumn(%resultSet, "pos_z");
-         
-         %rot_x = sqlite.getColumn(%resultSet, "rot_x");
-         %rot_y = sqlite.getColumn(%resultSet, "rot_y");
-         %rot_z = sqlite.getColumn(%resultSet, "rot_z");
-         %rot_a = sqlite.getColumn(%resultSet, "rot_a");
-         
-         %scale_x = sqlite.getColumn(%resultSet, "scale_x");
-         %scale_y = sqlite.getColumn(%resultSet, "scale_y");
-         %scale_z = sqlite.getColumn(%resultSet, "scale_z");
-         
-         %scene_pos_x = sqlite.getColumn(%resultSet, "scene_pos_x");
-         %scene_pos_y = sqlite.getColumn(%resultSet, "scene_pos_y");
-         %scene_pos_z = sqlite.getColumn(%resultSet, "scene_pos_z");
-         
-         %datablock = sqlite.getColumn(%resultSet, "datablock");
-         %skeleton_id = sqlite.getColumn(%resultSet, "skeleton_id");
-         
-         //echo("Found a sceneShape: " @ %sceneShape_id @ " pos " @ %pos_x @ " " @ %pos_y @ " " @ %pos_z @
-         //       " scale " @ %scale_x @ " " @ %scale_y @ " " @ %scale_z );
-                
-         %position = (%pos_x + %scene_pos_x) @ " " @ (%pos_y + %scene_pos_y) @ " " @ (%pos_z + %scene_pos_z);
-         %rotation = %rot_x @ " " @ %rot_y @ " " @ %rot_z @ " " @ %rot_a;
-         %scale = %scale_x @ " " @ %scale_y @ " " @ %scale_z;
-         
-         echo("loading sceneShape id " @ %sceneShape_id @ " position " @ %position @ " rotation " @ 
-               %rotation @ " scale " @ %scale);
-         
-         //TEMP -- use name from sceneShape table
-         //%name = "";          
-         //if (%shape_id==4)
-         //   %name = "ka50";   
-         //else if (%shape_id==3)
-         //   %name = "bo105";
-         //else if (%shape_id==2)
-         //   %name = "dragonfly";
-         //TEMP
-            
-         %pShape =  new PhysicsShape(%name) {
-            playAmbient = %ambient;
-            dataBlock = %datablock;
-            position = %position;
-            rotation = %rotation;
-            scale = %scale;
-            canSave = "1";
-            canSaveDynamicFields = "1";
-            areaImpulse = "0";
-            damageRadius = "0";
-            invulnerable = "0";
-            minDamageAmount = "0";
-            radiusDamage = "0";
-            hasGravity = %grav;
-            isDynamic = %dyn;
-            shapeID = %shape_id;
-            sceneShapeID = %sceneShape_id;
-            sceneID = %id;
-            skeletonID = %skeleton_id;
-            openSteerID = %openSteer_id;
-            actionProfileID = %actionProfile_id;
-            shapeGroupID = %shapeGroup_id;
-            targetShapeID = %target_shape;
-            behaviorTreeName = %behavior_tree;
-            targetType = "Health";//"AmmoClip" "Player" //Obsolete?
-            targetItem = 0;
-            isDirty = false;
-         };
-         //skeletonID = %skeleton_id;
-         
-         %pShape.setScale(%scale);//Maybe? Scale above is broken. 
-         
-         MissionGroup.add(%pShape);   
-         SceneShapes.add(%pShape);  
-         
-         %pShape.getClientObject().sceneShapeID = %sceneShape_id;
-         
-         if ($mmSelectedSceneShape>0)
-         {
-            if ($mmSelectedSceneShape==%sceneShape_id)
-            {
-               $mmSelectedShape = %pShape;
-               echo("reselecting selected shape! " @ %temp @ " sceneShape " @ %sceneShape_id);
-            }
-         }
-         sqlite.nextRow(%resultSet);
-      }
-   }   
-   sqlite.clearResult(%resultSet);
-      
-   
-   //mmSetBehaviors(%id);
-   
-   schedule(3000,0,"mmShapeSpecifics");   
-   
-   schedule(1000,0,"mmMountShapes",%id);
-   
-   mmSceneSpecifics(%id);
-   
-   $mmLoadedScenes++;
-   
-   //schedule(40, 0, "mmLoadKeyframeSets");
-} 
-
 function mmSceneSpecifics(%id)
 {  //TEMP - FIX - Not really doing anything scene specific here anymore, instead doing this weird 
    //CubeShapes group - making temporary navigation targets out of all the cube shapes in the level. 
@@ -1700,6 +1758,12 @@ function mmShapeSpecifics()
 
 function mmSetBehaviors(%id)
 {
+   $mmPlayingScene = true;
+   
+   /////// TEMP - TESTING - "Start of scene" behavior for whole group. /////////////
+   //mmGroupSingleFileTargets(2,2.0);// Set each actor to follow the one ahead of them, only first one makes decisions. (%group_id,%padding)
+   //mmGroupFormationTargets(2,0,3,3,1.0,4.0);// %group_id,%formation_type,%count_x,%count_y,%padding_x,%padding_y
+   
    for (%i = 0; %i < SceneShapes.getCount();%i++)
    {
       %obj = SceneShapes.getObject(%i); 
@@ -1712,8 +1776,488 @@ function mmSetBehaviors(%id)
          }         
       }
    }
+   
 }
 
+function mmMountShapes(%id)
+{
+   //Now, do all shapeMounts - except only for shapes from this scene, so we don't do it twice.
+   for (%i = 0; %i < SceneShapes.getCount();%i++)
+   {
+      %obj = SceneShapes.getObject(%i); 
+      if (%obj.sceneID==%id)
+      {
+         %obj.mountShapes();
+      }     
+   }
+}
+
+function mmShapeGroups(%scene_id)
+{
+   //Now, mmShapeGroupIDs[] has already been filled with only the relevant IDs based on loaded sceneShapes. 
+   for (%i=0;%i<$mmShapeGroupCount;%i++)
+   {
+      %id = $mmShapeGroupIDs[%i];
+      //$mmShapePartList.add(%name,%id);
+      
+      $mmShapeGroupData[%id,0] = 0;//member count
+      $mmShapeGroupData[%id,1] = "";//name: maybe do it later, maybe not, we don't really care right now.
+      $mmShapeGroupData[%id,2] = 0;//leader shape
+      $mmShapeGroupData[%id,3] = 0;//think state
+      
+      //Now, assign the group behavior tree to one of our magic Cubes, starting at one instead of zero.
+      if (%i < CubeShapes.getCount()) // FIX: make a special marker model, perhaps only visible in edit mode.
+      {
+         %cube = CubeShapes.getObject(%i); 
+         if (%cube>0) //Right, do not call SetBehavior yet! That's what Play Scene button is for.
+         {
+            %cube.behaviorTreeName = "group_" @ %id @ "_Tree";//Actually, group name might be better here. eg AttackerGroup_Tree.cs
+            $mmShapeGroupData[%id,4] = %cube;//But let's store this for later. 
+            echo(%cube @ " setting cube behavior tree: " @ %cube.behaviorTreeName);
+         }
+      }
+      sqlite.nextRow(%resultSet);
+   }
+   $mmShapeGroupCount = %c;//Use this to know how many are in mmShapeGroupIDs[]
+   for (%i = 0; %i < SceneShapes.getCount();%i++)
+   {
+      %obj = SceneShapes.getObject(%i);
+      if (%obj.sceneID==%scene_id)
+      {
+         %groupID = %obj.shapeGroupID;
+         if (%groupID > 0)
+         {
+            //HERE: Make this accessible some other way, but for the current research pass, we're going to manually
+            //assign cubes as leaders for groups A and B, adn then the first member as leader of group C. Scene = Horde01.
+            if ($mmShapeGroupData[%groupID,0] == 0)
+            {
+               if ((%groupID<3)&&(%cube>0))
+               {
+                  $mmShapeGroupData[%groupID,2] = $mmShapeGroupData[%groupID,4];
+               }
+               else
+               {
+                  $mmShapeGroupData[%groupID,2] = %obj;
+                  %obj.targetShapeID = $mmShapeGroupData[%groupID,4];
+               }
+            }
+            %obj.shapeGroupIndex = $mmShapeGroupData[%groupID,0];//Save current count as this object's group position.
+            
+            $mmShapeGroupMembers[%groupID,%obj.shapeGroupIndex] = %obj;//And then store us in the group members array.
+            $mmShapeGroupData[%groupID,0]++;//And increment the counter.
+         }
+      }     
+   }
+}
+
+      //(%groupID, %formationType, %widthX, %depthY, %paddingX, %paddingY, %offset, %include_leader)
+      //mmGroupFormationTargets(2,0,20.0,20.0,2.0,2.0,"-10.0 10.0 0",false);//filled block
+      //mmGroupFormationTargets(2,1,20.0,20.0,2.0,2.0,"-10.0 10.0 0",false);//open block
+      //mmGroupFormationTargets(2,2,20.0,20.0,2.0,2.0,"0 10.0 0",false);//filled wedge
+      //mmGroupFormationTargets(2,3,20.0,20.0,2.0,2.0,"0 10.0 0",false);//open wedge
+      //mmGroupFormationTargets(2,4,30.0,40.0,2.0,2.0,"0 22.0 0",false);//open V
+      //mmGroupFormationTargets(2,5,10.0,15.0,2.0,2.0,"0 10.0 0",false);//filled diamond
+      //mmGroupFormationTargets(2,6,20.0,20.0,2.0,2.0,"0 10.0 0",false);//open diamond
+      //mmGroupFormationTargets(2,7,20.0,20.0,2.0,2.0,"0 10.0 0",false);//filled circle
+      //mmGroupFormationTargets(2,8,11.5,0.0,2.0,2.0,"0 0.0 0",false);//open circle
+
+function mmGroup_Horde_Attack(%groupID)
+{ //(Filled Block)
+   mmGroupFormationTargets(%groupID,0,6.0,40.0,3.0,2.0,"0.0 20.0 0",false);
+}
+
+function mmGroup_Horde_Retreat(%groupID)
+{ //(Filled Block)
+   mmGroupFormationTargets(%groupID,0,20.0,4.0,2.0,2.0,"-10.0 -100.0 0",false);
+}
+
+function mmGroup_Militia_Attack(%groupID)
+{ //(Filled Block)
+   //Should really only do this once, not all the time.
+   if ($mmShapeGroupMembers[%groupID,1].targetShapeID == 0)
+      mmGroupSingleFileTargets(%groupID,2.0);
+}
+
+function mmGroup_Militia_Defend_Wall(%groupID)
+{ //(Filled Block)
+   //mmGroupFormationTargets(%groupID,0,6.0,40.0,3.0,2.0,"0.0 20.0 0",false);
+}
+///////////////////////////////////////////
+
+function mmGroup_Block_Targets(%groupID)
+{ 
+   mmGroupFormationTargets(%groupID,1,20.0,20.0,2.0,2.0,"-10.0 10.0 0",false);
+}
+
+function mmGroup_Wedge_Targets(%groupID)
+{ 
+   mmGroupFormationTargets(%groupID,3,20.0,20.0,2.0,2.0,"0 10.0 0",false);
+}
+
+function mmGroup_V_Targets(%groupID)
+{ 
+   mmGroupFormationTargets(%groupID,4,40.0,30.0,2.0,2.0,"0 22.0 0",false);
+}
+
+function mmGroup_Diamond_Targets(%groupID)
+{ 
+   mmGroupFormationTargets(%groupID,6,20.0,20.0,2.0,2.0,"0 10.0 0",false);
+}
+
+function mmGroup_Circle_Targets(%groupID)
+{ 
+   mmGroupFormationTargets(%groupID,8,11.5,0.0,2.0,2.0,"0 0.0 0",false);
+}
+
+function mmGroupThink()
+{ //HERE: we need to loop through all of our group actors, and keep them up to date on their target locations. It would be
+  //very helpful if we did a single check on position/orientation of the group leader, and if no change, don't bother 
+  //recalculating target positions for all the followers, they will be the same.
+   for (%i = 0; %i < $mmShapeGroupCount;%i++)
+   {
+      %groupID = $mmShapeGroupIDs[%i];
+      %count = $mmShapeGroupData[%groupID,0];
+      %leader = $mmShapeGroupData[%groupID,2];
+      
+      %leaderPos = %leader.getPosition();
+      %leaderTransform = %leader.getTransform(); 
+      //%scale = %leader.getScale();
+      
+      //NOW: follow a plan for each group      
+      
+      //HERE: we need to rotate vectors around a point, by an angle on the Z axis. This is easy in script, right??
+      //for (%j = 0; %j < 3;%j++)  //for (%j = 0; %j < %count;%j++)
+      //{
+      //   %position = VectorAdd(%leaderPos,"0" SPC (%j*2) SPC "5");
+      //   %member = $mmShapeGroupMembers[%groupID,%j];
+      //   %member.goalPos = %position;
+         //%member.
+      //}
+   }
+}
+
+function mmGroupSingleFileTargets(%groupID, %padding)
+{
+   echo("calling mmGroupSingleFileTargets " @ %groupID @ " padding " @ %padding );
+   %count = $mmShapeGroupData[%groupID,0];
+   %leader = $mmShapeGroupData[%groupID,2];
+   for (%i = 1; %i < %count;%i++)
+   {
+      $mmShapeGroupMembers[%groupID,%i].targetShapeID = $mmShapeGroupMembers[%groupID,%i-1];
+      echo("assigning target id: " @ $mmShapeGroupMembers[%groupID,%i].targetShapeID);
+   }
+}
+
+function mmGroupFormationTargets(%groupID, %formationType, %widthX, %depthY, %paddingX, %paddingY, %offset, %include_leader)
+{
+   //
+   %member_count = $mmShapeGroupData[%groupID,0];
+   %leader = $mmShapeGroupData[%groupID,2];
+   %leaderClient = %leader.getClientObject();
+   %leaderPos = %leaderClient.getPosition();
+   %leaderZRot = -1 * mDegToRad(getWord(%leaderClient.getEulerRotation(),2));
+   %leaderGroup = %leader.shapeGroupID;
+   
+   //echo("calling group formation targets: group " @ %groupID @ " members " @ %member_count );
+   
+   //SO: We need formation types. Arbitrary list, but here we go.
+   // 0 = filled block or single row or column
+   // 1 = empty block
+   // 2 = filled forward wedge
+   // 3 = empty forward wedge
+   // 4 = forward V
+   // 5 = filled diamond
+   // 6 = empty diamond
+   // 7 = filled circle
+   // 8 = empty circle
+   //There can be more, but that's plenty to start with.
+   
+   //First methodology: don't try to cram all the available guys into the formation. Instead, rely on overall 
+   //dimensions and x/y padding to fill up the space till it's full, then ignore whatever guys are left.
+   
+   //FIX: this still assumes that our leader shape is the first member of our group, in which case here we decide
+   if ((%leaderGroup!=%groupID)||(%include_leader==true)) //whether the leader is part of the formation shape or being followed/preceded/surrounded/etc.
+      %c = 0;
+   else
+      %c = 1;
+      
+   //Rewrite this block? Could be much shorter.
+   if (%paddingX > 0)
+      %x_count = mFloor(%widthX / %paddingX);
+   else
+      %x_count = 1;
+   if (%paddingY > 0)
+      %y_count = mFloor(%depthY / %paddingY);
+   else
+      %y_count = 1;   
+      
+   //////////////////////////////////////////////   
+   if (%formationType==0) // filled block
+   {    
+      for (%x = 0; %x < %x_count; %x++)
+      {
+         for (%y = 0; %y < %y_count; %y++)
+         {
+            %relPos = %x * %paddingX @ " " @ (-1 * %y * %paddingY) @ " 0";
+            %offsetPos = VectorAdd(%relPos,%offset);
+            %finalPos = VectorRot(%offsetPos,%leaderZRot);
+            if (%c < %member_count) //FIX: do a goto or something to get us out of here if we run out of members.
+               $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+            %c++;
+         }
+      }
+   } 
+   //////////////////////////////////////////////
+   else if (%formationType==1) // open block
+   {    
+      for (%x = 0; %x < %x_count;%x++)
+      {
+         if (%x == 0)
+         {
+            for (%y = 0; %y < %y_count; %y++)
+            {
+               %relPos = %x * %paddingX @ " " @ (-1 * %y * %paddingY) @ " 0";
+               %offsetPos = VectorAdd(%relPos,%offset);
+               %finalPos = VectorRot(%offsetPos,%leaderZRot);
+               if (%c < %member_count)
+                  $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+               %c++;
+            }
+         }
+         else if ((%x > 0)&&(%x < (%x_count-1)))
+         {
+            for (%y = 0; %y < 2; %y++)
+            {
+               %relPos = %x * %paddingX @ " " @ (-1 * %y * (%x_count * %paddingY)) @ " 0";
+               %offsetPos = VectorAdd(%relPos,%offset);
+               %finalPos = VectorRot(%offsetPos,%leaderZRot);               
+               if (%c < %member_count)
+                  $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+               %c++;
+            }
+         }
+         else if (%x == (%x_count-1))
+         {
+            for (%y = 0; %y < %y_count; %y++)
+            {
+               %relPos = %x * %paddingX @ " " @ (-1 * %y * %paddingY) @ " 0";
+               %offsetPos = VectorAdd(%relPos,%offset);
+               %finalPos = VectorRot(%offsetPos,%leaderZRot);
+               if (%c < %member_count)
+                  $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+               %c++;
+            }
+         }
+      }      
+   }
+   //////////////////////////////////////////////
+   else if (%formationType==2) // filled forward wedge
+   {
+      for (%y = 0; %y < %y_count; %y++)
+      {
+         if (%y == 0)
+         {
+            %relPos = "0 0 0";//Point of wedge starts at the offset position
+            %offsetPos = VectorAdd(%relPos,%offset);
+            %finalPos = VectorRot(%offsetPos,%leaderZRot);
+            if (%c < %member_count)
+               $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+            %c++;
+         } else {
+            for (%x = (-%widthX / 2) * (%y/%y_count); %x <= (%widthX / 2) * (%y/%y_count); %x+=%paddingX)
+            {
+               %relPos = %x @ " " @ (-%y * %paddingY) @ " 0";
+               %offsetPos = VectorAdd(%relPos,%offset);
+               %finalPos = VectorRot(%offsetPos,%leaderZRot);
+               if (%c < %member_count)
+                  $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+               %c++;
+            }            
+         }
+      }
+   }
+   //////////////////////////////////////////////
+   else if (%formationType==3) // open forward wedge
+   {
+      for (%y = 0; %y < %y_count; %y++)
+      {
+         if (%y == 0)
+         {
+            %relPos = "0 0 0";//Point of wedge starts at the offset position
+            %offsetPos = VectorAdd(%relPos,%offset);
+            %finalPos = VectorRot(%offsetPos,%leaderZRot);
+            if (%c < %member_count)
+               $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+            %c++;
+         } 
+         else if ((%y > 0)&&(%y < (%y_count - 1))) 
+         {
+            for (%x = -1; %x <= 1; %x+=2)//(two passes, -1 and 1)
+            {
+               %relPos = (%x * (%widthX / 2) * (%y/%y_count)) @ " " @ (-1 * %y * %paddingY) @ " 0";
+               %offsetPos = VectorAdd(%relPos,%offset);
+               %finalPos = VectorRot(%offsetPos,%leaderZRot);
+               if (%c < %member_count)
+                  $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+               %c++;
+            }            
+         } else { //last row, need to fill it. Probably need to go x_count * 2, but it might depend on y_count, let's test it.
+            for (%x = (-%widthX / 2) * (%y/%y_count); %x <= (%widthX / 2) * (%y/%y_count); %x+=%paddingX)
+            {
+               %relPos = %x @ " " @ (-%y * %paddingY) @ " 0";
+               %offsetPos = VectorAdd(%relPos,%offset);
+               %finalPos = VectorRot(%offsetPos,%leaderZRot);
+               if (%c < %member_count)
+                  $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+               %c++;
+            }
+         }
+      }
+   }
+   //////////////////////////////////////////////
+   else if (%formationType==4) // forward V
+   {      
+      for (%y = 0; %y < %y_count; %y++)
+      {
+         if (%y == 0)
+         {
+            %relPos = "0 0 0";//Point of wedge starts at the offset position
+            %offsetPos = VectorAdd(%relPos,%offset);
+            %finalPos = VectorRot(%offsetPos,%leaderZRot);
+            if (%c < %member_count)
+               $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+            %c++;
+         } else {
+            for (%x = -1; %x <= 1; %x+=2)//(two passes, -1 and 1)
+            {
+               %relPos = (%x * (%widthX / 2) * (%y/%y_count)) @ " " @ (-1 * %y * %paddingY) @ " 0";
+               %offsetPos = VectorAdd(%relPos,%offset);
+               %finalPos = VectorRot(%offsetPos,%leaderZRot);
+               if (%c < %member_count)
+                  $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+               %c++;
+            }
+         }
+      }
+   }
+   //////////////////////////////////////////////
+   else if (%formationType==5) // filled diamond
+   {
+      for (%y = 0; %y < %y_count; %y++)
+      {
+         if (%y == 0)
+         {
+            %relPos = "0 0 0";//Point of wedge starts at the offset position
+            %offsetPos = VectorAdd(%relPos,%offset);
+            %finalPos = VectorRot(%offsetPos,%leaderZRot);
+            if (%c < %member_count)
+               $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+            %c++;
+         } 
+         else if (%y <= %y_count/2)
+         {
+            for (%x = (-%widthX / 2) * (%y/(%y_count/2)); 
+                  %x <= (%widthX / 2) * (%y/(%y_count/2)); 
+                  %x+=%paddingX)
+            {
+               %relPos = %x @ " " @ (-%y * %paddingY) @ " 0";
+               %offsetPos = VectorAdd(%relPos,%offset);
+               %finalPos = VectorRot(%offsetPos,%leaderZRot);
+               if (%c < %member_count)
+                  $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+               %c++;
+            }            
+         }
+         else if ((%y >= %y_count/2)&&(%y < %y_count-1))
+         {
+            for (%x = (-%widthX / 2) * (((%y_count/2)-(%y-(%y_count/2)))/(%y_count/2)); 
+                  %x <= (%widthX / 2) * (((%y_count/2)-(%y-(%y_count/2)))/(%y_count/2)); 
+                  %x+=%paddingX)
+            {
+               %relPos = %x @ " " @ (-%y * %paddingY) @ " 0";
+               %offsetPos = VectorAdd(%relPos,%offset);
+               %finalPos = VectorRot(%offsetPos,%leaderZRot);
+               if (%c < %member_count)
+                  $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+               %c++;
+            } 
+         }
+         else if (%y == %y_count-1)
+         {
+            %relPos = "0 " @  %depthY @ " 0";//Point of wedge starts at the offset position
+            %offsetPos = VectorAdd(%relPos,%offset);
+            %finalPos = VectorRot(%offsetPos,%leaderZRot);
+            if (%c < %member_count)
+               $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+            %c++;
+         }
+         
+      }
+   }
+   //////////////////////////////////////////////
+   else if (%formationType==6) // open diamond
+   {
+      for (%y = 0; %y < %y_count; %y++)
+      {
+         if (%y == 0)
+         {
+            %relPos = "0 0 0";//Point of wedge starts at the offset position
+            %offsetPos = VectorAdd(%relPos,%offset);
+            %finalPos = VectorRot(%offsetPos,%leaderZRot);
+            if (%c < %member_count)
+               $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+            %c++;
+         } 
+         else if ((%y > 0)&&(%y < (%y_count - 1))) 
+         {
+            for (%x = -1; %x <= 1; %x+=2)//(two passes, -1 and 1)
+            {
+               %relPos = (%x * (%widthX / 2) * (%y/%y_count)) @ " " @ (-1 * %y * %paddingY) @ " 0";
+               %offsetPos = VectorAdd(%relPos,%offset);
+               %finalPos = VectorRot(%offsetPos,%leaderZRot);
+               if (%c < %member_count)
+                  $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+               %c++;
+            }            
+         } else { //last row, need to fill it. Probably need to go x_count * 2, but it might depend on y_count, let's test it.
+            for (%x = (-%widthX / 2) * (%y/%y_count); %x <= (%widthX / 2) * (%y/%y_count); %x+=%paddingX)
+            {
+               %relPos = %x @ " " @ (-%y * %paddingY) @ " 0";
+               %offsetPos = VectorAdd(%relPos,%offset);
+               %finalPos = VectorRot(%offsetPos,%leaderZRot);
+               if (%c < %member_count)
+                  $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+               %c++;
+            }
+         }
+      }
+   }
+   //////////////////////////////////////////////
+   else if (%formationType==7) // filled circle
+   {
+      
+   }
+   //////////////////////////////////////////////
+   else if (%formationType==8) // open circle
+   {
+      %radius = %widthX;
+      %x_count = mFloor((2 * 3.1415 * %radius) / %paddingX);//Circumference over x_ padding
+      for (%x = 0; %x < %x_count;%x++)
+      {
+         //NOW: we need to take a vector of (positive?) %radius on the Y (forward) axis,  "0 %radius 0"
+         %startPos = "0 " @ %radius @ " 0";
+         %relPos = VectorRot(%startPos, (mDegToRad(360.0/%x_count) * %x));
+         %offsetPos = VectorAdd(%relPos,%offset);
+         %finalPos = VectorRot(%offsetPos,%leaderZRot);
+         if (%c < %member_count)
+            $mmShapeGroupMembers[%groupID,%c].goalPos = VectorAdd(%leaderPos,%finalPos); 
+         %c++;
+      }      
+   }
+   //////////////////////////////////////////////
+}
+
+////////////////////////////////////////////////////////////////
 //These are for custom code, whatever your needed action of the moment.
 function mmSceneAction1()
 {
@@ -1810,11 +2354,12 @@ function mmSceneAction7()
    for (%i = 0; %i < SceneShapes.getCount();%i++)
    {
       %obj = SceneShapes.getObject(%i); 
-      if (%obj.shapeGroupID==1)
+      if (%obj.shapeGroupID==3)
       {
          %client = %obj.getClientObject();
          %delay = 10 + getRandom(600);
-         %client.schedule(%delay,"applyImpulseToPart","2","0 0 0","-0.01 0 0.005"); 
+         %client.schedule(%delay,"applyImpulseToPart","0","0 0 0.6","-3.0 0 3.00"); 
+         //%client.schedule(%delay,"applyImpulseToPart","0","0 0 0","-0.01 0 0.005"); 
          %obj.setBehavior("FallingTree");                    
       }
    } 
@@ -1825,63 +2370,17 @@ function mmSceneAction8()
    for (%i = 0; %i < SceneShapes.getCount();%i++)
    {
       %obj = SceneShapes.getObject(%i); 
-      if (%obj.shapeGroupID==1)
+      if (%obj.shapeGroupID==3)
       {
          %client = %obj.getClientObject();
          %delay = 10 + getRandom(600);
-         %client.schedule(%delay,"applyImpulseToPart","2","0 0 0","0.01 0 0.005"); 
+         %client.schedule(%delay,"applyImpulseToPart","0","0 0 0.6","3.0 0 3.0"); 
+         //%client.schedule(%delay,"applyImpulseToPart","0","0 0 0","0.01 0 0.005"); 
          %obj.setBehavior("FallingTree");                    
       }
    } 
 }
-
-function mmMountShapes(%id)
-{
-   //Now, do all shapeMounts - except only for shapes from this scene, so we don't do it twice.
-   for (%i = 0; %i < SceneShapes.getCount();%i++)
-   {
-      %obj = SceneShapes.getObject(%i); 
-      if (%obj.sceneID==%id)
-      {
-         %obj.mountShapes();
-      }     
-   }
-}
-
-function mmUnloadScene(%id)
-{
-   if (%id<=0)
-      return;
-      
-   if ($mmSelectedShape>0)
-      $mmSelectedSceneShape = $mmSelectedShape.sceneShapeID;
-      
-   //HERE: look up all the sceneShapes from the scene in question, and drop them all from the current mission.
-   %shapesCount = SceneShapes.getCount();
-   for (%i=0;%i<%shapesCount;%i++)
-   {
-      %shape = SceneShapes.getObject(%i);  
-      //echo("shapesCount " @ %shapesCount @ ", sceneShape id " @ %shape.sceneShapeID @ 
-      //         " scene " @ %shape.sceneID ); 
-      if (%shape.sceneID==%id)
-      {       
-         //Whoops - *first*, we need to delete all physics shapes! (and joints? or is that automatic?)           
-         //%shape.deletePhysicsBodies?
-         
-         MissionGroup.remove(%shape);
-         SceneShapes.remove(%shape);//Wuh oh... removing from SceneShapes shortens the array...
-         %shape.delete();//Maybe??
-         
-         %shapesCount = SceneShapes.getCount();
-         if (%shapesCount>0)
-            %i=-1;//So start over every time we remove one, until we loop through and remove none.
-         else 
-            %i=1;//Or else we run out of shapes, and just need to exit the loop.   
-            
-         $mmLoadedScenes--;
-      }
-   }   
-}
+////////////////////////////////////////////////////////////////
 
 function mmSelectSceneShape()
 {
@@ -5259,147 +5758,6 @@ function mmGetSaveFileName(%defaultFilePath,%type)
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-function MegaMotionTick()
-{  
-   //General function for anything in MegaMotion that needs a tick but doesn't do it itself.
-   
-   //Sequence slider needs to keep up with selected shape's animation.
-   if ((isObject($mmSelectedShape))&&($mmSequenceSlider)&&(MegaMotionSequenceWindow.isVisible()))
-   {
-      %threadPos = $mmSelectedShape.getSeqPos();
-      %range = $mmSequenceSlider.range;
-      %numFrames = %range.y;//range is a Point2F, so begin and end are x and y.
-      %frame = %threadPos * %numFrames;
-      $mmSequenceSlider.setValue(%frame);  
-      //%frame = mRound(%frame * 100)/100;//(if we wanted "round to n decimals", n=100)      
-      %frame = mRound(%frame);    
-      $mmSequenceFrame.setText(%frame);
-      
-      /*
-   $mmSelectedShape.rotDeltaSumDescending = false;
-   $mmSelectedShape.rotDeltaSumMin = 999.0;
-   $mmSelectedShape.rotDeltaSumCurrentFrame = 0;
-   $mmSelectedShape.rotDeltaSumLastFrame = 0;
-   $mmSelectedShape.rotDeltaSumLast = 0;
-   $mmSelectedShape.rotDeltaSumLastMinusOne = 0;
-   $mmSelectedShape.rotDeltaSumLastMinusTwo = 0;
-   $mmSelectedShape.rotDeltaSumLastMinusThree = 0;
-   $mmSelectedShape.rotDeltaSumLastMinusFour = 0;
-   */
-      //Loop Detection - checking for best animation cycle. 
-      if ($mmSelectedShape.loopDetecting)
-      {
-         if ($mmSelectedShape.rotDeltaSumCurrentFrame == 0)
-         {
-            echo("starting loop detection!");
-         }
-         //TimelineRotDeltaSum.visible = 1;
-         //cropStopCyclicButton.visible = 1;
-         %seq = $mmSequenceList.getSelected();
-         %current_frame = mFloor(%threadpos * $mmSequenceSlider.range.y);
-         %start_frame = $mmSequenceInFrame.getText();
-         //if (%start_frame==%current_frame)    
-         //{//Somehow these starting values are getting lost between mmFindLoop and here. (??)
-         //   $mmRotDeltaSumMin = 999.0;
-         //   $mmRotDeltaSumDescending = 0;
-         //   $mmRotDeltaSumLast = 0;
-         //}
-         
-         %seqDeltaSum = $mmSelectedShape.getClientObject().getSeqDeltaSum(%seq,%current_frame,%start_frame);
-         $mmSequenceFindLoopDelta.setText(%seqDeltaSum);
-         //TimelineRotDeltaSum.setText(mFloatLength(%seqDeltaSum,3));
-         %frame_from_start = %current_frame-%start_frame;
-         
-         %seqDeltaMinusOne = 0;
-         %seqDeltaMinusTwo = 0;
-         %seqDeltaMinusThree = 0;
-         %seqDeltaMinusFour = 0;         
-         
-         //This is ugly, but we need a rolling array of last five values.
-         if ($mmSelectedShape.rotDeltaSumCurrentFrame > 0)
-         {
-            if ($mmSelectedShape.rotDeltaSumCurrentFrame > 3) //if we're on frame four or more, move all four stored values.
-            {
-               //echo("Last four diff: " @ (%seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusFour));
-               $mmSelectedShape.rotDeltaSumLastMinusFour = $mmSelectedShape.rotDeltaSumLastMinusThree;
-               $mmSelectedShape.rotDeltaSumLastMinusThree = $mmSelectedShape.rotDeltaSumLastMinusTwo;
-               $mmSelectedShape.rotDeltaSumLastMinusTwo = $mmSelectedShape.rotDeltaSumLastMinusOne;
-               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast; 
-               
-               %seqDeltaMinusOne = %seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusOne;
-               %seqDeltaMinusTwo = %seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusTwo;
-               %seqDeltaMinusThree = %seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusThree;
-               %seqDeltaMinusFour = %seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusFour;  
-            } 
-            else if ($mmSelectedShape.rotDeltaSumCurrentFrame == 3)
-            {
-               $mmSelectedShape.rotDeltaSumLastMinusThree = $mmSelectedShape.rotDeltaSumLastMinusTwo;
-               $mmSelectedShape.rotDeltaSumLastMinusTwo = $mmSelectedShape.rotDeltaSumLastMinusOne;
-               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast;
-            } 
-            else if ($mmSelectedShape.rotDeltaSumCurrentFrame == 2)
-            {
-               $mmSelectedShape.rotDeltaSumLastMinusTwo = $mmSelectedShape.rotDeltaSumLastMinusOne;
-               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast;
-            }
-            else if ($mmSelectedShape.rotDeltaSumCurrentFrame == 1)
-            {
-               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast;
-            }
-         }      
-            
-         echo(" frame: " @ %current_frame @ ", deltaSum " @ %seqDeltaSum @ ", -4 " @  %seqDeltaMinusFour @
-               ", -3 " @ %seqDeltaMinusThree @ ", -2 " @ %seqDeltaMinusTwo @ ", -1 " @ %seqDeltaMinusOne );
-            
-         $mmSelectedShape.rotDeltaSumCurrentFrame++;
-            
-         if ((%seqDeltaSum < $mmSelectedShape.rotDeltaSumLast)&&(%frame_from_start > $mmLoopDetectorDelay))
-            $mmSelectedShape.rotDeltaSumDescending = true;
-         else 
-         {
-            if ($mmSelectedShape.rotDeltaSumDescending)
-            {
-               
-               if ($mmSelectedShape.rotDeltaSumLast < $mmSelectedShape.rotDeltaSumMin)
-               {
-                  echo("loop detector found out pos: " @ %current_frame @ " frame-from-start " @ %frame_from_start );
-                  $mmSelectedShape.rotDeltaSumMin = $mmSelectedShape.rotDeltaSumLast;
-                  $mmSelectedShape.rotDeltaSumLastFrame = %current_frame-1;  //Are we sure about -1?                
-                  //SequencesCropStopKeyframeText.setText($rotDeltaSumLastFrame);
-                  %markOutPos = mFloatLength($mmSelectedShape.rotDeltaSumLastFrame / $mmSelectedShape.getSeqFrames(%seq),3);
-                  $mmSequenceOutFrame.setText(%markOutPos);
-                  $mmSequenceSlider.setValue($mmSelectedShape.rotDeltaSumLastFrame);
-                  mmSequenceSetOutBar();
-                  echo("found a minimum: " @ $mmSelectedShape.rotDeltaSumMin @ ", frame " @ $mmSelectedShape.rotDeltaSumLastFrame);           
-                  $mmSelectedShape.loopDetecting = false;
-                  $mmSelectedShape.pauseSeq();
-               }
-               $mmSelectedShape.rotDeltaSumDescending = false;
-            }
-         }
-         $mmSelectedShape.rotDeltaSumLast = %seqDeltaSum;
-         if (((%current_frame==0)&&($mmSelectedShape.rotDeltaSumMin<999.0))||(%frame_from_start > $mmLoopDetectorMax))//Hmmm
-         {//FIX: not at all sure about any of this...
-            echo("ending loop detection: current frame " @ %current_frame @ " frame-from-start " @ %frame_from_start @ 
-               ", loop detector max: " @ $loopDetectorMax);
-            //SequencesCropStopKeyframeText.setText($rotDeltaSumLastFrame);
-            %markOutPos = mFloatLength($mmSelectedShape.rotDeltaSumLastFrame / $mmSelectedShape.getSeqFrames(%seq),3);
-            //SequencesCropStopText.setText(%markOutPos);
-            //$crop_stop = %markOutPos;//Note: this sucks, we should just check SequencesCropStopText.getText instead.
-            //TimelineRotDeltaSum.setText(mFloatLength($rotDeltaSumMin,3));
-            $mmSequenceOutFrame.setText(%markOutPos);            
-            $mmSelectedShape.loopDetecting = false;
-            $mmSequenceSlider.setValue($mmSequenceOutFrame.getText());
-            mmSequenceSetOutBar();
-            //EcstasySequenceSlider::setSliderToPos(SequencesCropStartText.getText());
-            //$showRotDeltaSum = 0;
-         }          
-      }
-   }
-   
-   schedule(30,0,"MegaMotionTick");//30 MS =~ 32 times per second.
-}
-
 function startSceneRecording()
 {
    for (%i=0;%i<SceneShapes.getCount();%i++)
@@ -5598,6 +5956,7 @@ function mmReallyExportSceneBVH(%path)
       %shape = SceneShapes.getObject(%i);  
       %bvh_name = %shape.getSceneShapeID() @ ".bvh";
       %index = %shape.findSeq(%shape.getSceneShapeID());
+      echo("Saving scene bvh! shape " @ %shape.getSceneShapeID() @ " numBodies: " @ %shape.getNumBodies());
       if (%shape.getNumBodies()>1)
          %shape.saveBvh(%index,%path @ "/" @ %bvh_name,"OldTruebones",$pref::MegaMotion::BvhGlobal);
       else
@@ -5636,6 +5995,165 @@ function mmReallyExportSceneBVH(%path)
 }
 
 //////////////////////////////////////////////////////////////////////
+
+function MegaMotionTick()
+{     
+   schedule(30,0,"MegaMotionTick");//(We do have a way to cancel scheduled jobs right?)
+   
+   //General function for anything in MegaMotion that needs a tick but doesn't do it itself.
+   if ($mmPlayingScene)
+   {
+      //mmGroupThink();//Run think behavior for all of the active actor groups. 
+      //if ($mmTicks % $mmGroupThinkFrequency == 0)
+      //{
+         //mmGroupFormationTargets(2,0,20.0,20.0,2.0,2.0,"-10.0 10.0 0",false);//filled block
+         //mmGroupFormationTargets(2,1,20.0,20.0,2.0,2.0,"-10.0 10.0 0",false);//open block
+         //mmGroupFormationTargets(2,2,20.0,20.0,2.0,2.0,"0 10.0 0",false);//filled wedge
+         //mmGroupFormationTargets(2,3,20.0,20.0,2.0,2.0,"0 10.0 0",false);//open wedge
+         //mmGroupFormationTargets(2,4,30.0,40.0,2.0,2.0,"0 22.0 0",false);//open V
+         //mmGroupFormationTargets(2,5,10.0,15.0,2.0,2.0,"0 10.0 0",false);//filled diamond
+         //mmGroupFormationTargets(2,6,20.0,20.0,2.0,2.0,"0 10.0 0",false);//open diamond
+         //mmGroupFormationTargets(2,7,20.0,20.0,2.0,2.0,"0 10.0 0",false);//filled circle
+         //mmGroupFormationTargets(2,8,11.5,0.0,2.0,2.0,"0 0.0 0",false);//open circle, X is radius, Y not used
+      //}
+   }
+   
+   //Sequence slider needs to keep up with selected shape's animation.
+   if ((isObject($mmSelectedShape))&&($mmSequenceSlider)&&(MegaMotionSequenceWindow.isVisible()))
+   {
+      %threadPos = $mmSelectedShape.getSeqPos();
+      %range = $mmSequenceSlider.range;
+      %numFrames = %range.y;//range is a Point2F, so begin and end are x and y.
+      %frame = %threadPos * %numFrames;
+      $mmSequenceSlider.setValue(%frame);  
+      //%frame = mRound(%frame * 100)/100;//(if we wanted "round to n decimals", n=100)      
+      %frame = mRound(%frame);    
+      $mmSequenceFrame.setText(%frame);
+      
+      /*
+   $mmSelectedShape.rotDeltaSumDescending = false;
+   $mmSelectedShape.rotDeltaSumMin = 999.0;
+   $mmSelectedShape.rotDeltaSumCurrentFrame = 0;
+   $mmSelectedShape.rotDeltaSumLastFrame = 0;
+   $mmSelectedShape.rotDeltaSumLast = 0;
+   $mmSelectedShape.rotDeltaSumLastMinusOne = 0;
+   $mmSelectedShape.rotDeltaSumLastMinusTwo = 0;
+   $mmSelectedShape.rotDeltaSumLastMinusThree = 0;
+   $mmSelectedShape.rotDeltaSumLastMinusFour = 0;
+   */
+      //Loop Detection - checking for best animation cycle. 
+      if ($mmSelectedShape.loopDetecting)
+      {
+         if ($mmSelectedShape.rotDeltaSumCurrentFrame == 0)
+         {
+            echo("starting loop detection!");
+         }
+         //TimelineRotDeltaSum.visible = 1;
+         //cropStopCyclicButton.visible = 1;
+         %seq = $mmSequenceList.getSelected();
+         %current_frame = mFloor(%threadpos * $mmSequenceSlider.range.y);
+         %start_frame = $mmSequenceInFrame.getText();
+         //if (%start_frame==%current_frame)    
+         //{//Somehow these starting values are getting lost between mmFindLoop and here. (??)
+         //   $mmRotDeltaSumMin = 999.0;
+         //   $mmRotDeltaSumDescending = 0;
+         //   $mmRotDeltaSumLast = 0;
+         //}
+         
+         %seqDeltaSum = $mmSelectedShape.getClientObject().getSeqDeltaSum(%seq,%current_frame,%start_frame);
+         $mmSequenceFindLoopDelta.setText(%seqDeltaSum);
+         //TimelineRotDeltaSum.setText(mFloatLength(%seqDeltaSum,3));
+         %frame_from_start = %current_frame-%start_frame;
+         
+         %seqDeltaMinusOne = 0;
+         %seqDeltaMinusTwo = 0;
+         %seqDeltaMinusThree = 0;
+         %seqDeltaMinusFour = 0;         
+         
+         //This is ugly, but we need a rolling array of last five values.
+         if ($mmSelectedShape.rotDeltaSumCurrentFrame > 0)
+         {
+            if ($mmSelectedShape.rotDeltaSumCurrentFrame > 3) //if we're on frame four or more, move all four stored values.
+            {
+               //echo("Last four diff: " @ (%seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusFour));
+               $mmSelectedShape.rotDeltaSumLastMinusFour = $mmSelectedShape.rotDeltaSumLastMinusThree;
+               $mmSelectedShape.rotDeltaSumLastMinusThree = $mmSelectedShape.rotDeltaSumLastMinusTwo;
+               $mmSelectedShape.rotDeltaSumLastMinusTwo = $mmSelectedShape.rotDeltaSumLastMinusOne;
+               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast; 
+               
+               %seqDeltaMinusOne = %seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusOne;
+               %seqDeltaMinusTwo = %seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusTwo;
+               %seqDeltaMinusThree = %seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusThree;
+               %seqDeltaMinusFour = %seqDeltaSum - $mmSelectedShape.rotDeltaSumLastMinusFour;  
+            } 
+            else if ($mmSelectedShape.rotDeltaSumCurrentFrame == 3)
+            {
+               $mmSelectedShape.rotDeltaSumLastMinusThree = $mmSelectedShape.rotDeltaSumLastMinusTwo;
+               $mmSelectedShape.rotDeltaSumLastMinusTwo = $mmSelectedShape.rotDeltaSumLastMinusOne;
+               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast;
+            } 
+            else if ($mmSelectedShape.rotDeltaSumCurrentFrame == 2)
+            {
+               $mmSelectedShape.rotDeltaSumLastMinusTwo = $mmSelectedShape.rotDeltaSumLastMinusOne;
+               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast;
+            }
+            else if ($mmSelectedShape.rotDeltaSumCurrentFrame == 1)
+            {
+               $mmSelectedShape.rotDeltaSumLastMinusOne = $mmSelectedShape.rotDeltaSumLast;
+            }
+         }      
+            
+         echo(" frame: " @ %current_frame @ ", deltaSum " @ %seqDeltaSum @ ", -4 " @  %seqDeltaMinusFour @
+               ", -3 " @ %seqDeltaMinusThree @ ", -2 " @ %seqDeltaMinusTwo @ ", -1 " @ %seqDeltaMinusOne );
+            
+         $mmSelectedShape.rotDeltaSumCurrentFrame++;
+            
+         if ((%seqDeltaSum < $mmSelectedShape.rotDeltaSumLast)&&(%frame_from_start > $mmLoopDetectorDelay))
+            $mmSelectedShape.rotDeltaSumDescending = true;
+         else 
+         {
+            if ($mmSelectedShape.rotDeltaSumDescending)
+            {
+               
+               if ($mmSelectedShape.rotDeltaSumLast < $mmSelectedShape.rotDeltaSumMin)
+               {
+                  echo("loop detector found out pos: " @ %current_frame @ " frame-from-start " @ %frame_from_start );
+                  $mmSelectedShape.rotDeltaSumMin = $mmSelectedShape.rotDeltaSumLast;
+                  $mmSelectedShape.rotDeltaSumLastFrame = %current_frame-1;  //Are we sure about -1?                
+                  //SequencesCropStopKeyframeText.setText($rotDeltaSumLastFrame);
+                  %markOutPos = mFloatLength($mmSelectedShape.rotDeltaSumLastFrame / $mmSelectedShape.getSeqFrames(%seq),3);
+                  $mmSequenceOutFrame.setText(%markOutPos);
+                  $mmSequenceSlider.setValue($mmSelectedShape.rotDeltaSumLastFrame);
+                  mmSequenceSetOutBar();
+                  echo("found a minimum: " @ $mmSelectedShape.rotDeltaSumMin @ ", frame " @ $mmSelectedShape.rotDeltaSumLastFrame);           
+                  $mmSelectedShape.loopDetecting = false;
+                  $mmSelectedShape.pauseSeq();
+               }
+               $mmSelectedShape.rotDeltaSumDescending = false;
+            }
+         }
+         $mmSelectedShape.rotDeltaSumLast = %seqDeltaSum;
+         if (((%current_frame==0)&&($mmSelectedShape.rotDeltaSumMin<999.0))||(%frame_from_start > $mmLoopDetectorMax))//Hmmm
+         {//FIX: not at all sure about any of this...
+            echo("ending loop detection: current frame " @ %current_frame @ " frame-from-start " @ %frame_from_start @ 
+               ", loop detector max: " @ $loopDetectorMax);
+            //SequencesCropStopKeyframeText.setText($rotDeltaSumLastFrame);
+            %markOutPos = mFloatLength($mmSelectedShape.rotDeltaSumLastFrame / $mmSelectedShape.getSeqFrames(%seq),3);
+            //SequencesCropStopText.setText(%markOutPos);
+            //$crop_stop = %markOutPos;//Note: this sucks, we should just check SequencesCropStopText.getText instead.
+            //TimelineRotDeltaSum.setText(mFloatLength($rotDeltaSumMin,3));
+            $mmSequenceOutFrame.setText(%markOutPos);            
+            $mmSelectedShape.loopDetecting = false;
+            $mmSequenceSlider.setValue($mmSequenceOutFrame.getText());
+            mmSequenceSetOutBar();
+            //EcstasySequenceSlider::setSliderToPos(SequencesCropStartText.getText());
+            //$showRotDeltaSum = 0;
+         }          
+      }
+   }
+   
+   $mmTicks++;
+}
 
 function shapesAct()
 {

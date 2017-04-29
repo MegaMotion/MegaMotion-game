@@ -7,6 +7,7 @@ buildFiles/CMake/MegaMotion.VC.db
 game/core/fonts/*
 *.uft
 
+game/.vs
 game/MegaMotion.exe
 game/MegaMotion_DEBUG.exe
 game/MegaMotion_public.exe

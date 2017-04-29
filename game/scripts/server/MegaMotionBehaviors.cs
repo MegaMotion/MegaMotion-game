@@ -1,4 +1,6 @@
-
+//-----------------------------------------------------------------------------
+// Copyright (c) 2017 MegaMotion Software, LLC
+//-----------------------------------------------------------------------------
 
 
 //==============================================================================
@@ -166,7 +168,6 @@ function navGoToTarget::onEnter(%this, %obj)
       //         " ultimate target " @ %obj.targetItem.position);
       %obj.moveTo(%obj.currentPathGoal);
       //%clientObj.setMoveTarget(%obj.currentPathGoal);
-
    }
 }
 
@@ -223,6 +224,7 @@ function navGoToTarget::behavior(%this, %obj)
    {
       %obj.currentPathNode = 0;
       %obj.actionSeq("idle");
+      echo(%obj.sceneShapeID @ " found his goal position: " @ %obj.goalPos );
       return SUCCESS;
    }
 }
@@ -323,6 +325,7 @@ function openSteerGoToTarget::behavior(%this, %obj)
 //=============================================================================
 function openSteerNavGoToTarget::precondition(%this, %obj)
 {
+   //echo(" openSteerNavGoToTarget::precondition - " @ %obj.sceneShapeID @ " - goalPos " @ %obj.goalPos);
    //echo(%obj.sceneShapeID @ " openSteerNavGoToTarget::precondition - goalPos " @ %obj.goalPos @ 
    //      " len " @ VectorLen(%obj.goalPos) @ " currentGoal " @ %obj.currentPathGoal);
          
@@ -361,7 +364,7 @@ function openSteerNavGoToTarget::onEnter(%this, %obj)
 
 function openSteerNavGoToTarget::behavior(%this, %obj)
 {
-   //echo("openSteerNavGoToTarget::behavior");
+   //echo( "openSteerNavGoToTarget::behavior  id " @ %obj.sceneShapeID @ " goalPos " @ %obj.goalPos );
    // succeed when we reach the item
    
    %clientObj = 0;
@@ -373,45 +376,54 @@ function openSteerNavGoToTarget::behavior(%this, %obj)
    
    //%groundPos = %obj.findGroundPosition(%obj.goalPos);
    //%currentTargPos =  %obj.findGroundPosition(%obj.targetItem.getPosition());
-   %currentTargPos = %obj.targetItem.getPosition();
-   %moveDiff = VectorSub(%obj.goalPos,%currentTargPos);
    
-   //%clientGroundPos = %obj.findGroundPosition(%obj.getClientPosition());//Note: getClientPosition refers to player
-   //%finalDiff = VectorSub(%obj.findGroundPosition(%clientObj.getPosition()),%currentTargPos);
    %clientGroundPos = %obj.getClientPosition();
-   %finalDiff = VectorSub(%clientObj.getPosition(),%currentTargPos);
-   if (VectorLen(%moveDiff)>(%obj.dataBlock.foundItemDistance*2))
-   {    
-      %obj.setNavPathTo(%currentTargPos);   
+   if (%obj.targetItem)
+   {
+      %currentTargPos = %obj.targetItem.getPosition();
+      %moveDiff = VectorSub(%obj.goalPos,%currentTargPos);
+      if (VectorLen(%moveDiff)>(%obj.dataBlock.foundItemDistance*2))
+      {    
+         %obj.setNavPathTo(%currentTargPos);   
+         %obj.currentPathNode = 1;
+         %obj.currentPathGoal = %obj.getNavPathNode(%obj.currentPathNode);
+         %clientObj.setOpenSteerMoveTarget(%obj.currentPathGoal);
+         return RUNNING;
+      }
+   }
+   %lastDist = %obj.lastDist;
+   %finalDiff = VectorSub(%clientObj.getPosition(),%obj.goalPos);
+   //echo( "openSteerNavGoToTarget::behavior  id " @ %obj.sceneShapeID @ " goalPos " @ %obj.goalPos @ " distance " @ VectorLen(%finalDiff));
+   if ( VectorLen(%finalDiff) > %lastDist )
+   {//Whoops, we overshot our goal and are now running away from it forever.
+      %obj.setNavPathTo(%obj.goalPos); 
       %obj.currentPathNode = 1;
       %obj.currentPathGoal = %obj.getNavPathNode(%obj.currentPathNode);
       %clientObj.setOpenSteerMoveTarget(%obj.currentPathGoal);
+      //echo("OOPS, overshot the goal! lastDist: " @ %obj.lastDist);
       return RUNNING;
    }
    if ( VectorLen(%finalDiff) > %obj.dataBlock.foundItemDistance )
    {
       %nodeDiff = VectorSub(%obj.currentPathGoal,%clientGroundPos);
-      //echo("checking distance to path node: " @ VectorLen(%nodeDiff) );
-      //echo(%obj.getId() @ " is looking for target, my position " @ %clientGroundPos @ 
-      //      " target position " @ %obj.currentPathGoal @  " distance = " @ VectorLen(%diff) );
-
       if (VectorLen(%nodeDiff) < %obj.dataBlock.foundItemDistance)
       {
          %obj.currentPathNode++;
          %obj.currentPathGoal = %obj.getNavPathNode(%obj.currentPathNode-1);
-         
          //%obj.moveTo(%obj.currentPathGoal); 
          %clientObj.setOpenSteerMoveTarget(%obj.currentPathGoal);
       }
+      %obj.lastDist = VectorLen(%finalDiff);
       return RUNNING;
    }
    else
    {
       %obj.currentPathNode = 0;
       //%obj.currentPathGoal = %obj.getClientPosition();
-      //%obj.actionSeq("ambient");//Here: change to idle tree? No, play idle action while waiting for target to move away again.
+      %obj.actionSeq("idle");//Here: change to idle tree? No, play idle action while waiting for target to move away again.
       %obj.setOpenSteerSpeed(0.0);//HERE: I think we need to do more, this doesn't stop it from thinking.
       %obj.setUseSteering(false);
+      %obj.lastDist = 999.0;
       return SUCCESS;
    }
 }
@@ -521,4 +533,63 @@ function findTarget::behavior(%this, %obj)
    }
    
    return isObject(%obj.targetItem) ? SUCCESS : FAILURE;
+}
+
+//=============================================================================
+// group_A_think
+//=============================================================================
+function group_A_think::precondition(%this, %obj)
+{
+   %groupID = 1;
+   return ($mmShapeGroupData[%groupID,2]>0);//Don't start unless leader is assigned, but it should be already.
+}
+
+function group_A_think::onEnter(%this, %obj)
+{
+   return;
+}
+
+function group_A_think::behavior(%this, %obj)
+{
+   %groupID = 1;//Hmm. We can hard code this, because we know, but there should 
+                //still be a better way. 
+   mmGroup_Horde_Attack(%groupID);
+}
+
+//=============================================================================
+// group_B_think
+//=============================================================================
+function group_B_think::precondition(%this, %obj)
+{
+   return true;
+}
+
+function group_B_think::onEnter(%this, %obj)
+{
+   return;
+}
+
+function group_B_think::behavior(%this, %obj)
+{
+   %groupID = 2;
+   mmGroup_Militia_Defend_Wall(%groupID);
+}
+
+//=============================================================================
+// group_C_think
+//=============================================================================
+function group_C_think::precondition(%this, %obj)
+{
+   return true;
+}
+
+function group_C_think::onEnter(%this, %obj)
+{
+   return;
+}
+
+function group_C_think::behavior(%this, %obj)
+{
+   %groupID = 3;
+   mmGroup_Militia_Attack(%groupID);
 }
