@@ -35,16 +35,16 @@ $mmLoadedShapes = 0;
 
 $mmSelectedShape = 0;
 $mmSelectedSceneShape = 0;//Use this to store selection between load/unload scenes.
+$mmSelectingShape = 0;//Use this to temporarily tell shape-related list selection functions that we are 
+                     //not selecting them manually, so do not try to assign changes to this shape.
 
 $mmLoopDetecting = false;
+
 $mmRotDeltaSumMin = 0;
 $mmRotDeltaSumDescending = 0;
 $mmRotDeltaSumLast = 0;
 
 $mmShapeMountChildSceneShape = 0;
-
-//$mmKeyframesRotation = 1;
-//$mmKeyframesPosition = 0;
 
 $mmAddKeyframeRotation = 1;
 $mmAddKeyframePosition = 0;
@@ -361,7 +361,7 @@ function mmSetupPhysicsTab()
             //$mmShapeList.setSelected(%firstID);
       }
       sqlite.clearResult(%resultSet);
-   }   
+   }
 }
 
 function mmSetupSequenceTab()
@@ -370,6 +370,9 @@ function mmSetupSequenceTab()
    
    $mmSequenceActionList = %panel.findObjectByInternalName("sequenceActionList");
    $mmSequenceFileText = %panel.findObjectByInternalName("sequenceFileText");
+   
+   $mmTransitionSequenceList = %panel.findObjectByInternalName("sequenceTransitionSequenceList");
+   $mmTransitionFrames = %panel.findObjectByInternalName("sequenceTransitionFrames");
    
    //Can we reduce the number of globals here, by defining them temporarily where needed?
    $mmSequenceNodeList = %panel.findObjectByInternalName("sequenceNodeList");
@@ -385,10 +388,6 @@ function mmSetupSequenceTab()
    $mmSequenceKeyframeValueX.setText(0);
    $mmSequenceKeyframeValueY.setText(0);
    $mmSequenceKeyframeValueZ.setText(0);
-   
-   $mmLoopDetectorDelay = 10;
-   $mmLoopDetectorMax   = 150;
-   $mmLoopDetectorSmooth = 10;
    
    $mmGroundCaptureButton = %panel.findObjectByInternalName("groundCaptureButton");
    
@@ -439,7 +438,6 @@ function mmSetupSequenceTab()
       makeSqlGuiForm($MegaMotionSequenceWindowID);
       setupMegaMotionSequenceWindow();
    }
-   
 }
 
 function mmSetupBvhTab()
@@ -2391,6 +2389,7 @@ function mmSelectSceneShape()
    %scene_shape_id = $mmSceneShapeList.getSelected();
    
    $mmSequenceList.clear();
+   $mmTransitionSequenceList.clear();
    for (%i = 0; %i < SceneShapes.getCount();%i++)
    {
       %obj = SceneShapes.getObject(%i);  
@@ -2401,7 +2400,8 @@ function mmSelectSceneShape()
          for (%j=0;%j<%numSeqs;%j++)
          {
             %name = $mmSelectedShape.getSeqName(%j);
-            $mmSequenceList.add(%name,%j);         
+            $mmSequenceList.add(%name,%j);
+            $mmTransitionSequenceList.add(%name,%j);    
          }
       }
    }
@@ -2443,9 +2443,12 @@ function mmSelectSceneShape()
       
       echo("selecting sceneShape! shapeGroup " @ %group_id @ " behavior " @ %behavior_tree);
       
+      $mmSelectingShape = 1;
       $mmSceneShapeBehaviorTreeList.setSelected($mmSceneShapeBehaviorTreeList.findText(%behavior_tree));
       $mmShapeGroupList.setSelected(%group_id);
       $mmOpenSteerList.setSelected(%openSteer_id);
+      $mmSelectingShape = 0;//Now we will not try to assign the current shapeGroup etc. to the shape redundantly.
+      
       
       $mmSceneShapePositionX.setText(%pos_x);
       $mmSceneShapePositionY.setText(%pos_y);
@@ -2538,23 +2541,26 @@ function mmSelectBehaviorTree()
    if (EWorldEditor.getSelectionSize()==0)
       return;
  
-   %tree = $mmSceneShapeBehaviorTreeList.getText();
-   %id_list = "";
-   for (%i=0;%i<EWorldEditor.getSelectionSize();%i++)
+   if ($mmSelectingShape==0)
    {
-      %obj = EWorldEditor.getSelectedObject( %i );
-      if ((%obj.getClassName() $= "PhysicsShape")&&(%obj.sceneShapeID>0)&&
-            (%obj.behaviorTree !$= %tree))
+      %tree = $mmSceneShapeBehaviorTreeList.getText();
+      %id_list = "";
+      for (%i=0;%i<EWorldEditor.getSelectionSize();%i++)
       {
-         if (strlen(%id_list)==0)
-            %id_list =  %obj.sceneShapeID;
-         else
-            %id_list = %id_list @ "," @ %obj.sceneShapeID;
+         %obj = EWorldEditor.getSelectedObject( %i );
+         if ((%obj.getClassName() $= "PhysicsShape")&&(%obj.sceneShapeID>0)&&
+               (%obj.behaviorTree !$= %tree))
+         {
+            if (strlen(%id_list)==0)
+               %id_list =  %obj.sceneShapeID;
+            else
+               %id_list = %id_list @ "," @ %obj.sceneShapeID;
+         }
       }
+      %query = "UPDATE sceneShape SET behavior_tree='" @ %tree @ "'" @ 
+                     " WHERE id IN (" @ %id_list @ ");";
+      sqlite.query(%query,0);
    }
-   %query = "UPDATE sceneShape SET behavior_tree='" @ %tree @ "'" @ 
-                  " WHERE id IN (" @ %id_list @ ");";
-   sqlite.query(%query,0);
 }
 
 //Assign this shape group to all selected sceneShapes.
@@ -2564,23 +2570,31 @@ function mmSelectShapeGroup()
    
    if (EWorldEditor.getSelectionSize()==0)
       return;
-   %group_id = $mmShapeGroupList.getSelected();
-   %id_list = "";
-   for (%i=0;%i<EWorldEditor.getSelectionSize();%i++)
-   {
-      %obj = EWorldEditor.getSelectedObject( %i );
-      if ((%obj.getClassName() $= "PhysicsShape")&&(%obj.sceneShapeID>0))
+      
+   //HERE: as in so many places, I need to get squared away on whether I actually selected the shapeGroup manually,
+   //indicating I would like to assign a new shapeGroup for the selected shapes, as opposed to being here because we
+   //just selected one shape and we need to set up the form with that shape's shapeGroup information.
+   if ($mmSelectingShape==0)
+   {   
+      %group_id = $mmShapeGroupList.getSelected();
+      %id_list = "";
+      for (%i=0;%i<EWorldEditor.getSelectionSize();%i++)
       {
-         if (strlen(%id_list)==0)
-            %id_list =  %obj.sceneShapeID;
-         else
-            %id_list = %id_list @ "," @ %obj.sceneShapeID;
+         %obj = EWorldEditor.getSelectedObject( %i );
+         if ((%obj.getClassName() $= "PhysicsShape")&&(%obj.sceneShapeID>0))
+         {
+            if (strlen(%id_list)==0)
+               %id_list =  %obj.sceneShapeID;
+            else
+               %id_list = %id_list @ "," @ %obj.sceneShapeID;
+         }
       }
+   
+      %query = "UPDATE sceneShape SET shapeGroup_id='" @ %group_id @ "'" @ 
+                     " WHERE id IN (" @ %id_list @ ");";  
+      echo("QUERY: " @ %query);
+      sqlite.query(%query,0);
    }
-   %query = "UPDATE sceneShape SET shapeGroup_id='" @ %group_id @ "'" @ 
-                  " WHERE id IN (" @ %id_list @ ");";  
-   echo("QUERY: " @ %query);
-   sqlite.query(%query,0);
 }
 
 //Assign this shape group to all selected sceneShapes.
@@ -3444,31 +3458,34 @@ function mmSelectOpenSteer()
    
    //Now: although we should insert a warning message here, what we are now doing is saving new openSteer ID
    //to either all selected sceneShapes in the editor, *or* the selected single shape on the list
-   %selectedShape = $mmSceneShapeList.getSelected();
-   %id_list = "";
-   if (EWorldEditor.getSelectionSize()>0)
-   {   
-      for (%i=0;%i<EWorldEditor.getSelectionSize();%i++)
-      {
-         %obj = EWorldEditor.getSelectedObject( %i );
-         if ((%obj.getClassName() $= "PhysicsShape")&&(%obj.sceneShapeID>0))
+   if ($mmSelectingShape==0)
+   {
+      %selectedShape = $mmSceneShapeList.getSelected();
+      %id_list = "";
+      if (EWorldEditor.getSelectionSize()>0)
+      {   
+         for (%i=0;%i<EWorldEditor.getSelectionSize();%i++)
          {
-            if (strlen(%id_list)==0)
-               %id_list =  %obj.sceneShapeID;
-            else
-               %id_list = %id_list @ "," @ %obj.sceneShapeID;
+            %obj = EWorldEditor.getSelectedObject( %i );
+            if ((%obj.getClassName() $= "PhysicsShape")&&(%obj.sceneShapeID>0))
+            {
+               if (strlen(%id_list)==0)
+                  %id_list =  %obj.sceneShapeID;
+               else
+                  %id_list = %id_list @ "," @ %obj.sceneShapeID;
+            }
          }
+         
+         %query = "UPDATE sceneShape SET openSteerProfile_id='" @ %openSteerID @ "'" @ 
+                        " WHERE id IN (" @ %id_list @ ");";
+         sqlite.query(%query,0);
+         
+      } else if (%selectedShape>0) {
+         
+         %query = "UPDATE sceneShape SET openSteerProfile_id='" @ %openSteerID @ "'" @ 
+                        " WHERE id=" @ %selectedShape @ ";";
+         sqlite.query(%query,0);
       }
-      
-      %query = "UPDATE sceneShape SET openSteerProfile_id='" @ %openSteerID @ "'" @ 
-                     " WHERE id IN (" @ %id_list @ ");";
-      sqlite.query(%query,0);
-      
-   } else if (%selectedShape>0) {
-      
-      %query = "UPDATE sceneShape SET openSteerProfile_id='" @ %openSteerID @ "'" @ 
-                     " WHERE id=" @ %selectedShape @ ";";
-      sqlite.query(%query,0);
    }
    
    //Next, load up the UI with this profile.
@@ -4051,13 +4068,10 @@ function mmAddSequence()
          return;   	  
    } else return;
 
-   mmSelectShape();
+   mmSelectShape();//Refreshes sequence list.
    
    $mmSceneShapeList.setSelected($mmSelectedShape.sceneShapeID);
    
-   //Now, add it to the sequenceList (and any others?) and then select it.
-   //%name = $mmSelectedShape.getSeqName($mmSequenceList.size()-1);
-   //$mmSequenceList.add(%name,$mmSequenceList.size()-1);
    $mmSequenceList.setSelected($mmSequenceList.size()-1);
    
    echo("loaded sequence! " @ %openFileName @ ", sequence list: " @ $mmSequenceList.getText());
@@ -5372,10 +5386,14 @@ function setupMegaMotionSequenceWindow()
    $mmSequenceSlider = MegaMotionSequenceWindow.findObjectByInternalName("sequenceSlider");
    $mmSequenceSlider.ticks = 0;   
    
-   $mmSequenceInFrame = MegaMotionSequenceWindow.findObjectByInternalName("sequenceInFrame");
+   $mmSequenceInFrame  = MegaMotionSequenceWindow.findObjectByInternalName("sequenceInFrame");
    $mmSequenceOutFrame = MegaMotionSequenceWindow.findObjectByInternalName("sequenceOutFrame");
-   $mmSequenceFindLoopDelta = MegaMotionSequenceWindow.findObjectByInternalName("sequenceFindLoopDelta");
    $mmSequenceFrame = MegaMotionSequenceWindow.findObjectByInternalName("sequenceFrame");
+   
+   $mmSequenceFindLoopDelta = MegaMotionSequenceWindow.findObjectByInternalName("sequenceFindLoopDelta");   
+   $mmSequenceSmoothFrames    = MegaMotionSequenceWindow.findObjectByInternalName("sequenceLoopSmooth");   
+   $mmSequenceLoopDetectDelay = MegaMotionSequenceWindow.findObjectByInternalName("sequenceLoopDelay");
+   $mmSequenceLoopDetectMax   = MegaMotionSequenceWindow.findObjectByInternalName("sequenceLoopMax");
    
    $mmSequenceInFrame.setText("");
    $mmSequenceOutFrame.setText("");
@@ -5606,11 +5624,13 @@ function mmSequenceSliderDrag()
 function mmRefreshSequenceList()
 {
    $mmSequenceList.clear();
+   $mmTransitionSequenceList.clear();
    %numSeqs = $mmSelectedShape.getNumSeqs();
    for (%j=0;%j<%numSeqs;%j++)
    {
       %name = $mmSelectedShape.getSeqName(%j);
-      $mmSequenceList.add(%name,%j);         
+      $mmSequenceList.add(%name,%j);  
+      $mmTransitionSequenceList.add(%name,%j);       
    }
 }
 
@@ -5683,13 +5703,28 @@ function mmSmoothLoop()
       return;
    
    %seq = $mmSequenceList.getSelected();
-   $mmSelectedShape.smoothLoopTransition(%seq,$mmLoopDetectorSmooth);
+   $mmSelectedShape.smoothLoopTransition(%seq,$mmSequenceSmoothFrames);
    
-   $mmSelectedShape.playSeqByNum($mmSequenceList.getSelected());
+   $mmSelectedShape.playSeqByNum(%seq);
    $mmSelectedShape.pauseSeq();
    $mmSelectedShape.setSeqPos(0);
 }
 
+function mmSmoothTransition()
+{
+   if (!isObject($mmSelectedShape))
+      return;
+   
+   %seqA = $mmSequenceList.getSelected();
+   %seqB = $mmTransitionSequenceList.getSelected();
+   %frames = $mmTransitionFrames.getText();
+   
+   $mmSelectedShape.smoothSequenceTransition(%seqA,%seqB,%frames);
+   
+   $mmSelectedShape.playSeqByNum(%seqA);
+   $mmSelectedShape.pauseSeq();
+   $mmSelectedShape.setSeqPos(0);
+}
 ////////////////////////////////////////////////////
 function mmGetOpenFileName(%defaultFilePath,%type)
 {
@@ -6108,7 +6143,7 @@ function MegaMotionTick()
             
          $mmSelectedShape.rotDeltaSumCurrentFrame++;
             
-         if ((%seqDeltaSum < $mmSelectedShape.rotDeltaSumLast)&&(%frame_from_start > $mmLoopDetectorDelay))
+         if ((%seqDeltaSum < $mmSelectedShape.rotDeltaSumLast)&&(%frame_from_start > $mmSequenceLoopDetectDelay))
             $mmSelectedShape.rotDeltaSumDescending = true;
          else 
          {
@@ -6133,10 +6168,10 @@ function MegaMotionTick()
             }
          }
          $mmSelectedShape.rotDeltaSumLast = %seqDeltaSum;
-         if (((%current_frame==0)&&($mmSelectedShape.rotDeltaSumMin<999.0))||(%frame_from_start > $mmLoopDetectorMax))//Hmmm
+         if (((%current_frame==0)&&($mmSelectedShape.rotDeltaSumMin<999.0))||(%frame_from_start > $mmSequenceLoopDetectMax))//Hmmm
          {//FIX: not at all sure about any of this...
             echo("ending loop detection: current frame " @ %current_frame @ " frame-from-start " @ %frame_from_start @ 
-               ", loop detector max: " @ $loopDetectorMax);
+               ", loop detector max: " @ $mmSequenceLoopDetectMax);
             //SequencesCropStopKeyframeText.setText($rotDeltaSumLastFrame);
             %markOutPos = mFloatLength($mmSelectedShape.rotDeltaSumLastFrame / $mmSelectedShape.getSeqFrames(%seq),3);
             //SequencesCropStopText.setText(%markOutPos);
